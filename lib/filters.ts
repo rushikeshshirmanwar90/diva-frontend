@@ -69,14 +69,17 @@ function valuesFor(product: Product, facet: FacetKey): string[] {
       return priceBands
         .filter((b) => product.price >= b.min && product.price < b.max)
         .map((b) => b.key);
+    // These three are optional on a fixed-price plated piece. An absent value
+    // yields no values, so the product simply fails a filter that names one —
+    // rather than matching everything via an `undefined` slipping into the list.
     case "metal":
-      return [product.attributes.metal];
+      return product.attributes.metal ? [product.attributes.metal] : [];
     case "stone":
-      return [product.attributes.stone];
+      return product.attributes.stone ? [product.attributes.stone] : [];
     case "occasion":
       return product.attributes.occasions;
     case "gender":
-      return [product.attributes.gender];
+      return product.attributes.gender ? [product.attributes.gender] : [];
     case "category":
       return [product.categorySlug];
     case "availability":

@@ -1,14 +1,14 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { categories } from "@/lib/data/categories";
+import { useCatalogue, useCategories } from "@/lib/data/catalogue-context";
+import type { Category, Product } from "@/lib/types";
 import {
   facetCounts,
   priceBands,
   type FacetKey,
   type FilterState,
 } from "@/lib/filters";
-import type { Product } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 type Group = {
@@ -17,16 +17,17 @@ type Group = {
   options: Array<{ value: string; label: string }>;
 };
 
-const metalOptions = ["22K Gold", "18K Gold", "14K Rose Gold", "Platinum", "925 Silver"];
-const stoneOptions = [
-  "Diamond",
-  "Ruby",
-  "Emerald",
-  "Sapphire",
-  "Pearl",
-  "Uncut Polki",
-  "None",
-];
+/**
+ * Finish and stone options come from the catalogue, not a fixed list.
+ *
+ * They used to be hardcoded as 22K Gold / Diamond / Uncut Polki and so on.
+ * Nothing stocked carries those values any more, so every one of those chips
+ * filtered the grid down to nothing — a filter that can only ever return zero
+ * results is worse than no filter at all.
+ */
+function distinct(values: Array<string | undefined>): string[] {
+  return [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
+}
 const occasionOptions = [
   "Bridal",
   "Festive",
@@ -36,7 +37,16 @@ const occasionOptions = [
   "Party",
 ];
 
-export function buildGroups(includeCategory: boolean): Group[] {
+/** `categories` is passed in: this runs inside a client component that reads
+ * them from context, and a module-level import would go back to the mock list. */
+export function buildGroups(
+  includeCategory: boolean,
+  categories: Category[],
+  pool: Product[],
+): Group[] {
+  const metalOptions = distinct(pool.map((product) => product.attributes.metal));
+  const stoneOptions = distinct(pool.map((product) => product.attributes.stone));
+
   const groups: Group[] = [
     {
       key: "price",
@@ -53,20 +63,27 @@ export function buildGroups(includeCategory: boolean): Group[] {
     });
   }
 
-  groups.push(
-    {
+  // Only offered when the catalogue actually has them.
+  if (metalOptions.length > 0) {
+    groups.push({
       key: "metal",
-      label: "Metal",
+      label: "Finish",
       options: metalOptions.map((m) => ({ value: m, label: m })),
-    },
-    {
+    });
+  }
+
+  if (stoneOptions.length > 0) {
+    groups.push({
       key: "stone",
       label: "Stone",
       options: stoneOptions.map((s) => ({
         value: s,
         label: s === "None" ? "No stone" : s,
       })),
-    },
+    });
+  }
+
+  groups.push(
     {
       key: "occasion",
       label: "Occasion",
@@ -113,7 +130,9 @@ export function FilterPanel({
   onToggle: (key: FacetKey, value: string) => void;
   includeCategory: boolean;
 }) {
-  const groups = buildGroups(includeCategory);
+  const categories = useCategories();
+  const pool = useCatalogue();
+  const groups = buildGroups(includeCategory, categories, pool);
 
   return (
     <div className="divide-y divide-line border-t border-line">

@@ -2,13 +2,14 @@
 
 import { Heart } from "lucide-react";
 import { useStore } from "@/lib/store/store";
-import { getProduct } from "@/lib/data/products";
+import { useProductLookup } from "@/lib/data/catalogue-context";
 import { ProductGrid } from "@/components/product/product-grid";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 export function WishlistView() {
   const { wishlist, hydrated } = useStore();
+  const getProduct = useProductLookup();
 
   const items = wishlist
     .map(getProduct)

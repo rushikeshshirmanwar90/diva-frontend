@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { BadgeCheck, Mail, MapPin, Package } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { ProductRail } from "@/components/product/product-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { OrderConfirmationSummary } from "@/components/checkout/order-confirmation-summary";
 import { productsByBadge } from "@/lib/data/products";
-import { demoAddresses } from "@/lib/data/content";
 import { MODEL } from "@/lib/images";
 
 export const metadata: Metadata = {
@@ -19,10 +19,8 @@ export default async function OrderConfirmedPage({
   const params = await searchParams;
   const raw = params.order;
   const orderNumber = (Array.isArray(raw) ? raw[0] : raw) ?? "DIVA-2026-00000";
-  const address = demoAddresses[0]!;
 
-  const eta = new Date();
-  eta.setDate(eta.getDate() + 4);
+  const bestsellers = await productsByBadge("bestseller");
 
   return (
     <>
@@ -50,37 +48,7 @@ export default async function OrderConfirmedPage({
       </section>
 
       <div className="mx-auto max-w-4xl px-5 py-16 lg:px-10">
-        <div className="grid gap-px bg-line sm:grid-cols-3">
-          {[
-            {
-              icon: Package,
-              title: "Quality check",
-              body: "Weighed, hallmarked and photographed within 48 hours.",
-            },
-            {
-              icon: MapPin,
-              title: "Delivering to",
-              body: `${address.line1}, ${address.city} ${address.pincode}`,
-            },
-            {
-              icon: Mail,
-              title: "Expected by",
-              body: eta.toLocaleDateString("en-IN", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              }),
-            },
-          ].map(({ icon: Icon, title, body }) => (
-            <div key={title} className="bg-white p-7">
-              <Icon width={20} height={20} strokeWidth={1.3} className="text-gold" />
-              <p className="mt-4 text-[10px] tracking-luxe uppercase text-ink">
-                {title}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
-            </div>
-          ))}
-        </div>
+        <OrderConfirmationSummary orderNumber={orderNumber} />
 
         <div className="mt-12 border border-line p-8">
           <p className="eyebrow">What happens next</p>
@@ -117,7 +85,7 @@ export default async function OrderConfirmedPage({
             linkLabel="Shop all"
           />
           <div className="mt-10">
-            <ProductRail products={productsByBadge("bestseller")} />
+            <ProductRail products={bestsellers} />
           </div>
         </section>
       </div>

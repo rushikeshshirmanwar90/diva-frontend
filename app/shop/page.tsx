@@ -13,16 +13,17 @@ export const metadata: Metadata = {
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   const params = await searchParams;
   const initialFilters = filtersFromParams(params);
+  const pool = await products();
 
   return (
     <>
       <PageHeader
-        eyebrow={`${products.length} pieces`}
+        eyebrow={`${pool.length} pieces`}
         title="All jewellery"
         description="Every piece is BIS hallmarked with a verifiable HUID. Filter by what matters to you — weight, metal, stone or budget."
         trail={[{ label: "All jewellery" }]}
       />
-      <ShopView pool={products} initialFilters={initialFilters} />
+      <ShopView pool={pool} initialFilters={initialFilters} />
     </>
   );
 }

@@ -4,18 +4,28 @@ import { Accordion } from "@/components/ui/accordion";
 export function ProductDetails({ product }: { product: Product }) {
   const a = product.attributes;
 
-  const specs: Array<[string, string]> = [
-    ["Metal", a.metal],
-    ["Purity", a.purity],
-    ["Gross weight", a.grossWeight],
-    ["Stone", a.stone === "None" ? "No stone" : a.stone],
-    ...(a.stoneWeight ? ([["Stone detail", a.stoneWeight]] as Array<[string, string]>) : []),
-    ["Wearer", a.gender],
-    ["Occasion", a.occasions.join(", ")],
-    ["Hallmark", a.huid],
-    ["Certification", a.certification],
-    ["Country of origin", "India"],
-  ];
+  /**
+   * Built from what the piece actually has.
+   *
+   * Most of these are optional now — a plated piece carries no purity, gross
+   * weight, HUID or stone grading — so empty rows are dropped rather than
+   * printed as "—". A spec table of dashes reads as broken; a short one reads
+   * as a simple product.
+   */
+  const specs = (
+    [
+      ["Finish", a.metal],
+      ["Purity", a.purity],
+      ["Gross weight", a.grossWeight],
+      ["Stone", a.stone === "None" ? "No stone" : a.stone],
+      ["Stone detail", a.stoneWeight],
+      ["Wearer", a.gender],
+      ["Occasion", a.occasions.join(", ")],
+      ["Hallmark", a.huid],
+      ["Certification", a.certification],
+      ["Country of origin", "India"],
+    ] as Array<[string, string | undefined]>
+  ).filter((entry): entry is [string, string] => Boolean(entry[1]));
 
   return (
     <Accordion

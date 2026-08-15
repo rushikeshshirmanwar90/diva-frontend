@@ -6,7 +6,12 @@ import { policies } from "@/lib/data/policies";
 
 const BASE = "https://diva.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [catalogue, categoryList, collectionList] = await Promise.all([
+    products(),
+    categories(),
+    collections(),
+  ]);
   const staticRoutes = [
     { path: "", priority: 1 },
     { path: "/shop", priority: 0.9 },
@@ -23,17 +28,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: r.priority,
     })),
-    ...categories.map((c) => ({
+    ...categoryList.map((c) => ({
       url: `${BASE}/category/${c.slug}`,
       lastModified: new Date(),
       priority: 0.8,
     })),
-    ...collections.map((c) => ({
+    ...collectionList.map((c) => ({
       url: `${BASE}/collections/${c.slug}`,
       lastModified: new Date(),
       priority: 0.7,
     })),
-    ...products.map((p) => ({
+    ...catalogue.map((p) => ({
       url: `${BASE}/product/${p.slug}`,
       lastModified: new Date(p.createdAt),
       priority: 0.9,

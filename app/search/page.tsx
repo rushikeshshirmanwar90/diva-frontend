@@ -15,7 +15,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   const params = await searchParams;
   const raw = params.q;
   const query = (Array.isArray(raw) ? raw[0] : raw) ?? "";
-  const results = searchProducts(query);
+  const [results, categoryList] = await Promise.all([searchProducts(query), categories()]);
   const initialFilters = filtersFromParams(params);
 
   return (
@@ -41,7 +41,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
               Try a broader term — a metal, a stone, or one of the categories below.
             </p>
             <ul className="mt-8 flex flex-wrap justify-center gap-2">
-              {categories.map((c) => (
+              {categoryList.map((c) => (
                 <li key={c.slug}>
                   <Link
                     href={`/category/${c.slug}`}

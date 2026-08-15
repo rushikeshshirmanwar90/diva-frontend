@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { MODEL } from "@/lib/images";
+import { GoogleSignInButton } from "@/components/auth/google-button";
+import { cn } from "@/lib/cn";
 
 export function AuthShell({
   image = MODEL.pearlShirt,
@@ -52,8 +54,7 @@ export function AuthShell({
           <div className="mt-8 text-sm text-muted">{footer}</div>
 
           <p className="mt-10 text-[10px] leading-relaxed text-muted/80">
-            Front-end demo — these forms are not connected to anything and no data is
-            sent or stored. See{" "}
+            By continuing you agree to Diva&apos;s terms and{" "}
             <Link href="/policies/privacy" className="text-gold hover:underline">
               privacy policy
             </Link>
@@ -71,12 +72,24 @@ export function Field({
   placeholder,
   autoComplete,
   hint,
+  name,
+  value,
+  onChange,
+  error,
+  required,
+  disabled,
 }: {
   label: string;
   type?: string;
   placeholder?: string;
   autoComplete?: string;
   hint?: React.ReactNode;
+  name?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <label className="block">
@@ -86,15 +99,31 @@ export function Field({
       </span>
       <input
         type={type}
+        name={name}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="mt-2 w-full border-b border-line bg-transparent pb-2.5 text-sm text-ink outline-none transition-colors focus:border-gold"
+        value={value}
+        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
+        required={required}
+        disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        className={cn(
+          "mt-2 w-full border-b bg-transparent pb-2.5 text-sm text-ink outline-none transition-colors focus:border-gold disabled:opacity-50",
+          error ? "border-[#c0392b]" : "border-line",
+        )}
       />
+      {error && <small className="mt-1.5 block text-[11px] text-[#c0392b]">{error}</small>}
     </label>
   );
 }
 
-export function SocialButtons() {
+export function SocialButtons({
+  onCredential,
+  disabled,
+}: {
+  onCredential: (idToken: string) => void;
+  disabled?: boolean;
+}) {
   return (
     <div className="mt-8">
       <div className="flex items-center gap-4">
@@ -102,18 +131,7 @@ export function SocialButtons() {
         <span className="text-[10px] tracking-luxe uppercase text-muted">or</span>
         <span className="h-px flex-1 bg-line" />
       </div>
-      <button
-        type="button"
-        className="mt-6 flex w-full items-center justify-center gap-3 border border-line py-3.5 text-[11px] tracking-luxe uppercase text-charcoal transition-colors hover:border-charcoal"
-      >
-        <span
-          aria-hidden
-          className="font-display text-base leading-none font-medium text-gold"
-        >
-          G
-        </span>
-        Continue with Google
-      </button>
+      <GoogleSignInButton onCredential={onCredential} disabled={disabled} />
     </div>
   );
 }

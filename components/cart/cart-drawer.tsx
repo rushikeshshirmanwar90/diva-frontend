@@ -123,8 +123,7 @@ export function CartDrawer() {
                       {line.product.title}
                     </Link>
                     <p className="mt-0.5 text-xs text-muted">
-                      {line.product.variantLabel}: {line.variant.label} ·{" "}
-                      {line.variant.weightGrams} g
+                      {line.product.variantLabel}: {line.variant.label}
                     </p>
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center border border-line">
@@ -166,13 +165,6 @@ export function CartDrawer() {
             <div className="border-t border-line px-6 py-5">
               <dl className="space-y-1.5 text-sm">
                 <Row label="Subtotal" value={formatPaise(totals.subtotal)} />
-                {totals.couponDiscount > 0 && (
-                  <Row
-                    label="Coupon discount"
-                    value={`− ${formatPaise(totals.couponDiscount)}`}
-                    tone="success"
-                  />
-                )}
                 <Row label="GST (3%)" value={formatPaise(totals.gst)} />
                 <Row
                   label="Shipping"

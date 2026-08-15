@@ -1,12 +1,13 @@
 "use client";
 
 import { useStore } from "@/lib/store/store";
-import { getProduct } from "@/lib/data/products";
+import { useProductLookup } from "@/lib/data/catalogue-context";
 import { ProductRail } from "@/components/product/product-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 export function RecentlyViewed({ excludeSlug }: { excludeSlug?: string }) {
   const { recentlyViewed, hydrated } = useStore();
+  const getProduct = useProductLookup();
 
   const items = recentlyViewed
     .filter((slug) => slug !== excludeSlug)

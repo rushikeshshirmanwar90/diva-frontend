@@ -34,13 +34,21 @@ export type Occasion =
 
 export type Variant = {
   id: string;
-  /** Size / length label shown on the PDP, e.g. "16" or "18 in". */
+  /** Size / colour label shown on the PDP, e.g. "16" or "Rose Gold". */
   label: string;
   sku: string;
   stock: number;
-  /** Added to the parent price, in paise. Weight-driven in real life. */
+  /**
+   * Added to the parent price, in paise.
+   *
+   * Always 0 now that the catalogue is fixed-price: every colour and size of a
+   * design costs the same. Kept because the cart and PDP arithmetic reads it,
+   * and because a future per-variant price would land here rather than needing
+   * a new field threaded through those call sites.
+   */
   priceDelta: number;
-  weightGrams: number;
+  /** The colour token, for variants that vary by finish rather than size. */
+  colour?: string;
 };
 
 export type Product = {
@@ -56,16 +64,25 @@ export type Product = {
   /** Struck-through list price in paise. */
   mrp: number;
   images: string[];
+  /**
+   * Everything here is optional, because the catalogue is fixed-price plated
+   * jewellery and the backend simply does not store the bullion specification
+   * any more — no purity, no gross weight, no HUID, no stone grading.
+   *
+   * The UI renders whatever is present and omits the rest, rather than printing
+   * "—" down a spec table. `metal` now carries the variant's **finish** (Gold,
+   * Rose Gold, Oxidised) since that is what a customer is choosing between.
+   */
   attributes: {
-    metal: Metal;
-    purity: string;
-    stone: Stone;
+    metal?: string;
+    purity?: string;
+    stone?: string;
     stoneWeight?: string;
-    grossWeight: string;
-    gender: Gender;
+    grossWeight?: string;
+    gender?: Gender;
     occasions: Occasion[];
-    huid: string;
-    certification: string;
+    huid?: string;
+    certification?: string;
   };
   variantLabel: string;
   variants: Variant[];
@@ -80,7 +97,10 @@ export type Category = {
   slug: string;
   name: string;
   blurb: string;
+  /** Square tile — nav rails, category grids. */
   image: string;
+  /** Wide hero — the category landing page's header banner. */
+  bannerImage: string;
   displayOrder: number;
 };
 
@@ -96,13 +116,28 @@ export type Review = {
   id: string;
   productSlug: string;
   author: string;
-  city: string;
+  /** Optional: the backend does not store a reviewer location. */
+  city?: string;
   rating: number;
   title: string;
   body: string;
   date: string;
   verifiedPurchase: boolean;
   images?: string[];
+  helpfulCount?: number;
+  /** The seller’s response, shown beneath the review. */
+  reply?: { body: string; at: string } | null;
+};
+
+export type HeroCta = { label: string; href: string };
+
+export type HeroSlide = {
+  id: string;
+  heading: string;
+  subtitle: string;
+  image: string;
+  imageAlt: string;
+  cta: HeroCta;
 };
 
 export type BlogPost = {
@@ -125,48 +160,3 @@ export type Testimonial = {
   rating: number;
 };
 
-export type Coupon = {
-  code: string;
-  label: string;
-  type: "percent" | "flat";
-  value: number;
-  minCartValue: number;
-  maxDiscount?: number;
-};
-
-export type DemoOrder = {
-  orderNumber: string;
-  placedAt: string;
-  status:
-    | "PENDING"
-    | "CONFIRMED"
-    | "SHIPPED"
-    | "OUT_FOR_DELIVERY"
-    | "DELIVERED"
-    | "CANCELLED";
-  items: Array<{
-    productSlug: string;
-    title: string;
-    variantLabel: string;
-    image: string;
-    price: number;
-    qty: number;
-  }>;
-  total: number;
-  courier?: string;
-  awb?: string;
-  timeline: Array<{ label: string; date: string; done: boolean }>;
-};
-
-export type Address = {
-  id: string;
-  label: string;
-  name: string;
-  line1: string;
-  line2: string;
-  city: string;
-  state: string;
-  pincode: string;
-  phone: string;
-  isDefault: boolean;
-};

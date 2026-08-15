@@ -4,7 +4,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { categories } from "@/lib/data/categories";
 import { MODEL } from "@/lib/images";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const list = await categories();
+
   return (
     <div className="grid min-h-[70vh] lg:grid-cols-2">
       <div className="flex items-center px-5 py-20 lg:px-16">
@@ -30,7 +32,7 @@ export default function NotFound() {
           <div className="mt-12">
             <p className="eyebrow mb-4">Or jump to a category</p>
             <ul className="flex flex-wrap gap-2">
-              {categories.map((c) => (
+              {list.map((c) => (
                 <li key={c.slug}>
                   <Link
                     href={`/category/${c.slug}`}

@@ -9,34 +9,45 @@ import { ProductRail } from "@/components/product/product-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { getCategory } from "@/lib/data/categories";
-import { getProduct, products, relatedProducts } from "@/lib/data/products";
-import { reviewsFor } from "@/lib/data/content";
+import { getProduct, relatedProducts } from "@/lib/data/products";
+import { getProductReviews } from "@/lib/data/catalogue";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
-
+/**
+ * No `generateStaticParams` here on purpose. Pre-rendering this page would
+ * freeze its content at build time — a `cache: "no-store"` fetch inside a
+ * statically generated page never re-runs after the build, so "the backend
+ * is down" would never show up here even though `lib/data/catalogue.ts` is
+ * built to reflect that on every request. See `lib/data/catalogue.ts`'s
+ * `get()` for the full reasoning.
+ */
 export async function generateMetadata({
   params,
 }: PageProps<"/product/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) return { title: "Piece not found" };
+
+  // Only the parts that exist: a plated piece has no certification or gross
+  // weight, and "undefined." in a meta description is worse than a short one.
+  const description = [product.subtitle, product.attributes.certification]
+    .filter(Boolean)
+    .join(". ");
+
   return {
     title: product.title,
-    description: `${product.subtitle}. ${product.attributes.certification}. ${product.attributes.grossWeight}.`,
-    openGraph: { images: [product.images[0]!] },
+    description: description || product.title,
+    ...(product.images[0] ? { openGraph: { images: [product.images[0]] } } : {}),
   };
 }
 
 export default async function ProductPage({ params }: PageProps<"/product/[slug]">) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) notFound();
 
-  const category = getCategory(product.categorySlug);
-  const related = relatedProducts(product, 6);
-  const reviews = reviewsFor(product.slug);
+  const category = await getCategory(product.categorySlug);
+  const related = await relatedProducts(product, 6);
+  const reviews = await getProductReviews(product.slug);
 
   return (
     <div className="mx-auto max-w-[90rem] px-5 pt-8 lg:px-10">

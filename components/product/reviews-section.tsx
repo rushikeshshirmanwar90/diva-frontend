@@ -3,6 +3,7 @@ import { BadgeCheck } from "lucide-react";
 import type { Product, Review } from "@/lib/types";
 import { Rating } from "@/components/ui/rating";
 import { formatDate } from "@/lib/format";
+import { ReviewForm } from "@/components/product/review-form";
 
 export function ReviewsSection({
   product,
@@ -11,11 +12,19 @@ export function ReviewsSection({
   product: Product;
   reviews: Review[];
 }) {
-  // Plausible synthetic distribution so the bars are not all identical.
-  const distribution = [5, 4, 3, 2, 1].map((stars) => {
-    const weight = { 5: 0.74, 4: 0.18, 3: 0.05, 2: 0.02, 1: 0.01 }[stars] ?? 0;
-    return { stars, count: Math.round(product.ratingCount * weight) };
-  });
+  /**
+   * Counted from the reviews on the page, not modelled.
+   *
+   * This used to spread the total across the stars using fixed weights — 74%
+   * five-star, 18% four — which drew a distribution no customer had actually
+   * given. The bars now reflect the reviews shown beneath them.
+   */
+  const distribution = [5, 4, 3, 2, 1].map((stars) => ({
+    stars,
+    count: reviews.filter((review) => review.rating === stars).length,
+  }));
+
+  const verifiedCount = reviews.filter((review) => review.verifiedPurchase).length;
 
   return (
     <section id="reviews" className="scroll-mt-40">
@@ -27,7 +36,8 @@ export function ReviewsSection({
           </p>
           <Rating value={product.ratingAvg} className="mt-3" />
           <p className="mt-2 text-xs text-muted">
-            {product.ratingCount} verified reviews
+            {product.ratingCount === 1 ? "1 review" : `${product.ratingCount} reviews`}
+            {verifiedCount > 0 && ` · ${verifiedCount} verified`}
           </p>
 
           <ul className="mt-8 space-y-2">
@@ -54,9 +64,11 @@ export function ReviewsSection({
         </div>
 
         <div>
+          <ReviewForm productId={product.id} productTitle={product.title} />
+
           {reviews.length === 0 ? (
             <p className="text-sm text-muted">
-              No written reviews on this piece yet — it is new to the collection.
+              No written reviews on this piece yet — be the first to write one.
             </p>
           ) : (
             <ul className="divide-y divide-line border-t border-line">

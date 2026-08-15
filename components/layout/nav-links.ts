@@ -1,4 +1,4 @@
-import { categories, collections } from "@/lib/data/categories";
+import type { Category, Collection } from "@/lib/types";
 import { MODEL } from "@/lib/images";
 
 export type NavItem = {
@@ -10,7 +10,18 @@ export type NavItem = {
   };
 };
 
-export const navItems: NavItem[] = [
+/**
+ * Built from the taxonomy rather than declared once at module scope.
+ *
+ * The categories and collections now come from the backend, so this cannot be
+ * a constant evaluated at import time — the header calls it with whatever the
+ * store actually has.
+ */
+export function buildNavItems(
+  categories: Category[],
+  collections: Collection[],
+): NavItem[] {
+  return [
   {
     label: "Jewellery",
     href: "/shop",
@@ -32,15 +43,9 @@ export const navItems: NavItem[] = [
             { label: "Shop all", href: "/shop" },
           ],
         },
-        {
-          heading: "By metal",
-          links: [
-            { label: "22K Gold", href: "/shop?metal=22K+Gold" },
-            { label: "18K Gold", href: "/shop?metal=18K+Gold" },
-            { label: "Rose Gold", href: "/shop?metal=14K+Rose+Gold" },
-            { label: "925 Silver", href: "/shop?metal=925+Silver" },
-          ],
-        },
+        // The "By metal" column is gone: those links filtered on 22K/18K gold
+        // values the catalogue no longer has, so every one of them led to an
+        // empty grid. Finish is now a per-product colour, not a fixed list.
       ],
       feature: {
         title: "New this season",
@@ -82,15 +87,16 @@ export const navItems: NavItem[] = [
         },
       ],
       feature: {
-        title: "The Wedding Edit",
-        blurb: "Polki, temple gold and heirloom sets",
-        href: "/collections/wedding-edit",
+        title: "New this season",
+        blurb: "The latest additions to the catalogue",
+        href: "/shop?sort=newest",
         image: MODEL.chokerPortrait,
       },
     },
   },
-  { label: "Bridal", href: "/collections/wedding-edit" },
-  { label: "For Him", href: "/category/mens" },
-  { label: "Journal", href: "/blog" },
+  // "Bridal" and "For Him" pointed at a hardcoded collection and category that
+  // only ever existed in the demo data. Anything that is really stocked now
+  // reaches the nav through the two panels above.
   { label: "Our Story", href: "/about" },
-];
+  ];
+}

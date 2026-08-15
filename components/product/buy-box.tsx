@@ -18,7 +18,7 @@ import { Price } from "@/components/ui/price";
 import { Rating } from "@/components/ui/rating";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/store/store";
-import { formatPaise, GST_RATE } from "@/lib/format";
+import { GST_RATE } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 export function BuyBox({ product }: { product: Product }) {
@@ -37,10 +37,6 @@ export function BuyBox({ product }: { product: Product }) {
   const unitMrp = product.mrp + variant.priceDelta;
   const saved = isWishlisted(product.slug);
 
-  // Indicative breakdown — the real numbers come from the backend later.
-  const stoneValue = product.attributes.stone === "None" ? 0 : Math.round(unitPrice * 0.22);
-  const makingCharges = Math.round(unitPrice * 0.11);
-  const metalValue = unitPrice - stoneValue - makingCharges;
 
   return (
     <div>
@@ -70,27 +66,15 @@ export function BuyBox({ product }: { product: Product }) {
 
       <div className="mt-7 border-y border-line py-6">
         <Price price={unitPrice} mrp={unitMrp} size="lg" />
+        {/*
+          No itemised breakdown: this is a fixed-price catalogue, so there is no
+          metal value or making charge to itemise. The old version split the
+          price into invented percentages, which is a fabricated number shown to
+          a customer as if it were a fact about their purchase.
+        */}
         <p className="mt-2 text-xs text-muted">
-          Inclusive of {Math.round(GST_RATE * 100)}% GST · rate locked for 30 minutes at
-          checkout
+          Inclusive of {Math.round(GST_RATE * 100)}% GST · free insured delivery
         </p>
-
-        <details className="group mt-4">
-          <summary className="cursor-pointer list-none text-[11px] tracking-luxe uppercase text-gold">
-            View price breakdown
-          </summary>
-          <dl className="mt-4 space-y-2 border-l border-line pl-4 text-sm">
-            <Row label={`Metal value (${variant.weightGrams} g)`} value={formatPaise(metalValue)} />
-            {stoneValue > 0 && (
-              <Row
-                label={`Stone value (${product.attributes.stoneWeight ?? "—"})`}
-                value={formatPaise(stoneValue)}
-              />
-            )}
-            <Row label="Making charges (11%)" value={formatPaise(makingCharges)} />
-            <Row label="GST (3%)" value="Added at checkout" />
-          </dl>
-        </details>
       </div>
 
       {/* Variant picker */}
@@ -133,8 +117,8 @@ export function BuyBox({ product }: { product: Product }) {
           })}
         </div>
         <p className="mt-3 text-xs text-muted">
-          SKU {variant.sku} · {variant.weightGrams} g gross ·{" "}
-          {product.attributes.purity}
+          SKU {variant.sku}
+          {product.attributes.metal ? ` · ${product.attributes.metal}` : ""}
         </p>
       </div>
 
@@ -202,15 +186,6 @@ export function BuyBox({ product }: { product: Product }) {
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-6">
-      <dt className="text-muted">{label}</dt>
-      <dd className="text-ink">{value}</dd>
     </div>
   );
 }

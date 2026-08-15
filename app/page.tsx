@@ -5,24 +5,42 @@ import { PriceTiles } from "@/components/home/price-tiles";
 import { CraftStory } from "@/components/home/craft-story";
 import { Testimonials } from "@/components/home/testimonials";
 import { InstagramStrip } from "@/components/home/instagram-strip";
-import { JournalPreview } from "@/components/home/journal-preview";
 import { NewsletterBand } from "@/components/home/newsletter-band";
 import { ProductGrid, ProductRail } from "@/components/product/product-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { getCollection } from "@/lib/data/categories";
+import { collections } from "@/lib/data/categories";
 import { products, productsByBadge, productsByCollection } from "@/lib/data/products";
+import { getHeroSlides } from "@/lib/data/hero";
 
-export default function HomePage() {
-  const bestsellers = productsByBadge("bestseller").slice(0, 4);
-  const newArrivals = [...products]
+export default async function HomePage() {
+  const [catalogue, bestsellers, heroSlides] = await Promise.all([
+    products(),
+    productsByBadge("bestseller"),
+    getHeroSlides(),
+  ]);
+
+  const featured = bestsellers.slice(0, 4);
+  const newArrivals = [...catalogue]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 6);
-  const wedding = getCollection("wedding-edit")!;
-  const daily = getCollection("daily-wear")!;
+  /**
+   * The two banner slots take whichever edits exist, rather than the named
+   * "wedding-edit" and "daily-wear" this page used to assume. Those were demo
+   * slugs; a store that has not created them would have crashed on the
+   * non-null assertion that used to be here. Each banner renders only if there
+   * is a collection to put in it.
+   */
+  const edits = await collections();
+  const [wedding, daily] = edits;
+
+  const [weddingCount, dailyCount] = await Promise.all([
+    wedding ? productsByCollection(wedding.slug) : Promise.resolve([]),
+    daily ? productsByCollection(daily.slug) : Promise.resolve([]),
+  ]);
 
   return (
     <>
-      <Hero />
+      <Hero slides={heroSlides} />
       <CategoryRail />
 
       <section className="mx-auto max-w-[90rem] px-5 pb-8 lg:px-10">
@@ -33,13 +51,12 @@ export default function HomePage() {
           linkLabel="Shop bestsellers"
           align="between"
         />
-        <ProductGrid products={bestsellers} className="mt-10" />
+        <ProductGrid products={featured} className="mt-10" />
       </section>
 
-      <CollectionBanner
-        collection={wedding}
-        productCount={productsByCollection(wedding.slug).length}
-      />
+      {wedding && (
+        <CollectionBanner collection={wedding} productCount={weddingCount.length} />
+      )}
 
       <section className="mx-auto max-w-[90rem] px-5 py-12 lg:px-10">
         <SectionHeading
@@ -57,16 +74,13 @@ export default function HomePage() {
       <PriceTiles />
       <CraftStory />
 
-      <CollectionBanner
-        collection={daily}
-        reverse
-        productCount={productsByCollection(daily.slug).length}
-      />
+      {daily && (
+        <CollectionBanner collection={daily} reverse productCount={dailyCount.length} />
+      )}
 
       <Testimonials />
       <InstagramStrip />
       <NewsletterBand />
-      <JournalPreview />
     </>
   );
 }

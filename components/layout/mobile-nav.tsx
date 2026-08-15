@@ -3,10 +3,13 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { ChevronRight, X } from "lucide-react";
-import { categories, collections } from "@/lib/data/categories";
+import { useCategories, useCollections } from "@/lib/data/catalogue-context";
 import { Logo } from "@/components/layout/logo";
 
 export function MobileNav({ onClose }: { onClose: () => void }) {
+  const categories = useCategories();
+  const collections = useCollections();
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -51,9 +54,6 @@ export function MobileNav({ onClose }: { onClose: () => void }) {
           </Section>
 
           <Section title="More">
-            <Row href="/blog" onClose={onClose}>
-              Journal
-            </Row>
             <Row href="/about" onClose={onClose}>
               Our story
             </Row>

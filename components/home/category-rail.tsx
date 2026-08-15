@@ -3,7 +3,9 @@ import Link from "next/link";
 import { categories } from "@/lib/data/categories";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-export function CategoryRail() {
+export async function CategoryRail() {
+  const list = await categories();
+
   return (
     <section className="mx-auto max-w-[90rem] px-5 py-20 lg:px-10">
       <SectionHeading
@@ -13,7 +15,7 @@ export function CategoryRail() {
       />
 
       <div className="no-scrollbar mt-12 -mx-5 flex snap-x gap-4 overflow-x-auto px-5 lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible lg:px-0">
-        {categories.map((c, i) => (
+        {list.map((c, i) => (
           <Link
             key={c.slug}
             href={`/category/${c.slug}`}

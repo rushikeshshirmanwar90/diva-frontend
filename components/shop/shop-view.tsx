@@ -17,12 +17,13 @@ import {
 import { FilterPanel } from "@/components/shop/filter-panel";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Button } from "@/components/ui/button";
-import { categories } from "@/lib/data/categories";
+import { useCategories } from "@/lib/data/catalogue-context";
+import type { Category } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 const PAGE_SIZE = 8;
 
-function labelFor(key: FacetKey, value: string) {
+function labelFor(key: FacetKey, value: string, categories: Category[]) {
   if (key === "price") return priceBands.find((b) => b.key === value)?.label ?? value;
   if (key === "category")
     return categories.find((c) => c.slug === value)?.name ?? value;
@@ -44,6 +45,7 @@ export function ShopView({
   /** Query params that must survive filter changes, e.g. `{ q: "gold hoops" }`. */
   keepParams?: Record<string, string>;
 }) {
+  const categories = useCategories();
   const [state, setState] = useState<FilterState>(initialFilters);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -165,7 +167,7 @@ export function ShopView({
                     onClick={() => toggle(chip.key, chip.value)}
                     className="flex items-center gap-2 bg-beige px-3 py-1.5 text-xs text-charcoal transition-colors hover:bg-beige-dark"
                   >
-                    {labelFor(chip.key, chip.value)}
+                    {labelFor(chip.key, chip.value, categories)}
                     <X width={11} height={11} />
                   </button>
                 </li>

@@ -40,7 +40,9 @@ const assurances = [
   },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const [categoryList, collectionList] = await Promise.all([categories(), collections()]);
+
   return (
     <footer className="mt-24 border-t border-line">
       <div className="mx-auto grid max-w-[90rem] gap-8 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
@@ -91,7 +93,7 @@ export function Footer() {
           <FooterColumn
             heading="Shop"
             links={[
-              ...categories.slice(0, 6).map((c) => ({
+              ...categoryList.slice(0, 6).map((c) => ({
                 label: c.name,
                 href: `/category/${c.slug}`,
               })),
@@ -101,7 +103,7 @@ export function Footer() {
 
           <FooterColumn
             heading="Collections"
-            links={collections.map((c) => ({
+            links={collectionList.map((c) => ({
               label: c.name,
               href: `/collections/${c.slug}`,
             }))}
@@ -150,7 +152,7 @@ export function Footer() {
 
         <div className="border-t border-line/70">
           <div className="mx-auto flex max-w-[90rem] flex-col gap-3 px-5 py-6 text-[10px] tracking-wide text-muted sm:flex-row sm:items-center sm:justify-between lg:px-10">
-            <p>© 2026 Diva Fine Jewellery Pvt. Ltd. · GSTIN 29AABCD1234E1ZQ</p>
+            <p>© 2026 Diva The Indian Jewel Pvt. Ltd. · GSTIN 29AABCD1234E1ZQ</p>
             <p className="tracking-luxe uppercase">
               UPI · Cards · Net banking · No-cost EMI
             </p>

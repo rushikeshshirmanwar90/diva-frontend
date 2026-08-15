@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { searchProducts } from "@/lib/data/products";
-import { categories } from "@/lib/data/categories";
+import { useProductSearch } from "@/lib/data/catalogue-context";
+import { useCategories } from "@/lib/data/catalogue-context";
 import { formatPaise } from "@/lib/format";
 
 const suggestions = [
@@ -19,6 +19,8 @@ const suggestions = [
 ];
 
 export function SearchOverlay({ onClose }: { onClose: () => void }) {
+  const categories = useCategories();
+
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -36,7 +38,8 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
     };
   }, [onClose]);
 
-  const results = useMemo(() => searchProducts(query).slice(0, 6), [query]);
+  const matches = useProductSearch(query);
+  const results = useMemo(() => matches.slice(0, 6), [matches]);
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col bg-white/98 backdrop-blur-sm">

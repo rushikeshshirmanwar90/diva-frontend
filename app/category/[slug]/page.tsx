@@ -2,19 +2,22 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shop/page-header";
 import { ShopView } from "@/components/shop/shop-view";
-import { categories, getCategory } from "@/lib/data/categories";
+import { getCategory } from "@/lib/data/categories";
 import { productsByCategory } from "@/lib/data/products";
 import { filtersFromParams } from "@/lib/filters";
 
-export function generateStaticParams() {
-  return categories.map((c) => ({ slug: c.slug }));
-}
-
+/**
+ * No `generateStaticParams` here — see the comment on it in
+ * `app/product/[slug]/page.tsx`. Pre-rendering would freeze this page's
+ * product listing at build time, defeating the `cache: "no-store"` fetch in
+ * `lib/data/catalogue.ts` that's meant to reflect a dead backend on every
+ * request.
+ */
 export async function generateMetadata({
   params,
 }: PageProps<"/category/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategory(slug);
+  const category = await getCategory(slug);
   if (!category) return { title: "Category not found" };
   return {
     title: category.name,
@@ -27,10 +30,10 @@ export default async function CategoryPage({
   searchParams,
 }: PageProps<"/category/[slug]">) {
   const { slug } = await params;
-  const category = getCategory(slug);
+  const category = await getCategory(slug);
   if (!category) notFound();
 
-  const pool = productsByCategory(slug);
+  const pool = await productsByCategory(slug);
   const initialFilters = filtersFromParams(await searchParams);
 
   return (
@@ -40,7 +43,7 @@ export default async function CategoryPage({
         title={category.name}
         description={category.blurb}
         trail={[{ label: "All jewellery", href: "/shop" }, { label: category.name }]}
-        image={category.image}
+        image={category.bannerImage}
       />
       <ShopView pool={pool} initialFilters={initialFilters} includeCategory={false} />
     </>

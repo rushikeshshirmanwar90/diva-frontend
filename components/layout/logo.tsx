@@ -15,7 +15,7 @@ export function Logo({
       </span>
       {tagline && (
         <span className="mt-1 block text-[8px] tracking-[0.3em] uppercase text-muted">
-          Fine Jewellery · Est. 1998
+          The Indian Jewel · Est. 1998
         </span>
       )}
     </Link>

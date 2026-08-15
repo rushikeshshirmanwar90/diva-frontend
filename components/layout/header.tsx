@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
-import { navItems } from "@/components/layout/nav-links";
+import { buildNavItems } from "@/components/layout/nav-links";
+import { useCategories, useCollections } from "@/lib/data/catalogue-context";
 import { SearchOverlay } from "@/components/layout/search-overlay";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { useStore } from "@/lib/store/store";
@@ -14,6 +15,12 @@ import { cn } from "@/lib/cn";
 
 export function Header() {
   const pathname = usePathname();
+  const categories = useCategories();
+  const collections = useCollections();
+  const navItems = useMemo(
+    () => buildNavItems(categories, collections),
+    [categories, collections],
+  );
   const { totals, wishlist, setCartOpen, hydrated } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

@@ -1,4 +1,3 @@
-import type { Coupon } from "@/lib/types";
 import type { CartTotals } from "@/lib/totals";
 import { formatPaise } from "@/lib/format";
 
@@ -8,7 +7,8 @@ export function OrderSummary({
   title = "Order summary",
 }: {
   totals: CartTotals;
-  coupon: Coupon | null;
+  /** A staged, unvalidated code — its actual discount is only known once the backend prices it. */
+  coupon?: string | null;
   title?: string;
 }) {
   return (
@@ -24,13 +24,6 @@ export function OrderSummary({
           <Row
             label="Discount on MRP"
             value={`− ${formatPaise(totals.savings)}`}
-            tone="success"
-          />
-        )}
-        {coupon && totals.couponDiscount > 0 && (
-          <Row
-            label={`Coupon ${coupon.code}`}
-            value={`− ${formatPaise(totals.couponDiscount)}`}
             tone="success"
           />
         )}
@@ -51,9 +44,15 @@ export function OrderSummary({
         </span>
       </div>
 
-      {totals.savings + totals.couponDiscount > 0 && (
+      {totals.savings > 0 && (
         <p className="mt-3 text-xs text-success">
-          You save {formatPaise(totals.savings + totals.couponDiscount)} on this order
+          You save {formatPaise(totals.savings)} on this order
+        </p>
+      )}
+
+      {coupon && (
+        <p className="mt-3 text-xs text-muted">
+          Code <span className="text-ink">{coupon}</span> will be applied at checkout.
         </p>
       )}
     </div>

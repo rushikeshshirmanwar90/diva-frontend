@@ -10,7 +10,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { OrderSummary } from "@/components/cart/order-summary";
 import { formatPaise } from "@/lib/format";
-import { coupons } from "@/lib/data/content";
 
 export function CartView() {
   const {
@@ -86,8 +85,7 @@ export function CartView() {
                         {line.product.title}
                       </Link>
                       <p className="mt-1 text-xs text-muted">
-                        {line.product.variantLabel}: {line.variant.label} ·{" "}
-                        {line.variant.weightGrams} g · SKU {line.variant.sku}
+                        {line.product.variantLabel}: {line.variant.label} · SKU {line.variant.sku}
                       </p>
                       <p className="mt-1.5 text-xs text-success">
                         {line.variant.stock > 0
@@ -166,8 +164,8 @@ export function CartView() {
             {coupon ? (
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 bg-beige px-4 py-3">
                 <p className="text-sm text-ink">
-                  <span className="font-medium">{coupon.code}</span> applied —{" "}
-                  {coupon.label}
+                  <span className="font-medium">{coupon}</span> will be applied at
+                  checkout
                 </p>
                 <button
                   type="button"
@@ -210,26 +208,6 @@ export function CartView() {
                 {message.text}
               </p>
             )}
-
-            <ul className="mt-5 space-y-2 border-t border-line pt-4">
-              {coupons.map((c) => (
-                <li key={c.code} className="flex flex-wrap justify-between gap-2 text-xs">
-                  <span className="text-ink">
-                    <button
-                      type="button"
-                      onClick={() => setCode(c.code)}
-                      className="font-medium tracking-wide text-gold hover:underline"
-                    >
-                      {c.code}
-                    </button>{" "}
-                    — {c.label}
-                  </span>
-                  <span className="text-muted">
-                    Min. {formatPaise(c.minCartValue)}
-                  </span>
-                </li>
-              ))}
-            </ul>
           </div>
 
           <ButtonLink href="/shop" variant="ghost" className="mt-8 px-0">

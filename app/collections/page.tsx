@@ -12,7 +12,18 @@ export const metadata: Metadata = {
     "Curated edits — the Wedding Edit, Festive Radiance, Daily Wear, the Gifting Suite and Limited Edition runs from our Jaipur atelier.",
 };
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  const edits = await collections();
+
+  // Counted up front: the map below renders synchronously and cannot await.
+  const counts = new Map(
+    await Promise.all(
+      edits.map(
+        async (c) => [c.slug, (await productsByCollection(c.slug)).length] as const,
+      ),
+    ),
+  );
+
   return (
     <>
       <PageHeader
@@ -24,7 +35,7 @@ export default function CollectionsPage() {
 
       <div className="mx-auto max-w-[90rem] px-5 pb-16 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-2">
-          {collections.map((c, i) => (
+          {edits.map((c, i) => (
             <Link
               key={c.slug}
               href={`/collections/${c.slug}`}
@@ -55,7 +66,7 @@ export default function CollectionsPage() {
                     {c.description}
                   </p>
                   <span className="mt-5 inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-white">
-                    {productsByCollection(c.slug).length} pieces
+                    {counts.get(c.slug) ?? 0} pieces
                     <ArrowRight
                       width={14}
                       height={14}
