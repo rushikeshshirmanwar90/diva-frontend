@@ -55,6 +55,12 @@ export function buildNavItems(
       },
     },
   },
+  // Not a taxonomy of their own — `gender` is a product attribute (see
+  // `lib/filters.ts`), so these are plain links into the existing shop filter
+  // rather than categories or collections. A product just needs the right
+  // Gender tag in the catalogue to show up here; nothing to curate.
+  { label: "Women", href: "/shop?gender=Women" },
+  { label: "Men", href: "/shop?gender=Men" },
   {
     label: "Collections",
     href: "/collections",

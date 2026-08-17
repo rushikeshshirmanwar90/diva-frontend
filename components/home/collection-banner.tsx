@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ButtonLink } from "@/components/ui/button";
+import { isAnimatedImageUrl } from "@/lib/images";
 import type { Collection } from "@/lib/types";
 
 export function CollectionBanner({
@@ -24,6 +25,7 @@ export function CollectionBanner({
             alt={collection.name}
             fill
             sizes="(max-width: 1024px) 100vw, 44vw"
+            unoptimized={isAnimatedImageUrl(collection.image)}
             className="object-cover"
           />
         </div>

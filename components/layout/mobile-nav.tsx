@@ -34,6 +34,15 @@ export function MobileNav({ onClose }: { onClose: () => void }) {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-5 py-6">
+          <Section title="Shop by">
+            <Row href="/shop?gender=Women" onClose={onClose}>
+              Women
+            </Row>
+            <Row href="/shop?gender=Men" onClose={onClose}>
+              Men
+            </Row>
+          </Section>
+
           <Section title="Shop by category">
             {categories.map((c) => (
               <Row key={c.slug} href={`/category/${c.slug}`} onClose={onClose}>

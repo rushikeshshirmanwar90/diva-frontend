@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide, type SwiperClass } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import { ButtonLink } from "@/components/ui/button";
-import { MODEL } from "@/lib/images";
+import { MODEL, isAnimatedImageUrl } from "@/lib/images";
 import type { HeroSlide } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
@@ -115,6 +115,7 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
         fill
         priority
         sizes="100vw"
+        unoptimized={isAnimatedImageUrl(slide.image)}
         className="object-cover object-[60%_center]"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-charcoal/85 via-charcoal/45 to-transparent" />

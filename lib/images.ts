@@ -56,3 +56,16 @@ export const MODEL = {
   chokerPortrait: photo("photo-1621784563330-caee0b138a00", 1400),
   braceletWrist: photo("photo-1596944924616-7b38e7cfac36", 1400),
 } as const;
+
+/**
+ * Whether a `next/image` source needs `unoptimized`.
+ *
+ * Next's built-in image optimizer re-encodes everything it serves — including
+ * flattening an animated GIF to its first frame. There is no per-request way to
+ * ask it to pass an image through untouched, only this static opt-out. Used for
+ * admin-uploaded GIF hero and collection banners, which are stored and served
+ * as an unmodified Cloudinary URL.
+ */
+export function isAnimatedImageUrl(url: string): boolean {
+  return /\.gif($|\?)/i.test(url);
+}

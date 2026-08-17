@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/shop/page-header";
+import { isAnimatedImageUrl } from "@/lib/images";
 import { collections } from "@/lib/data/categories";
 import { productsByCollection } from "@/lib/data/products";
 
@@ -52,6 +53,7 @@ export default async function CollectionsPage() {
                   fill
                   priority={i < 2}
                   sizes={i === 0 ? "100vw" : "(max-width: 1024px) 100vw, 45vw"}
+                  unoptimized={isAnimatedImageUrl(c.image)}
                   className="object-cover opacity-80 transition-transform duration-[900ms] ease-out group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/25 to-transparent" />
