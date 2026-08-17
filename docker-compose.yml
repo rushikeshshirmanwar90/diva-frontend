@@ -1,0 +1,52 @@
+# ============================================================================
+# Docker Compose Configuration for Diva Frontend
+# ============================================================================
+#
+# This file defines 1 service:
+#   1. frontend  - Next.js storefront container (diva-frontend)
+#
+# The backend API is a separate stack - see ../diva-backend/docker-compose.yml
+#
+# ENVIRONMENT VARIABLES:
+#   This file reads variables from the .env file in the same directory.
+#   Variables are referenced using ${VARIABLE_NAME} syntax.
+#
+# HOW TO USE:
+#   1. Make sure .env in this directory has real values.
+#   2. Create the shared network once: docker network create diva-network
+#   3. Start diva-backend first (it must be reachable on diva-network).
+#   4. Start this service: docker compose up -d
+#
+# VARIABLE FLOW:
+#   .env file → docker-compose.yml → container
+#
+# NETWORKING:
+#   Reaches diva-backend/docker-compose.yml's container over the shared
+#   external "diva-network" using the hostname "diva-backend" (that
+#   container's container_name) — not "localhost", which would resolve to
+#   this container itself.
+# ============================================================================
+
+services:
+  frontend:
+    image: exponentor/diva-frontend:latest
+    container_name: diva-frontend
+    ports:
+      - '3100:3000'
+    environment:
+      NODE_ENV: production
+      # Deployment-specific — reaches the backend by name on diva-network,
+      # not from .env.
+      API_ORIGIN: http://diva-backend:4000
+
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+      NEXT_PUBLIC_CHECKOUT_ENABLED: ${NEXT_PUBLIC_CHECKOUT_ENABLED:-false}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+    networks:
+      - diva
+    restart: always
+
+networks:
+  diva:
+    name: diva-network
+    external: true

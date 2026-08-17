@@ -19,7 +19,7 @@ import "server-only";
  * to import this from a client component.
  */
 
-export const API_ORIGIN = "http://localhost:4000";
+export const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:4000";
 
 /**
  * Builds a `/api/v1/...` URL against the backend.

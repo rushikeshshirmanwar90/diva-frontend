@@ -17,6 +17,7 @@ import type { NextConfig } from "next";
 const CLOUDINARY_CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "oo0nwzph";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   reactCompiler: true,
   images: {
     // Demo imagery is hot-linked from Unsplash. `i.pinimg.com` is allowed so
