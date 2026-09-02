@@ -31,21 +31,25 @@ export function ProductCard({
   return (
     <article className={cn("group", className)}>
       <div className="relative aspect-4/5 overflow-hidden bg-beige">
-        <Image
-          src={product.images[0]!}
-          alt={product.title}
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          priority={priority}
-          className="object-cover transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-0"
-        />
-        <Image
-          src={hover!}
-          alt=""
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="scale-[1.04] object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-100 group-hover:opacity-100"
-        />
+        {product.images[0] && (
+          <Image
+            src={product.images[0]}
+            alt={product.title}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            priority={priority}
+            className="object-cover transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-0"
+          />
+        )}
+        {hover && (
+          <Image
+            src={hover}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="scale-[1.04] object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-100 group-hover:opacity-100"
+          />
+        )}
 
         {/* Whole-image click target, kept as a sibling so the buttons below stay valid HTML */}
         <Link

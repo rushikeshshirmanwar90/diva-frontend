@@ -22,14 +22,16 @@ export async function CategoryRail() {
             className="group w-40 shrink-0 snap-start sm:w-48 lg:w-auto"
           >
             <div className="relative aspect-3/4 overflow-hidden bg-beige">
-              <Image
-                src={c.image}
-                alt={c.name}
-                fill
-                sizes="(max-width: 1024px) 12rem, 18vw"
-                priority={i < 5}
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
+              {c.image ? (
+                <Image
+                  src={c.image}
+                  alt={c.name}
+                  fill
+                  sizes="(max-width: 1024px) 12rem, 18vw"
+                  priority={i < 5}
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              ) : null}
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-4">
                 <p className="font-display text-xl leading-tight font-light text-white">
