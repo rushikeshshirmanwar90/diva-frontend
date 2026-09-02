@@ -89,6 +89,10 @@ export type Product = {
   ratingAvg: number;
   ratingCount: number;
   badges: Array<"new" | "bestseller" | "limited">;
+  /** Optional custom copy for shipping & returns; uses default store policy if omitted. */
+  shippingReturns?: string;
+  /** Optional custom care advice; uses default care instructions if omitted. */
+  careInstructions?: string;
   /** ISO date — drives the "New Arrivals" sort. */
   createdAt: string;
 };

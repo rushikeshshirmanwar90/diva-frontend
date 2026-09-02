@@ -44,13 +44,13 @@ export default async function HomePage() {
       <CategoryRail />
 
       <section className="mx-auto max-w-[90rem] px-5 pb-8 lg:px-10">
-        <SectionHeading
+        {/* <SectionHeading
           eyebrow="Most loved"
           title="Signature pieces"
           href="/shop?sort=popular"
           linkLabel="Shop bestsellers"
           align="between"
-        />
+        /> */}
         <ProductGrid products={featured} className="mt-10" />
       </section>
 

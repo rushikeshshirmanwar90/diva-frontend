@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { categories, collections } from "@/lib/data/categories";
 import { products } from "@/lib/data/products";
 import { blogPosts } from "@/lib/data/content";
-import { policies } from "@/lib/data/policies";
+import { POLICY_SLUGS } from "@/lib/data/policies";
 
 const BASE = "https://diva.com";
 
@@ -48,9 +48,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(p.publishedAt),
       priority: 0.6,
     })),
-    ...policies.map((p) => ({
-      url: `${BASE}/policies/${p.slug}`,
-      lastModified: new Date(p.updated),
+    ...POLICY_SLUGS.map((slug) => ({
+      url: `${BASE}/policies/${slug}`,
+      lastModified: new Date(),
       priority: 0.3,
     })),
   ];

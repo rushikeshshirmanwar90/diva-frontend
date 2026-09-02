@@ -2,26 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { getPolicy, policies } from "@/lib/data/policies";
-import { CONTACT } from "@/lib/data/site";
+import { getPolicy, listPolicies, POLICY_SLUGS } from "@/lib/data/policies";
+import { getContact } from "@/lib/data/site";
 import { formatDate } from "@/lib/format";
 
 export function generateStaticParams() {
-  return policies.map((p) => ({ slug: p.slug }));
+  return POLICY_SLUGS.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/policies/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const policy = getPolicy(slug);
+  const policy = await getPolicy(slug);
   if (!policy) return { title: "Policy not found" };
   return { title: policy.title, description: policy.intro };
 }
 
 export default async function PolicyPage({ params }: PageProps<"/policies/[slug]">) {
   const { slug } = await params;
-  const policy = getPolicy(slug);
+  const [policy, policies, contact] = await Promise.all([getPolicy(slug), listPolicies(), getContact()]);
   if (!policy) notFound();
 
   return (
@@ -87,10 +87,10 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
 
           <p className="mt-16 border-t border-line pt-6 text-xs leading-relaxed text-muted">
             Questions about this policy? Write to{" "}
-            <a href={CONTACT.emailHref} className="text-gold hover:underline">
-              {CONTACT.email}
+            <a href={contact.emailHref} className="text-gold hover:underline">
+              {contact.email}
             </a>{" "}
-            or WhatsApp {CONTACT.whatsapp}.
+            or WhatsApp {contact.whatsapp}.
           </p>
         </article>
       </div>

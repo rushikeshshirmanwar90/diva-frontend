@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { AuthShell, Field, SocialButtons } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { CONTACT } from "@/lib/data/site";
+import { DEFAULT_CONTACT as CONTACT } from "@/lib/data/contact-defaults";
 import { useAuth } from "@/lib/auth/auth-context";
 import { ApiError, errorMessage } from "@/lib/api/client";
 

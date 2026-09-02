@@ -3,47 +3,28 @@ import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { PageHeader } from "@/components/shop/page-header";
 import { ContactForm } from "@/components/contact/contact-form";
 import { WhatsappIcon } from "@/components/ui/social-icons";
-import { CONTACT } from "@/lib/data/site";
+import { getSiteSettings } from "@/lib/data/site";
 
-export const metadata: Metadata = {
-  title: "Contact & stores",
-  description: `Talk to us on WhatsApp, call ${CONTACT.phone}, or visit our counters in Bengaluru, Chennai and Hyderabad.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const contact = settings.contact;
+  return {
+    title: "Contact & stores",
+    description: `Talk to us on WhatsApp, call ${contact.phone}, or visit our counters in ${settings.contactPage.stores.map((s) => s.city).join(", ")}.`,
+  };
+}
 
-const stores = [
-  {
-    city: "Bengaluru",
-    tag: "Flagship",
-    address: CONTACT.addressLine,
-    phone: CONTACT.phone,
-    hours: "Mon–Sat 10:30–20:00 · Sun 11:00–18:00",
-    note: "Bridal appointments and purity assays available here.",
-  },
-  {
-    city: "Chennai",
-    tag: "Counter",
-    address: "48 Nungambakkam High Road, Chennai 600034",
-    phone: CONTACT.phone,
-    hours: "Mon–Sat 10:30–20:00 · Sun closed",
-    note: "Temple and 22K collections held in depth.",
-  },
-  {
-    city: "Hyderabad",
-    tag: "Counter",
-    address: "9 Road No. 12, Banjara Hills, Hyderabad 500034",
-    phone: CONTACT.phone,
-    hours: "Tue–Sun 11:00–20:00 · Mon closed",
-    note: "Polki and diamond bridal, by appointment on weekends.",
-  },
-];
+export default async function ContactPage() {
+  const settings = await getSiteSettings();
+  const { contact, contactPage, supportHours } = settings;
+  const stores = contactPage.stores;
 
-export default function ContactPage() {
   return (
     <>
       <PageHeader
-        eyebrow="We answer in under four hours"
-        title="Talk to a person"
-        description="No chatbots. Messages reach the same team that handles the counters, and bridal enquiries go straight to a senior consultant."
+        eyebrow={contactPage.eyebrow}
+        title={contactPage.title}
+        description={contactPage.description}
         trail={[{ label: "Contact" }]}
       />
 
@@ -53,22 +34,22 @@ export default function ContactPage() {
             {
               icon: <WhatsappIcon size={20} className="text-gold" />,
               label: "WhatsApp",
-              value: CONTACT.whatsapp,
-              href: CONTACT.whatsappHref,
+              value: contact.whatsapp,
+              href: contact.whatsappHref,
               sub: "Fastest — usually under 10 minutes",
             },
             {
               icon: <Phone width={20} height={20} strokeWidth={1.4} className="text-gold" />,
               label: "Call us",
-              value: CONTACT.phone,
-              href: CONTACT.phoneHref,
-              sub: "Mon–Sat, 9:00–21:00 IST",
+              value: contact.phone,
+              href: contact.phoneHref,
+              sub: supportHours,
             },
             {
               icon: <Mail width={20} height={20} strokeWidth={1.4} className="text-gold" />,
               label: "Email",
-              value: CONTACT.email,
-              href: CONTACT.emailHref,
+              value: contact.email,
+              href: contact.emailHref,
               sub: "Replies within 4 working hours",
             },
             {
@@ -81,8 +62,8 @@ export default function ContactPage() {
                 />
               ),
               label: "Bridal desk",
-              value: CONTACT.email,
-              href: `${CONTACT.emailHref}?subject=Bridal%20appointment`,
+              value: contact.email,
+              href: `${contact.emailHref}?subject=Bridal%20appointment`,
               sub: "Write “Bridal” in the subject · book 6–8 weeks ahead",
             },
           ].map(({ icon, label, value, href, sub }) => (
@@ -115,7 +96,7 @@ export default function ContactPage() {
             <h2 className="font-display text-3xl font-light text-ink">Our counters</h2>
             <ul className="mt-8 divide-y divide-line border-y border-line">
               {stores.map((s) => (
-                <li key={s.city} className="py-7">
+                <li key={s.city + s.address} className="py-7">
                   <div className="flex flex-wrap items-baseline gap-3">
                     <h3 className="font-display text-2xl font-light text-ink">
                       {s.city}
@@ -142,7 +123,7 @@ export default function ContactPage() {
                       {s.hours}
                     </li>
                   </ul>
-                  <p className="mt-3 text-xs text-ink">{s.note}</p>
+                  {s.note && <p className="mt-3 text-xs text-ink">{s.note}</p>}
                 </li>
               ))}
             </ul>
