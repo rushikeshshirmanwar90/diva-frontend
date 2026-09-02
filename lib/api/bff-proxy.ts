@@ -1,11 +1,14 @@
+import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import { backendUrl } from "@/lib/domain";
 
 /**
- * Backend-for-frontend proxy.
+ * Shared body for every `app/api/bff/**` route.
  *
- * The browser talks only to this origin; every `/api/v1/*` call is relayed to
- * `diva-backend` from the server. That buys three things:
+ * The browser talks only to this origin; each route under `app/api/bff`
+ * forwards its one fixed backend path (e.g. `/auth/login`, or
+ * `/orders/${orderNumber}` for a dynamic segment) through `bffProxy`. That
+ * buys three things:
  *
  *  1. **Session cookies work on unrelated domains.** The web auth scheme uses
  *     httpOnly cookies, and a cookie set by `api.diva.in` is simply not sent to
@@ -49,8 +52,20 @@ const STRIPPED_RESPONSE_HEADERS = new Set([
   "keep-alive",
 ]);
 
-async function proxy(request: NextRequest, path: string[]): Promise<NextResponse> {
-  const target = new URL(backendUrl(path.join("/")));
+/** Removes any `Domain=…` attribute so the cookie is host-only to this origin. */
+function stripDomain(cookie: string): string {
+  return cookie
+    .split(";")
+    .filter((part) => !/^\s*domain=/i.test(part))
+    .join(";");
+}
+
+/**
+ * Forwards `request` to `${API_ORIGIN}/api/v1${backendPath}`, preserving the
+ * query string, and relays the response (including cookies) back verbatim.
+ */
+export async function bffProxy(request: NextRequest, backendPath: string): Promise<NextResponse> {
+  const target = new URL(backendUrl(backendPath));
   target.search = request.nextUrl.search;
 
   const headers = new Headers();
@@ -123,32 +138,3 @@ async function proxy(request: NextRequest, path: string[]): Promise<NextResponse
     headers: responseHeaders,
   });
 }
-
-/** Removes any `Domain=…` attribute so the cookie is host-only to this origin. */
-function stripDomain(cookie: string): string {
-  return cookie
-    .split(";")
-    .filter((part) => !/^\s*domain=/i.test(part))
-    .join(";");
-}
-
-type Context = { params: Promise<{ path: string[] }> };
-
-async function handler(request: NextRequest, context: Context): Promise<NextResponse> {
-  // Next 16: `params` is a Promise and must be awaited before use.
-  const { path } = await context.params;
-  return proxy(request, path);
-}
-
-export const GET = handler;
-export const POST = handler;
-export const PATCH = handler;
-export const PUT = handler;
-export const DELETE = handler;
-
-/**
- * Never prerendered or cached. Every call carries a session and, for payments,
- * reads live gateway state — a cached checkout response would show one
- * customer's order to another.
- */
-export const dynamic = "force-dynamic";

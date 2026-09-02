@@ -3,12 +3,11 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { ChevronRight, X } from "lucide-react";
-import { useCategories, useCollections } from "@/lib/data/catalogue-context";
+import { useCategories } from "@/lib/data/catalogue-context";
 import { Logo } from "@/components/layout/logo";
 
 export function MobileNav({ onClose }: { onClose: () => void }) {
   const categories = useCategories();
-  const collections = useCollections();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -34,15 +33,6 @@ export function MobileNav({ onClose }: { onClose: () => void }) {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-5 py-6">
-          <Section title="Shop by">
-            <Row href="/shop?gender=Women" onClose={onClose}>
-              Women
-            </Row>
-            <Row href="/shop?gender=Men" onClose={onClose}>
-              Men
-            </Row>
-          </Section>
-
           <Section title="Shop by category">
             {categories.map((c) => (
               <Row key={c.slug} href={`/category/${c.slug}`} onClose={onClose}>
@@ -52,14 +42,6 @@ export function MobileNav({ onClose }: { onClose: () => void }) {
             <Row href="/shop" onClose={onClose}>
               Shop all
             </Row>
-          </Section>
-
-          <Section title="Collections">
-            {collections.map((c) => (
-              <Row key={c.slug} href={`/collections/${c.slug}`} onClose={onClose}>
-                {c.name}
-              </Row>
-            ))}
           </Section>
 
           <Section title="More">

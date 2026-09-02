@@ -3,7 +3,9 @@
  *
  * Every call goes to `/api/bff/*` on this origin, which relays to the backend.
  * Nothing in the browser knows the backend's address, and no request is ever
- * cross-origin — see `app/api/bff/[...path]/route.ts` for why that matters.
+ * cross-origin — see `lib/api/bff-proxy.ts` for why that matters. Each
+ * `/api/bff/**` route forwards to one fixed backend path; there is no
+ * catch-all.
  *
  * Written once against the `{ success, data }` envelope so no caller repeats
  * the unwrapping, and so a failure is always a thrown `ApiError` with a `code`

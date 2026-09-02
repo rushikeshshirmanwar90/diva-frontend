@@ -5,18 +5,19 @@ import "server-only";
  * diva-backend.
  *
  * Three places used to each hardcode the same `process.env.API_ORIGIN ??
- * "http://localhost:4000"` fallback: the BFF proxy the browser talks to
- * (`app/api/bff/[...path]/route.ts`), and the two server-only catalogue
- * readers (`lib/data/catalogue.ts`, `lib/data/hero.ts`). They now all import
- * from here, so pointing the app at a different backend — a staging
- * deployment, a teammate's machine — is a one-line change in this file (or
- * in `.env.local`'s `API_ORIGIN`), not a search-and-replace across three.
+ * "http://localhost:4000"` fallback: the BFF proxy every `app/api/bff/**`
+ * route calls through (`lib/api/bff-proxy.ts`), and the two server-only
+ * catalogue readers (`lib/data/catalogue.ts`, `lib/data/hero.ts`). They now
+ * all import from here, so pointing the app at a different backend — a
+ * staging deployment, a teammate's machine — is a one-line change in this
+ * file (or in `.env.local`'s `API_ORIGIN`), not a search-and-replace across
+ * three.
  *
  * No `NEXT_PUBLIC_` prefix on the env var: the backend's address must never
  * reach the browser bundle. The browser only ever talks to this origin's own
- * `/api/bff/*`, which is the whole point of the proxy — see that route file
- * for why. `server-only` enforces that at build time if anything ever tries
- * to import this from a client component.
+ * `/api/bff/*`, which is the whole point of the proxy — see
+ * `lib/api/bff-proxy.ts` for why. `server-only` enforces that at build time
+ * if anything ever tries to import this from a client component.
  */
 
 export const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:4000";
