@@ -177,7 +177,7 @@ const GENDER_LABELS: Record<string, Product["attributes"]["gender"]> = {
 function toVariant(variant: ApiVariant): Variant {
   return {
     id: variant._id,
-    label: variant.size?.trim() || titleCase(variant.colour),
+    label: variant.size?.trim() || (variant.colour ? titleCase(variant.colour) : ""),
     sku: variant.sku,
     // What the shopper can actually buy: held stock belongs to open checkouts.
     stock: Math.max(0, variant.stock - variant.reservedStock),
