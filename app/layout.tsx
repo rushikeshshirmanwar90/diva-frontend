@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Header } from "@/components/layout/header";
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} h-full`}>
       <body className="flex min-h-full flex-col antialiased">
+        <NextTopLoader color="#c9a227" showSpinner={false} />
         <CatalogueProvider
           products={catalogue}
           categories={categories}

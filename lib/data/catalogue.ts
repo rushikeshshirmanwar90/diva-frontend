@@ -132,7 +132,8 @@ async function get<T>(path: string): Promise<T | null> {
 // ---------------------------------------------------------------------------
 
 /** `ROSE_GOLD` → `Rose Gold`. Mirrors the admin console's own label helper. */
-function titleCase(token: string): string {
+function titleCase(token: string | undefined | null): string {
+  if (!token) return "";
   return token
     .split("_")
     .filter(Boolean)
@@ -175,7 +176,7 @@ const GENDER_LABELS: Record<string, Product["attributes"]["gender"]> = {
 function toVariant(variant: ApiVariant): Variant {
   return {
     id: variant._id,
-    label: variant.size?.trim() || titleCase(variant.colour),
+    label: variant.size?.trim() || titleCase(variant.colour) || "Default",
     sku: variant.sku,
     // What the shopper can actually buy: held stock belongs to open checkouts.
     stock: Math.max(0, variant.stock - variant.reservedStock),

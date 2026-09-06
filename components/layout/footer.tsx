@@ -152,7 +152,7 @@ export async function Footer() {
 
         <div className="border-t border-line/70">
           <div className="mx-auto flex max-w-[90rem] flex-col gap-3 px-5 py-6 text-[10px] tracking-wide text-muted sm:flex-row sm:items-center sm:justify-between lg:px-10">
-            <p>© 2026 Diva The Indian Jewel Pvt. Ltd. · GSTIN 29AABCD1234E1ZQ</p>
+            <p>© 2026 Diva The Indian Jewel · GSTIN 29AABCD1234E1ZQ</p>
             <p className="tracking-luxe uppercase">
               UPI · Cards · Net banking · No-cost EMI
             </p>
