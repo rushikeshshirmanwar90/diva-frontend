@@ -1,4 +1,7 @@
-import { CONTACT } from "@/lib/data/site";
+import "server-only";
+import { cache } from "react";
+import { backendUrl } from "@/lib/domain";
+import { DEFAULT_CONTACT } from "@/lib/data/contact-defaults";
 
 export type Policy = {
   slug: string;
@@ -8,8 +11,12 @@ export type Policy = {
   sections: Array<{ heading: string; body: string[] }>;
 };
 
-export const policies: Policy[] = [
-  {
+/** Every policy slug that exists, in nav order. Fixed regardless of content, so build-time param generation never depends on the backend being reachable. */
+export const POLICY_SLUGS = ["shipping", "returns", "privacy", "terms"] as const;
+export type PolicySlug = (typeof POLICY_SLUGS)[number];
+
+const FALLBACK_POLICIES: Record<PolicySlug, Policy> = {
+  shipping: {
     slug: "shipping",
     title: "Shipping policy",
     updated: "2026-07-01",
@@ -47,7 +54,7 @@ export const policies: Policy[] = [
       },
     ],
   },
-  {
+  returns: {
     slug: "returns",
     title: "Returns & exchange",
     updated: "2026-07-01",
@@ -84,7 +91,7 @@ export const policies: Policy[] = [
       },
     ],
   },
-  {
+  privacy: {
     slug: "privacy",
     title: "Privacy policy",
     updated: "2026-07-01",
@@ -110,7 +117,7 @@ export const policies: Policy[] = [
         heading: "How long we keep it",
         body: [
           "Order and invoice records for eight years, as Indian tax law requires. Account details until you ask us to delete them. Analytics data for 14 months.",
-          `You can request a copy of everything we hold, or ask us to delete it, by writing to ${CONTACT.email}. We respond within 30 days.`,
+          `You can request a copy of everything we hold, or ask us to delete it, by writing to ${DEFAULT_CONTACT.email}. We respond within 30 days.`,
         ],
       },
       {
@@ -121,7 +128,7 @@ export const policies: Policy[] = [
       },
     ],
   },
-  {
+  terms: {
     slug: "terms",
     title: "Terms of service",
     updated: "2026-07-01",
@@ -158,8 +165,54 @@ export const policies: Policy[] = [
       },
     ],
   },
-];
+};
 
-export function getPolicy(slug: string) {
-  return policies.find((p) => p.slug === slug);
+type ApiPolicy = {
+  slug: PolicySlug;
+  title: string;
+  intro: string;
+  sections: Array<{ heading: string; body: string[] }>;
+  updatedAt: string;
+};
+
+type Envelope<T> = { success: true; data: T } | { success: false };
+
+/**
+ * All policy pages from backend — editable in the diva-backend admin console ("Policies").
+ * `cache: "no-store"` and static fallbacks keep the storefront resilient.
+ */
+const getDynamicPolicy = cache(async (slug: PolicySlug): Promise<Policy> => {
+  try {
+    const response = await fetch(backendUrl(`/policies/${slug}`), {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    });
+
+    if (!response.ok) return FALLBACK_POLICIES[slug];
+
+    const payload = (await response.json()) as Envelope<ApiPolicy>;
+    if (!payload.success) return FALLBACK_POLICIES[slug];
+
+    return {
+      slug: payload.data.slug,
+      title: payload.data.title,
+      updated: payload.data.updatedAt,
+      intro: payload.data.intro,
+      sections: payload.data.sections,
+    };
+  } catch {
+    return FALLBACK_POLICIES[slug];
+  }
+});
+
+export async function getPolicy(slug: string): Promise<Policy | undefined> {
+  if ((POLICY_SLUGS as readonly string[]).includes(slug)) {
+    return getDynamicPolicy(slug as PolicySlug);
+  }
+  return undefined;
+}
+
+/** All four policies, in nav order — for the sidebar on each policy page. */
+export async function listPolicies(): Promise<Policy[]> {
+  return Promise.all(POLICY_SLUGS.map((slug) => getDynamicPolicy(slug)));
 }

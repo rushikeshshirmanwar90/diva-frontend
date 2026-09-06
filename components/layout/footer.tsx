@@ -14,34 +14,29 @@ import {
   YoutubeIcon,
 } from "@/components/ui/social-icons";
 import { categories, collections } from "@/lib/data/categories";
-import { CONTACT } from "@/lib/data/site";
+import { getSiteSettings } from "@/lib/data/site";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 
-const assurances = [
-  {
-    icon: BadgeCheck,
-    title: "BIS hallmarked",
-    body: "HUID on every gold piece, verifiable in the BIS Care app.",
-  },
-  {
-    icon: Truck,
-    title: "Insured delivery",
-    body: "Fully insured and tracked until it is signed for.",
-  },
-  {
-    icon: RotateCcw,
-    title: "15-day returns",
-    body: "Plus one free size exchange within 30 days.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Lifetime care",
-    body: "Free cleaning, polishing and re-rhodium plating.",
-  },
-];
+const ICON_MAP: Record<string, typeof BadgeCheck> = {
+  BadgeCheck,
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+};
 
 export async function Footer() {
-  const [categoryList, collectionList] = await Promise.all([categories(), collections()]);
+  const [categoryList, collectionList, settings] = await Promise.all([
+    categories(),
+    collections(),
+    getSiteSettings(),
+  ]);
+
+  const contact = settings.contact;
+  const assurances = settings.assurances.map((a, i) => ({
+    icon: (a.icon && ICON_MAP[a.icon]) || [BadgeCheck, Truck, RotateCcw, ShieldCheck][i % 4] || ShieldCheck,
+    title: a.title,
+    body: a.body,
+  }));
 
   return (
     <footer className="mt-24 border-t border-line">
@@ -66,11 +61,10 @@ export async function Footer() {
         <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-10">
           <div>
             <p className="font-display text-2xl font-light tracking-[0.4em] text-ink">
-              DIVA
+              {settings.storeName || "DIVA"}
             </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
-              Fine jewellery made in Bengaluru and Jaipur since 1998. Every piece is
-              hallmarked, priced transparently, and made to be worn — not stored.
+              {settings.footerBlurb}
             </p>
             <NewsletterForm className="mt-7" />
             <div className="mt-7 flex gap-3">
@@ -132,19 +126,19 @@ export async function Footer() {
             <div className="mt-7 space-y-2 text-xs text-muted">
               <p className="flex items-center gap-2">
                 <Phone width={13} height={13} className="text-gold" />
-                <a href={CONTACT.phoneHref} className="hover:text-gold">
-                  {CONTACT.phone}
+                <a href={contact.phoneHref} className="hover:text-gold">
+                  {contact.phone}
                 </a>
               </p>
               <p className="flex items-center gap-2">
                 <Mail width={13} height={13} className="text-gold" />
-                <a href={CONTACT.emailHref} className="hover:text-gold">
-                  {CONTACT.email}
+                <a href={contact.emailHref} className="hover:text-gold">
+                  {contact.email}
                 </a>
               </p>
               <p className="flex items-start gap-2">
                 <MapPin width={13} height={13} className="mt-0.5 shrink-0 text-gold" />
-                {CONTACT.addressLine}
+                {contact.addressLine}
               </p>
             </div>
           </div>
@@ -152,9 +146,9 @@ export async function Footer() {
 
         <div className="border-t border-line/70">
           <div className="mx-auto flex max-w-[90rem] flex-col gap-3 px-5 py-6 text-[10px] tracking-wide text-muted sm:flex-row sm:items-center sm:justify-between lg:px-10">
-            <p>© 2026 Diva The Indian Jewel · GSTIN 29AABCD1234E1ZQ</p>
+            <p>{settings.copyrightText}</p>
             <p className="tracking-luxe uppercase">
-              UPI · Cards · Net banking · No-cost EMI
+              {settings.paymentMethodsNote}
             </p>
           </div>
         </div>

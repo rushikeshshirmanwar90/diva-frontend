@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CONTACT } from "@/lib/data/site";
+import { DEFAULT_CONTACT as CONTACT } from "@/lib/data/contact-defaults";
 
 const topics = [
   "A specific piece",

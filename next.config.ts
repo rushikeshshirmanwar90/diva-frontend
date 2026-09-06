@@ -1,22 +1,19 @@
 import type { NextConfig } from "next";
 
-/**
- * The Cloudinary account catalogue imagery is delivered from.
- *
- * Hardcoding this is what broke the home page once already: the value here said
- * `do6v48jbp` while the admin was uploading to `oo0nwzph`, and every category
- * image threw "hostname is not configured" — Next reports a *pathname* mismatch
- * with that same message, which sends you looking at the hostname, which is
- * fine.
- *
- * So it reads from the environment, with the current account as the fallback
- * for when it is unset. Keep it equal to `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` in
- * diva-backend — that is the account the admin uploads to, and these two
- * disagreeing is a 500 on any page showing a real product.
- */
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // "standalone" produces a self-contained server for the Dockerfile in this
+  // repo, but its .next layout is not what Vercel's own build pipeline
+  // expects (it looks for .next/next-server.js.nft.json directly) — so skip
+  // it under Vercel's build, which sets VERCEL=1 automatically.
+  output: process.env.VERCEL ? undefined : "standalone",
   reactCompiler: true,
+  experimental: {
+    // Default worker concurrency for static generation can exceed available
+    // memory on smaller machines, crashing the build with an OOM rather than
+    // a real error. Forcing fewer, larger-batched workers trades some build
+    // speed for not crashing.
+    staticGenerationMinPagesPerWorker: 50,
+  },
   images: {
     unoptimized: true,
     remotePatterns: [

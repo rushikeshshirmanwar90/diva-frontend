@@ -48,6 +48,8 @@ type ApiProduct = {
   compareAtPricePaise?: number | null;
   variants: ApiVariant[];
   attributes?: { gender?: string; occasions?: string[]; certification?: string };
+  shippingReturns?: string;
+  careInstructions?: string;
   ratingAvg: number;
   ratingCount: number;
   isFeatured: boolean;
@@ -202,6 +204,8 @@ function toProduct(product: ApiProduct, slugs: SlugMaps): Product {
     title: product.title,
     subtitle: product.shortDescription ?? "",
     description: product.description ?? "",
+    shippingReturns: product.shippingReturns,
+    careInstructions: product.careInstructions,
     categorySlug: slugs.categories.get(product.categoryIds?.[0] ?? "") ?? "",
     collectionSlugs: (product.collectionIds ?? [])
       .map((id) => slugs.collections.get(id))

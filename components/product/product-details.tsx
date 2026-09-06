@@ -1,8 +1,35 @@
 import type { Product } from "@/lib/types";
 import { Accordion } from "@/components/ui/accordion";
 
+function parseLines(raw?: string, fallback: string[] = []): string[] {
+  if (!raw || !raw.trim()) return fallback;
+  const lines = raw
+    .split("\n")
+    .map((line) => line.trim().replace(/^[-*•]\s+/, "").replace(/^\d+\.\s+/, ""))
+    .filter(Boolean);
+  return lines.length > 0 ? lines : fallback;
+}
+
+const DEFAULT_SHIPPING_LINES = [
+  "Insured, fully tracked delivery in 2–4 working days for in-stock pieces. Made-to-order and bridal work takes 6–8 weeks from design freeze.",
+  "Returns accepted within 15 days of delivery with the hallmark tag unbroken. Refunds are credited within 5 working days of receipt.",
+  "One free size exchange within 30 days, including two-way courier.",
+  "Photo ID matching the order name is required at delivery.",
+];
+
 export function ProductDetails({ product }: { product: Product }) {
   const a = product.attributes;
+
+  const defaultCareLines = [
+    "Perfume and hairspray first, jewellery second — with a gap.",
+    "Store each piece in its own pouch. Uncut stones scratch polished gold.",
+    a.stone === "Uncut Polki" || a.stone === "Pearl"
+      ? "Never use an ultrasonic cleaner on this piece — polki foil and pearl nacre are both destroyed by it. Dry brush only."
+      : "Free ultrasonic cleaning and re-polishing for life at any Diva counter.",
+  ];
+
+  const shippingLines = parseLines(product.shippingReturns, DEFAULT_SHIPPING_LINES);
+  const careLines = parseLines(product.careInstructions, defaultCareLines);
 
   /**
    * Built from what the piece actually has.
@@ -52,16 +79,9 @@ export function ProductDetails({ product }: { product: Product }) {
           q: "Shipping & returns",
           a: (
             <ul className="space-y-2">
-              <li>
-                Insured, fully tracked delivery in 2–4 working days for in-stock pieces.
-                Made-to-order and bridal work takes 6–8 weeks from design freeze.
-              </li>
-              <li>
-                Returns accepted within 15 days of delivery with the hallmark tag
-                unbroken. Refunds are credited within 5 working days of receipt.
-              </li>
-              <li>One free size exchange within 30 days, including two-way courier.</li>
-              <li>Photo ID matching the order name is required at delivery.</li>
+              {shippingLines.map((line, idx) => (
+                <li key={idx}>{line}</li>
+              ))}
             </ul>
           ),
         },
@@ -69,15 +89,9 @@ export function ProductDetails({ product }: { product: Product }) {
           q: "Care instructions",
           a: (
             <ul className="space-y-2">
-              <li>Perfume and hairspray first, jewellery second — with a gap.</li>
-              <li>
-                Store each piece in its own pouch. Uncut stones scratch polished gold.
-              </li>
-              <li>
-                {a.stone === "Uncut Polki" || a.stone === "Pearl"
-                  ? "Never use an ultrasonic cleaner on this piece — polki foil and pearl nacre are both destroyed by it. Dry brush only."
-                  : "Free ultrasonic cleaning and re-polishing for life at any Diva counter."}
-              </li>
+              {careLines.map((line, idx) => (
+                <li key={idx}>{line}</li>
+              ))}
             </ul>
           ),
         },

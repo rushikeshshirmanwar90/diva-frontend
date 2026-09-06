@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/shop/page-header";
 import { Accordion } from "@/components/ui/accordion";
-import { faqs } from "@/lib/data/content";
-import { CONTACT } from "@/lib/data/site";
+import { getSiteSettings } from "@/lib/data/site";
 
 export const metadata: Metadata = {
   title: "Help & FAQ",
@@ -11,19 +10,23 @@ export const metadata: Metadata = {
     "Delivery times, pricing, returns, buyback and hallmarking — the questions we are actually asked, answered plainly.",
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const settings = await getSiteSettings();
+  const contact = settings.contact;
+  const faqGroups = settings.faqs;
+
   return (
     <>
       <PageHeader
         eyebrow="Help centre"
         title="Questions, answered plainly"
-        description={`If your question is not here, WhatsApp us on ${CONTACT.whatsapp} — a person replies, usually within ten minutes.`}
+        description={`If your question is not here, WhatsApp us on ${contact.whatsapp} — a person replies, usually within ten minutes.`}
         trail={[{ label: "Help & FAQ" }]}
       />
 
       <div className="mx-auto max-w-4xl px-5 pb-20 lg:px-10">
         <div className="space-y-16">
-          {faqs.map((group) => (
+          {faqGroups.map((group) => (
             <section key={group.group}>
               <h2 className="mb-6 font-display text-2xl font-light text-ink">
                 {group.group}
