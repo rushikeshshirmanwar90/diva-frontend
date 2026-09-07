@@ -35,8 +35,21 @@ services:
       - '3100:3000'
     environment:
       NODE_ENV: production
-      API_ORIGIN: http://diva-backend.vercel.app
+      # MUST be https. Vercel answers plain http with a 308 to the https URL,
+      # and lib/api/bff-proxy.ts fetches with `redirect: "manual"` — so the
+      # proxy relays that bodyless 308 to the browser, which then re-sends the
+      # request cross-origin to the backend, losing the first-party CSRF and
+      # session cookies. Every login and payment call fails with "The server
+      # sent an unreadable response."
+      API_ORIGIN: https://diva-backend.vercel.app
 
+      # NOTE: these three do NOTHING for the browser bundle. Next.js inlines
+      # every NEXT_PUBLIC_* value during `npm run build`, so by the time this
+      # container starts the strings are already compiled into the JS. They
+      # are set by ./deploy.sh as --build-arg; that is the only thing that
+      # works. Kept here only for the server runtime, and so nobody "fixes"
+      # a missing value by editing this block and wondering why nothing
+      # changed after a restart.
       NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
       NEXT_PUBLIC_CHECKOUT_ENABLED: ${NEXT_PUBLIC_CHECKOUT_ENABLED:-false}
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
