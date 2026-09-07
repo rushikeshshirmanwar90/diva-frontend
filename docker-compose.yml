@@ -35,8 +35,6 @@ services:
       - '3100:3000'
     environment:
       NODE_ENV: production
-      # Deployment-specific — reaches the backend by name on diva-network,
-      # not from .env.
       API_ORIGIN: http://diva-backend.vercel.app
 
       NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}

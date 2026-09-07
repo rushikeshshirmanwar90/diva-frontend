@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   BadgeCheck,
   Mail,
-  MapPin,
   Phone,
   RotateCcw,
   ShieldCheck,
@@ -136,10 +135,7 @@ export async function Footer() {
                   {contact.email}
                 </a>
               </p>
-              <p className="flex items-start gap-2">
-                <MapPin width={13} height={13} className="mt-0.5 shrink-0 text-gold" />
-                {contact.addressLine}
-              </p>
+              <p>{contact.addressLine}</p>
             </div>
           </div>
         </div>
