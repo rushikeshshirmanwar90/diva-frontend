@@ -163,7 +163,7 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
         d.footerBlurb ||
         "Fine jewellery made in Bengaluru and Jaipur since 1998. Every piece is hallmarked, priced transparently, and made to be worn — not stored.",
       copyrightText:
-        d.copyrightText || "© 2026 Diva The Indian Jewel Pvt. Ltd. · GSTIN 29AABCD1234E1ZQ",
+        d.copyrightText || "© 2026 Diva The Indian Jewel · GSTIN 29AABCD1234E1ZQ",
       paymentMethodsNote:
         d.paymentMethodsNote || "UPI · Cards · Net banking · No-cost EMI",
       assurances: d.assurances?.length ? d.assurances : DEFAULT_ASSURANCES,
@@ -189,7 +189,7 @@ function fallbackSiteSettings(): SiteSettings {
     supportHours: "Mon–Sat, 9:00–21:00 IST",
     footerBlurb:
       "Fine jewellery made in Bengaluru and Jaipur since 1998. Every piece is hallmarked, priced transparently, and made to be worn — not stored.",
-    copyrightText: "© 2026 Diva The Indian Jewel Pvt. Ltd. · GSTIN 29AABCD1234E1ZQ",
+    copyrightText: "© 2026 Diva The Indian Jewel · GSTIN 29AABCD1234E1ZQ",
     paymentMethodsNote: "UPI · Cards · Net banking · No-cost EMI",
     assurances: DEFAULT_ASSURANCES,
     contactPage: {
