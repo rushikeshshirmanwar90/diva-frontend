@@ -32,6 +32,19 @@ export function formatDate(iso: string): string {
 /** GST on jewellery — 3% for the demo. Real rates need §11 question 3 answered. */
 export const GST_RATE = 0.03;
 
-/** Free shipping above this cart value (paise). */
-export const FREE_SHIPPING_THRESHOLD = rupees(2000);
+/**
+ * Free shipping above this cart value (paise).
+ *
+ * Currently 0, which makes shipping free on every order. `SHIPPING_CHARGE` is
+ * kept at its real value so restoring the policy is a one-line change back to
+ * `rupees(2000)`.
+ *
+ * These are only what the storefront *displays*. The amount actually charged
+ * comes from the backend's store settings document
+ * (`shipping.freeShippingThresholdPaise` / `flatRatePaise`), which
+ * `order.service.ts` uses to build `grandTotalPaise` — the figure PhonePe
+ * collects. The two must be changed together, or the cart quotes one number
+ * and the gateway takes another.
+ */
+export const FREE_SHIPPING_THRESHOLD = rupees(0);
 export const SHIPPING_CHARGE = rupees(99);

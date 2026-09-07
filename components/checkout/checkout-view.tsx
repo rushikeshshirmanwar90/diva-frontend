@@ -457,9 +457,7 @@ export function CheckoutView() {
                               : "3–7 days"}
                           </span>
                           {shipping.courierName && ` via ${shipping.courierName}`}.{" "}
-                          {shipping.shippingChargePaise === 0
-                            ? "Insured shipping is free on this order."
-                            : `Insured shipping ${formatPaise(shipping.shippingChargePaise)}.`}
+                          Insured shipping is complimentary.
                         </p>
                       </>
                     ) : shipping ? (

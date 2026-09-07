@@ -28,11 +28,11 @@ export function OrderSummary({
           />
         )}
         <Row label="GST (3%)" value={formatPaise(totals.gst)} />
-        <Row
-          label="Insured shipping"
-          value={totals.shipping === 0 ? "Complimentary" : formatPaise(totals.shipping)}
-          tone={totals.shipping === 0 ? "success" : undefined}
-        />
+        {/* Shipping is free on every order, so there is no charge to itemise.
+            The row returns automatically if a rate is ever restored. */}
+        {totals.shipping > 0 && (
+          <Row label="Insured shipping" value={formatPaise(totals.shipping)} />
+        )}
       </dl>
 
       <div className="mt-6 flex items-baseline justify-between border-t border-line pt-5">

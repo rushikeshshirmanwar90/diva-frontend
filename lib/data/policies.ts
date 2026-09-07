@@ -33,8 +33,7 @@ const FALLBACK_POLICIES: Record<PolicySlug, Policy> = {
       {
         heading: "Delivery times and charges",
         body: [
-          "Standard insured delivery reaches Indian metros in 2–4 working days and non-metros in 4–7. It is complimentary on all orders above ₹2,000.",
-          "Express insured delivery is next working day in metros, charged at ₹499.",
+          "Standard insured delivery reaches Indian metros in 2–4 working days and non-metros in 4–7. It is complimentary on every order, with no minimum cart value.",
           "We ship only through Bluedart and Delhivery secure-jewellery services. We do not use ordinary parcel services for jewellery at any value.",
         ],
       },

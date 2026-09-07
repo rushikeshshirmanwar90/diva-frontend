@@ -229,14 +229,15 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
                 <dd className="text-gold">-{formatPaise(order.totals.discountPaise)}</dd>
               </div>
             )}
-            <div className="flex justify-between">
-              <dt className="text-muted">Shipping</dt>
-              <dd className="text-ink">
-                {order.totals.shippingPaise === 0
-                  ? "Free"
-                  : formatPaise(order.totals.shippingPaise)}
-              </dd>
-            </div>
+            {/* Only for orders that were actually charged shipping — hiding
+                this outright would misrepresent older orders placed under
+                the ₹99 policy. */}
+            {order.totals.shippingPaise > 0 && (
+              <div className="flex justify-between">
+                <dt className="text-muted">Shipping</dt>
+                <dd className="text-ink">{formatPaise(order.totals.shippingPaise)}</dd>
+              </div>
+            )}
             <div className="flex justify-between">
               <dt className="text-muted">GST</dt>
               <dd className="text-ink">{formatPaise(order.totals.gstPaise)}</dd>

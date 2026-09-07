@@ -166,10 +166,9 @@ export function CartDrawer() {
               <dl className="space-y-1.5 text-sm">
                 <Row label="Subtotal" value={formatPaise(totals.subtotal)} />
                 <Row label="GST (3%)" value={formatPaise(totals.gst)} />
-                <Row
-                  label="Shipping"
-                  value={totals.shipping === 0 ? "Free" : formatPaise(totals.shipping)}
-                />
+                {totals.shipping > 0 && (
+                  <Row label="Shipping" value={formatPaise(totals.shipping)} />
+                )}
               </dl>
               <div className="mt-3 flex items-baseline justify-between border-t border-line pt-3">
                 <span className="text-[11px] tracking-luxe uppercase text-muted">
