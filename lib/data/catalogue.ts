@@ -44,6 +44,7 @@ type ApiProduct = {
   categoryIds: string[];
   collectionIds?: string[];
   images: ApiImage[];
+  videoUrl?: string | null;
   pricePaise: number;
   compareAtPricePaise?: number | null;
   variants: ApiVariant[];
@@ -214,6 +215,7 @@ function toProduct(product: ApiProduct, slugs: SlugMaps): Product {
     // No compare-at price means no strike-through: equal values render as one.
     mrp: product.compareAtPricePaise ?? product.pricePaise,
     images: product.images?.map((image) => image.url) ?? [],
+    videoUrl: product.videoUrl ?? undefined,
     attributes: {
       // The finish, where the metal used to be. One colour reads as a fact
       // about the piece; several would be a lie on a card that shows one line.

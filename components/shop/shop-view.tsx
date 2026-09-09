@@ -19,7 +19,6 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/lib/data/catalogue-context";
 import type { Category } from "@/lib/types";
-import { cn } from "@/lib/cn";
 
 const PAGE_SIZE = 8;
 
@@ -231,19 +230,16 @@ export function ShopView({
             type="button"
             aria-label="Close filters"
             onClick={() => setDrawerOpen(false)}
-            className="absolute inset-0 bg-charcoal/40"
+            className="absolute inset-0 animate-fade-in bg-charcoal/50 backdrop-blur-[2px]"
           />
-          <div
-            className={cn(
-              "absolute inset-y-0 left-0 flex w-[88%] max-w-sm animate-fade-in flex-col bg-white",
-            )}
-          >
+          <div className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm animate-slide-in-left flex-col bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-line px-5 py-4">
               <p className="font-display text-xl font-light text-ink">Refine</p>
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close filters"
+                className="flex size-9 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold"
               >
                 <X width={19} height={19} strokeWidth={1.5} />
               </button>

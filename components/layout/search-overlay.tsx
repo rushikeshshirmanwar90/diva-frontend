@@ -42,15 +42,15 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
   const results = useMemo(() => matches.slice(0, 6), [matches]);
 
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-white/98 backdrop-blur-sm">
-      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col overflow-y-auto px-6 py-6">
-        <div className="flex items-center justify-between">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-white">
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col overflow-y-auto px-5 py-5 sm:px-6 sm:py-6">
+        <div className="flex h-12 items-center justify-between border-b border-line/60 pb-3">
           <p className="eyebrow">Search Diva</p>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close search"
-            className="text-charcoal hover:text-gold"
+            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold active:bg-beige-dark"
           >
             <X width={20} height={20} strokeWidth={1.5} />
           </button>

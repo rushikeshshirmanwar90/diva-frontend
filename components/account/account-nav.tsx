@@ -24,7 +24,36 @@ export function AccountNav() {
 
   return (
     <nav aria-label="Account">
-      <ul className="divide-y divide-line border-y border-line">
+      {/*
+        Below `lg` this is the only nav in the section — a vertical sidebar
+        list stacked full-width above the page content would push every
+        account page's actual content below five links and a promo box. A
+        horizontal scroller keeps the section switcher to one compact row,
+        the same fix `category-rail.tsx` uses for the same bleed-to-edge need.
+      */}
+      <ul className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:hidden">
+        {links.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href;
+          return (
+            <li key={href} className="shrink-0">
+              <Link
+                href={href}
+                className={cn(
+                  "flex items-center gap-2 border px-4 py-2.5 text-[11px] tracking-luxe whitespace-nowrap uppercase transition-colors",
+                  active
+                    ? "border-gold bg-gold text-white"
+                    : "border-line text-charcoal hover:border-charcoal",
+                )}
+              >
+                <Icon width={13} height={13} strokeWidth={1.5} />
+                {label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+
+      <ul className="hidden divide-y divide-line border-y border-line lg:block">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
@@ -45,7 +74,7 @@ export function AccountNav() {
         })}
       </ul>
 
-      <div className="mt-8 bg-beige p-6">
+      <div className="mt-8 hidden bg-beige p-6 lg:block">
         <p className="text-[10px] tracking-luxe uppercase text-ink">Diva Circle</p>
         <p className="mt-2 font-display text-3xl font-light text-gold">Gold tier</p>
         <p className="mt-2 text-xs leading-relaxed text-muted">

@@ -52,12 +52,14 @@ const STRIPPED_RESPONSE_HEADERS = new Set([
   "keep-alive",
 ]);
 
-/** Removes any `Domain=…` attribute so the cookie is host-only to this origin. */
-function stripDomain(cookie: string): string {
-  return cookie
-    .split(";")
-    .filter((part) => !/^\s*domain=/i.test(part))
-    .join(";");
+/** Removes Domain and ensures Path=/ so the cookie is host-only and available across all routes */
+function normalizeCookie(cookie: string): string {
+  const parts = cookie.split(";").map((part) => part.trim());
+  const filtered = parts.filter(
+    (part) => !/^domain=/i.test(part) && !/^path=/i.test(part),
+  );
+  filtered.push("Path=/");
+  return filtered.join("; ");
 }
 
 /**

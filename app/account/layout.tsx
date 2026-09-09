@@ -47,7 +47,7 @@ export default function AccountLayout({ children }: LayoutProps<"/account">) {
         </button>
       </div>
 
-      <div className="mt-10 grid gap-12 lg:grid-cols-[16rem_1fr] lg:gap-16">
+      <div className="mt-10 grid gap-6 lg:grid-cols-[16rem_1fr] lg:gap-16">
         <AccountNav />
         <div className="min-w-0">{children}</div>
       </div>

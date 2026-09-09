@@ -11,6 +11,8 @@ import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { getCategory } from "@/lib/data/categories";
 import { getProduct, relatedProducts } from "@/lib/data/products";
 import { getProductReviews } from "@/lib/data/catalogue";
+import { toYouTubeEmbedUrl } from "@/lib/youtube";
+import { cn } from "@/lib/cn";
 
 /**
  * No `generateStaticParams` here on purpose. Pre-rendering this page would
@@ -48,6 +50,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
   const category = await getCategory(product.categorySlug);
   const related = await relatedProducts(product, 6);
   const reviews = await getProductReviews(product.slug);
+  const videoEmbedUrl = toYouTubeEmbedUrl(product.videoUrl);
 
   return (
     <div className="mx-auto max-w-[90rem] px-5 pt-8 lg:px-10">
@@ -62,40 +65,45 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
       />
 
       <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16">
-        <Gallery images={product.images} title={product.title} />
+        <Gallery
+          images={product.images}
+          title={product.title}
+          videoUrl={product.videoUrl}
+        />
         <div className="lg:pt-2">
           <BuyBox product={product} />
         </div>
       </div>
 
-      <div className="mt-20 grid gap-16 lg:grid-cols-2 lg:gap-16">
+      <div
+        className={cn(
+          "mt-20",
+          videoEmbedUrl
+            ? "grid items-start gap-12 lg:grid-cols-2 lg:gap-16"
+            : "mx-auto max-w-3xl",
+        )}
+      >
         <ProductDetails product={product} />
-        <div className="bg-beige p-8 lg:p-12">
-          <p className="eyebrow">Made in India</p>
-          <h2 className="mt-4 font-display text-2xl leading-snug font-light text-ink">
-            How this piece was made
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-muted">
-            {product.attributes.stone === "Uncut Polki"
-              ? "Set by hand in our Jaipur atelier, where each uncut stone is foiled from behind before the bezel is closed over it. Nine karigars, four of them second generation."
-              : product.attributes.metal === "22K Gold"
-                ? "Hand-finished in Thanjavur, where the repoussé and granulation work on 22K gold has been done the same way for four generations."
-                : "Cast, set and finished in our Bengaluru workshop, then tumble-polished for four hours before it is hallmarked."}
-          </p>
-          <dl className="mt-8 grid grid-cols-2 gap-6 border-t border-line pt-8">
-            {[
-              ["Gross weight", product.attributes.grossWeight],
-              ["Purity", product.attributes.purity],
-              ["Hallmark", product.attributes.huid],
-              ["Certification", product.attributes.certification],
-            ].map(([k, v]) => (
-              <div key={k}>
-                <dt className="text-[10px] tracking-luxe uppercase text-muted">{k}</dt>
-                <dd className="mt-1 text-sm text-ink">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+
+        {videoEmbedUrl && (
+          <div className="overflow-hidden border border-line bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-line bg-beige/50 px-5 py-3.5">
+              <span className="eyebrow text-gold">Jewellery in motion</span>
+              <span className="text-[10px] tracking-luxe uppercase text-muted">
+                YouTube Short
+              </span>
+            </div>
+            <div className="relative aspect-[9/16] max-h-[520px] w-full mx-auto flex items-center justify-center bg-charcoal">
+              <iframe
+                src={`${videoEmbedUrl}?autoplay=0&rel=0&modestbranding=1&playsinline=1`}
+                title={`${product.title} video`}
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mt-24">

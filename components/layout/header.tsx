@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Heart, Search, ShoppingBag, User, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { buildNavItems } from "@/components/layout/nav-links";
 import { useCategories } from "@/lib/data/catalogue-context";
@@ -44,25 +44,26 @@ export function Header() {
   }
 
   const iconButton =
-    "relative flex size-10 items-center justify-center text-charcoal transition-colors hover:text-gold";
+    "relative flex size-9 sm:size-10 items-center justify-center rounded-full text-charcoal transition-all duration-200 hover:bg-beige hover:text-gold active:bg-beige-dark";
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 bg-white/95 backdrop-blur transition-shadow duration-300",
-        scrolled && "shadow-[0_1px_0_rgba(0,0,0,0.06),0_10px_30px_-20px_rgba(0,0,0,0.25)]",
+        "relative bg-white border-b border-line/80 transition-shadow duration-300",
+        scrolled ? "shadow-md" : "shadow-xs",
       )}
       onMouseLeave={() => setOpenPanel(null)}
     >
-      <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-5 lg:px-10">
-        <div className="flex flex-1 items-center gap-1">
+      <div className="mx-auto flex h-16 sm:h-[68px] lg:h-20 max-w-[90rem] items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-10">
+        <div className="flex flex-1 items-center gap-0.5 sm:gap-1">
           <button
             type="button"
             className={cn(iconButton, "lg:hidden")}
-            onClick={() => setMenuOpen(true)}
-            aria-label="Open menu"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
           >
-            <Menu width={19} height={19} strokeWidth={1.5} />
+            <HamburgerIcon open={menuOpen} />
           </button>
           <button
             type="button"
@@ -72,16 +73,20 @@ export function Header() {
           >
             <Search width={18} height={18} strokeWidth={1.5} />
           </button>
-          <span className="hidden text-[10px] tracking-luxe uppercase text-muted lg:inline">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="hidden text-[10px] tracking-luxe uppercase text-muted hover:text-gold lg:inline transition-colors"
+          >
             Search
-          </span>
+          </button>
         </div>
 
-        <Logo
-          className={cn("shrink-0 py-4 transition-all duration-300", scrolled && "py-3")}
-        />
+        <div className="flex shrink-0 items-center justify-center">
+          <Logo className="transition-transform duration-300 active:scale-98" />
+        </div>
 
-        <div className="flex flex-1 items-center justify-end gap-0.5">
+        <div className="flex flex-1 items-center justify-end gap-0.5 sm:gap-1.5">
           <button
             type="button"
             className={cn(iconButton, "lg:hidden")}
@@ -185,15 +190,45 @@ export function Header() {
       </nav>
 
       {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
-      {menuOpen && <MobileNav onClose={() => setMenuOpen(false)} />}
+      {menuOpen && (
+        <MobileNav
+          onClose={() => setMenuOpen(false)}
+          onOpenSearch={() => setSearchOpen(true)}
+        />
+      )}
     </header>
+  );
+}
+
+/**
+ * Three thin bars that morph into an X, rather than swapping the lucide
+ * `Menu`/`X` icons outright — a straight swap has no in-between frame, so the
+ * open/close never reads as one continuous motion the way this does.
+ */
+function HamburgerIcon({ open }: { open: boolean }) {
+  // `top` never changes — only `transform`, so each bar's animated property
+  // is a single, always-composable translate+rotate rather than two
+  // properties (top and transform) racing each other during the transition.
+  const bar =
+    "absolute inset-x-0 top-1/2 h-px bg-current transition-transform duration-300 ease-out";
+  return (
+    <span className="relative block size-[18px]">
+      <span className={cn(bar, open ? "rotate-45" : "-translate-y-[6px]")} />
+      <span
+        className={cn(
+          "absolute inset-x-0 top-1/2 h-px bg-current transition-opacity duration-200",
+          open && "opacity-0",
+        )}
+      />
+      <span className={cn(bar, open ? "-rotate-45" : "translate-y-[6px]")} />
+    </span>
   );
 }
 
 function Count({ value }: { value: number }) {
   return (
-    <span className="absolute top-1.5 right-1 flex min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[9px] leading-4 font-medium text-white">
-      {value}
+    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[9px] font-semibold leading-none text-white shadow-xs">
+      {value > 99 ? "99+" : value}
     </span>
   );
 }

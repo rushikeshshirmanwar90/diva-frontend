@@ -57,19 +57,36 @@ export function GoogleSignInButton({
       callback: handleCredential,
     });
 
-    // Re-rendered on every effect run rather than once, so a `disabled` flip
-    // (say, while a password login is in flight) is reflected without a
-    // second script load.
-    containerRef.current.innerHTML = "";
-    window.google.accounts.id.renderButton(containerRef.current, {
-      type: "standard",
-      theme: "outline",
-      size: "large",
-      shape: "rectangular",
-      text: "continue_with",
-      logo_alignment: "left",
-      width: 336,
-    });
+    /**
+     * GIS renders at a fixed pixel width, not a percentage — a hardcoded 336
+     * overflowed the 375px-wide `AuthShell` column on small phones (its
+     * `max-w-sm` content area shrinks below 336px once the shell's own
+     * padding is subtracted). Measuring the container keeps the button from
+     * ever being wider than the space actually available, clamped to GIS's
+     * documented 200–400 range.
+     */
+    const render = () => {
+      if (!containerRef.current || !window.google) return;
+      const width = Math.min(400, Math.max(200, containerRef.current.clientWidth));
+
+      // Re-rendered on every call rather than once, so a `disabled` flip
+      // (say, while a password login is in flight) or a resize is reflected
+      // without a second script load.
+      containerRef.current.innerHTML = "";
+      window.google.accounts.id.renderButton(containerRef.current, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        shape: "rectangular",
+        text: "continue_with",
+        logo_alignment: "left",
+        width,
+      });
+    };
+
+    render();
+    window.addEventListener("resize", render);
+    return () => window.removeEventListener("resize", render);
   }, [scriptReady, handleCredential]);
 
   if (!GOOGLE_CLIENT_ID) {

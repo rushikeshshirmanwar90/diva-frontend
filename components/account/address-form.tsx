@@ -99,7 +99,7 @@ export function AddressForm({
         </p>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField label="Label" value={form.label ?? ""} onChange={(v) => set("label", v)} placeholder="Home" disabled={saving} />
         <label className="block">
           <span className="text-[10px] tracking-luxe uppercase text-muted">Type</span>
@@ -117,13 +117,13 @@ export function AddressForm({
       </div>
 
       <TextField label="Full name" value={form.fullName} onChange={(v) => set("fullName", v)} required disabled={saving} error={fieldErrors.fullName} />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField label="Phone" value={form.phone} onChange={(v) => set("phone", v)} required disabled={saving} error={fieldErrors.phone} />
         <TextField label="Alternate phone" value={form.alternatePhone ?? ""} onChange={(v) => set("alternatePhone", v)} disabled={saving} error={fieldErrors.alternatePhone} />
       </div>
       <TextField label="Address line 1" value={form.line1} onChange={(v) => set("line1", v)} required disabled={saving} error={fieldErrors.line1} />
       <TextField label="Address line 2" value={form.line2 ?? ""} onChange={(v) => set("line2", v)} disabled={saving} />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField label="City" value={form.city} onChange={(v) => set("city", v)} required disabled={saving} error={fieldErrors.city} />
         <TextField label="State" value={form.state} onChange={(v) => set("state", v)} required disabled={saving} error={fieldErrors.state} />
       </div>

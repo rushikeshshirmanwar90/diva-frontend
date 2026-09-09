@@ -61,8 +61,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         >
           <AuthProvider>
             <StoreProvider>
-              <AnnouncementBar />
-              <Header />
+              {/*
+                Sticks the announcement bar and header together as one unit.
+                Header alone being sticky meant the bar above it scrolled away
+                on its own, which read as "the navbar isn't staying put" even
+                though the header itself was pinned correctly.
+              */}
+              <div className="sticky top-0 z-50">
+                <AnnouncementBar />
+                <Header />
+              </div>
               <main className="flex-1">{children}</main>
               <Footer />
               <CartDrawer />

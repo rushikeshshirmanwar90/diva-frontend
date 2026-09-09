@@ -64,6 +64,8 @@ export type Product = {
   /** Struck-through list price in paise. */
   mrp: number;
   images: string[];
+  /** Optional YouTube video or Shorts link showcasing the piece. */
+  videoUrl?: string | null;
   /**
    * Everything here is optional, because the catalogue is fixed-price plated
    * jewellery and the backend simply does not store the bullion specification

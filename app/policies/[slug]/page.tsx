@@ -28,10 +28,39 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
     <div className="mx-auto max-w-[90rem] px-5 pt-8 pb-20 lg:px-10">
       <Breadcrumbs trail={[{ label: policy.title }]} />
 
-      <div className="mt-8 grid gap-14 lg:grid-cols-[16rem_1fr] lg:gap-20">
+      <div className="mt-8 grid gap-8 lg:grid-cols-[16rem_1fr] lg:gap-20">
         <nav aria-label="Policies">
           <p className="eyebrow mb-4">Policies</p>
-          <ul className="divide-y divide-line border-y border-line">
+
+          {/* Below `lg` a vertical list would stack above the article and
+              push it below the fold — a horizontal scroller keeps it to one
+              row, same fix as `account-nav.tsx`. */}
+          <ul className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:hidden">
+            {policies.map((p) => (
+              <li key={p.slug} className="shrink-0">
+                <Link
+                  href={`/policies/${p.slug}`}
+                  className={`block border px-4 py-2.5 text-[11px] tracking-luxe whitespace-nowrap uppercase transition-colors ${
+                    p.slug === policy.slug
+                      ? "border-gold bg-gold text-white"
+                      : "border-line text-charcoal hover:border-charcoal"
+                  }`}
+                >
+                  {p.title}
+                </Link>
+              </li>
+            ))}
+            <li className="shrink-0">
+              <Link
+                href="/faq"
+                className="block border border-line px-4 py-2.5 text-[11px] tracking-luxe whitespace-nowrap uppercase text-charcoal transition-colors hover:border-charcoal"
+              >
+                Help & FAQ
+              </Link>
+            </li>
+          </ul>
+
+          <ul className="hidden divide-y divide-line border-y border-line lg:block">
             {policies.map((p) => (
               <li key={p.slug}>
                 <Link

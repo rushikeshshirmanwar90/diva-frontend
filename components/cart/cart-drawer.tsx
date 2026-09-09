@@ -37,7 +37,7 @@ export function CartDrawer() {
         onClick={() => setCartOpen(false)}
         className="absolute inset-0 animate-fade-in bg-charcoal/40"
       />
-      <div className="absolute inset-y-0 right-0 flex w-full max-w-md animate-fade-in flex-col bg-white shadow-2xl">
+      <div className="absolute inset-y-0 right-0 flex w-full max-w-md animate-slide-in-right flex-col bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-line px-6 py-5">
           <div>
             <p className="eyebrow">Your bag</p>
@@ -49,7 +49,7 @@ export function CartDrawer() {
             type="button"
             onClick={() => setCartOpen(false)}
             aria-label="Close bag"
-            className="text-charcoal hover:text-gold"
+            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold"
           >
             <X width={20} height={20} strokeWidth={1.5} />
           </button>

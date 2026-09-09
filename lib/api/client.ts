@@ -77,6 +77,10 @@ function isAuthPath(path: string): boolean {
  * family. The result would be the opposite of what this is for: a hard
  * sign-out triggered by nothing worse than a busy page. Mirrors
  * `diva-backend/app/admin/_lib/api.ts`'s identical mechanism.
+ *
+ * Note the storefront's refresh window is 30 days (`STOREFRONT_REFRESH_TOKEN_TTL_DAYS`
+ * in diva-backend), not the 2 days admin gets — see that file for why the two
+ * audiences deliberately differ.
  */
 let refreshInFlight: Promise<boolean> | null = null;
 
@@ -144,8 +148,8 @@ function send(path: string, method: string, body: unknown, signal?: AbortSignal)
  * One API call, with the 15-minute access token made invisible.
  *
  * Access tokens are deliberately short-lived; the session's real length is
- * the refresh token's (2 days, sliding — see `REFRESH_TOKEN_TTL_DAYS` in
- * diva-backend). So a 401 here is not "signed out", it is routine: refresh
+ * the refresh token's (30 days, sliding — see `STOREFRONT_REFRESH_TOKEN_TTL_DAYS`
+ * in diva-backend). So a 401 here is not "signed out", it is routine: refresh
  * once and replay the request. Callers only ever see a real logged-out state
  * when the refresh itself fails, which means the session genuinely ended.
  */

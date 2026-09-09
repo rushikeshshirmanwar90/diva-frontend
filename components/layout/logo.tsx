@@ -9,12 +9,12 @@ const LOGO_HEIGHT = 887;
 export function Logo({
   className,
   tagline = true,
+  imageClassName,
 }: {
   className?: string;
   tagline?: boolean;
+  imageClassName?: string;
 }) {
-  const width = tagline ? 152 : 116;
-
   return (
     <Link href="/" className={cn("group block w-fit shrink-0", className)}>
       <Image
@@ -23,8 +23,13 @@ export function Logo({
         width={LOGO_WIDTH}
         height={LOGO_HEIGHT}
         priority
-        style={{ width, height: "auto" }}
-        className="transition-opacity group-hover:opacity-80"
+        className={cn(
+          "h-auto transition-opacity group-hover:opacity-80",
+          tagline
+            ? "w-[120px] sm:w-[136px] lg:w-[152px]"
+            : "w-[96px] sm:w-[106px] lg:w-[116px]",
+          imageClassName,
+        )}
       />
     </Link>
   );

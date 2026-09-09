@@ -24,6 +24,8 @@
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-fade-in: fade-in 0.5s ease-out both;
   --animate-marquee: marquee 42s linear infinite;
+  --animate-slide-in-left: slide-in-left 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-slide-in-right: slide-in-right 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes fade-up {
@@ -46,6 +48,24 @@
   }
 }
 
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -57,6 +77,14 @@
 
 html {
   scroll-behavior: smooth;
+  /*
+    Belt-and-suspenders: one element that's a few pixels too wide (a fixed
+    width, an unbreakable long word/number) should never be able to widen
+    the whole page into a horizontal scrollbar. Applied at the root scroller
+    rather than on some nested wrapper, so it doesn't touch `position: sticky`
+    computed against the viewport.
+  */
+  overflow-x: hidden;
 }
 
 body {

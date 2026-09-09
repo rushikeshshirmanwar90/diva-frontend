@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   BadgeCheck,
   Heart,
-  MapPin,
   Minus,
   Plus,
   RotateCcw,
@@ -22,7 +21,7 @@ import { GST_RATE } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 export function BuyBox({ product }: { product: Product }) {
-  const { addToCart, toggleWishlist, isWishlisted, markViewed, notify } = useStore();
+  const { addToCart, toggleWishlist, isWishlisted, markViewed } = useStore();
   const firstAvailable =
     product.variants.find((v) => v.stock > 0) ?? product.variants[0]!;
   const [variantId, setVariantId] = useState(firstAvailable.id);
@@ -169,8 +168,6 @@ export function BuyBox({ product }: { product: Product }) {
         </Button>
       </div>
 
-      <PincodeCheck onNotify={notify} />
-
       <ul className="mt-8 grid gap-4 border-t border-line pt-8 sm:grid-cols-3">
         {[
           { icon: Truck, label: "Insured delivery", sub: "2–4 working days" },
@@ -186,64 +183,6 @@ export function BuyBox({ product }: { product: Product }) {
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-/** Purely local — a real pincode check hits the Shiprocket serviceability API. */
-function PincodeCheck({
-  onNotify,
-}: {
-  onNotify: (message: string) => void;
-}) {
-  const [pincode, setPincode] = useState("");
-  const [result, setResult] = useState<string | null>(null);
-
-  return (
-    <div className="mt-6 border border-line p-5">
-      <div className="flex items-center gap-2">
-        <MapPin width={15} height={15} strokeWidth={1.4} className="text-gold" />
-        <p className="text-[11px] tracking-luxe uppercase text-ink">
-          Check delivery date
-        </p>
-      </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!/^\d{6}$/.test(pincode)) {
-            setResult("Enter a valid 6-digit pincode.");
-            return;
-          }
-          const days = 2 + (Number(pincode.slice(-1)) % 4);
-          const date = new Date();
-          date.setDate(date.getDate() + days);
-          setResult(
-            `Delivers by ${date.toLocaleDateString("en-IN", {
-              weekday: "short",
-              day: "numeric",
-              month: "short",
-            })} · free insured shipping`,
-          );
-          onNotify("Serviceable — insured delivery available");
-        }}
-        className="mt-3 flex gap-3"
-      >
-        <input
-          value={pincode}
-          onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          inputMode="numeric"
-          placeholder="560001"
-          aria-label="Pincode"
-          className="w-32 border-b border-line bg-transparent pb-1.5 text-sm text-ink outline-none focus:border-gold"
-        />
-        <button
-          type="submit"
-          className="text-[10px] tracking-luxe uppercase text-gold hover:underline"
-        >
-          Check
-        </button>
-      </form>
-      {result && <p className="mt-3 text-xs text-success">{result}</p>}
     </div>
   );
 }

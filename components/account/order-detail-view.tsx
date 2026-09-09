@@ -72,7 +72,7 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
 
   if (loadError) {
     return (
-      <div className="mx-auto max-w-3xl px-5 py-20 text-center">
+      <div className="mx-auto max-w-3xl py-20 text-center">
         <p className="text-sm text-muted">{loadError}</p>
         <ButtonLink href="/account/orders" variant="outline" size="md" className="mt-6">
           Back to orders
@@ -90,7 +90,7 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-5 py-10 lg:px-0">
+    <div className="mx-auto max-w-4xl">
       <Link
         href="/account/orders"
         className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-muted hover:text-gold"

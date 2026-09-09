@@ -122,7 +122,7 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
 
       <div className="relative mx-auto flex min-h-[78vh] max-w-[90rem] items-center px-5 lg:min-h-[86vh] lg:px-10">
         <div className="max-w-xl animate-fade-up">
-          <h1 className="font-display text-[2.75rem] leading-[1.05] font-light whitespace-pre-line text-white sm:text-6xl lg:text-[4.25rem]">
+          <h1 className="font-display text-[2rem] leading-[1.05] font-light whitespace-pre-line text-white sm:text-5xl lg:text-[4.25rem]">
             {slide.heading}
           </h1>
           <p className="mt-6 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
@@ -134,10 +134,12 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
             </ButtonLink>
           </div>
 
-          <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-white/15 pt-7">
+          <dl className="mt-14 grid max-w-md grid-cols-3 gap-3 border-t border-white/15 pt-7 sm:gap-6">
             {STATS.map((s) => (
-              <div key={s.k}>
-                <dt className="font-display text-2xl font-light text-gold-light">{s.k}</dt>
+              <div key={s.k} className="min-w-0">
+                <dt className="break-words font-display text-base font-light text-gold-light sm:text-2xl">
+                  {s.k}
+                </dt>
                 <dd className="mt-1 text-[10px] tracking-[0.18em] uppercase text-white/55">
                   {s.v}
                 </dd>
