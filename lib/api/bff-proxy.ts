@@ -131,7 +131,7 @@ export async function bffProxy(request: NextRequest, backendPath: string): Promi
    * of proxying in the first place.
    */
   for (const cookie of upstream.headers.getSetCookie()) {
-    responseHeaders.append("set-cookie", stripDomain(cookie));
+    responseHeaders.append("set-cookie", normalizeCookie(cookie));
   }
 
   return new NextResponse(upstream.body, {

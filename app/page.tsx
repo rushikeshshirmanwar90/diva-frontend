@@ -72,15 +72,12 @@ export default async function HomePage() {
       </section>
 
       <PriceTiles />
-      <CraftStory />
-
+{/* 
       {daily && (
         <CollectionBanner collection={daily} reverse productCount={dailyCount.length} />
-      )}
+      )} */}
 
       <Testimonials />
-      <InstagramStrip />
-      <NewsletterBand />
     </>
   );
 }
