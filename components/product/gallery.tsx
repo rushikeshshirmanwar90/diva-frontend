@@ -69,7 +69,11 @@ export function Gallery({
       33,554,384px wide and pushed every hit target off-screen.
     */
     <div className="flex min-w-0 flex-col-reverse gap-4 lg:flex-row">
-      <ul className="no-scrollbar flex gap-3 overflow-x-auto lg:w-24 lg:flex-col lg:overflow-visible">
+      {/* Wraps below `lg` instead of scrolling sideways — three thumbnails fit
+          a phone today, but a product with six would have hidden half of them
+          off-edge. `lg:flex-nowrap` stops the wrap turning the desktop column
+          into columns. */}
+      <ul className="flex flex-wrap gap-3 lg:w-24 lg:flex-col lg:flex-nowrap">
         {images.map((image, i) => {
           const current = !isVideo && imageIndex === i;
           return (

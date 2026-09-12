@@ -28,17 +28,6 @@ const FALLBACK_SLIDE: HeroSlide = {
   cta: { label: "Shop the collection", href: "/shop" },
 };
 
-/**
- * Trust figures, shown under every slide rather than made part of any one of
- * them — they describe the business, not a promotion, so they should not
- * disappear when the slide rotates.
- */
-const STATS = [
-  { k: "28 yrs", v: "of making" },
-  { k: "1,40,000+", v: "pieces delivered" },
-  { k: "4.8/5", v: "across 6,200 reviews" },
-];
-
 export function Hero({ slides }: { slides: HeroSlide[] }) {
   const items = slides.length > 0 ? slides : [FALLBACK_SLIDE];
   const multi = items.length > 1;
@@ -49,9 +38,10 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
   return (
     <section className="relative">
       {/*
-        No mobile min-height: below `lg` the hero is as tall as the banner plus
-        the copy under it. Forcing `78svh` here is what made a 2:1 banner get
-        `object-cover`-ed into a portrait box, throwing away ~70% of its width.
+        Below `lg` this is exactly as tall as the banner and nothing more — the
+        height comes from the slide's 2:1 image, and all of the copy is overlaid
+        on top of it. `bg-charcoal` is only the backdrop for a slide whose
+        artwork is not 2:1 and therefore gets side bars.
       */}
       <div className="relative w-full overflow-hidden bg-charcoal lg:min-h-[86vh]">
         <Swiper
@@ -91,7 +81,10 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
               <ChevronRight width={18} height={18} />
             </button>
 
-            <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center gap-2">
+            {/* Bottom-right of the banner below `lg`, opposite the copy in the
+                bottom-left, so the two share one line instead of the dots
+                needing a strip of their own under the image. */}
+            <div className="absolute right-5 bottom-4 z-10 flex gap-2 lg:inset-x-0 lg:right-auto lg:bottom-7 lg:justify-center">
               {items.map((slide, index) => (
                 <button
                   key={slide.id}
@@ -108,6 +101,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           </>
         )}
       </div>
+
     </section>
   );
 }
@@ -138,19 +132,20 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
       {/*
         Two different jobs at two different sizes.
 
-        Below `lg` this is a banner in normal flow: a 2:1 box with
-        `object-contain`, so the whole banner is visible and the copy sits
-        underneath it. `contain` rather than `cover` because slides come from
-        the admin at mixed ratios (2.000 and 1.203 in the current set) and
-        Swiper needs every slide the same height — `cover` would crop whatever
-        does not match, which is the bug this replaces. Anything not 2:1 gets
-        charcoal bars that blend into the section behind it.
+        Below `lg` this is the hero: a 2:1 box in normal flow, so the slide is
+        exactly as tall as the artwork and everything else is layered over it.
+        `object-contain` keeps it uncropped — the mobile box is portrait (0.59)
+        against landscape banners (2.00), so `cover` would scale to the height
+        and throw away ~70% of the width. `contain` also covers the admin
+        uploading mixed ratios (2.000 and 1.203 in the current set); Swiper
+        needs every slide the same height, and anything not 2:1 gets side bars
+        in the section's charcoal.
 
-        From `lg` it goes back to filling the hero as a background layer, where
-        the box (1.86) and the banners (2.00) are close enough that `cover`
-        loses almost nothing.
+        From `lg` it fills the hero as a background layer, where the box (1.86)
+        and the banners (2.00) are close enough that `cover` loses almost
+        nothing.
       */}
-      <div className="relative aspect-[2/1] w-full bg-charcoal lg:absolute lg:inset-0 lg:aspect-auto">
+      <div className="relative aspect-[2/1] w-full lg:absolute lg:inset-0 lg:aspect-auto">
         <Image
           src={slide.image}
           alt={slide.imageAlt}
@@ -163,56 +158,66 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
       </div>
 
       {/*
-        Desktop-only scrim. It exists to make white copy legible over the
-        artwork, which is only a problem when the copy is *on* the artwork —
-        below `lg` the copy now sits beneath the banner, so there is nothing to
-        darken. Dropping it on mobile also retires the collision it was hiding:
-        these banners carry their own burnt-in headline, and the old
-        charcoal/85 fade was covering the whole image to stop that headline
-        showing through behind `slide.heading`.
-      */}
-      <div className="hidden lg:absolute lg:inset-0 lg:block lg:bg-gradient-to-r lg:from-charcoal/85 lg:via-charcoal/45 lg:to-transparent" />
+        One scrim, two shapes.
 
-      {/* `pb-16` leaves room for the pagination dots pinned to the hero's
-          bottom edge, which on mobile would otherwise land on the stats. */}
-      <div className="relative mx-auto flex max-w-[90rem] items-center px-5 pt-10 pb-16 lg:min-h-[86vh] lg:px-10 lg:py-0">
+        Below `lg` it is a band rising from the banner's own bottom edge. The
+        stops are explicit rather than the default even spread because the copy
+        occupies roughly 15–75% up the band, and an even fade left the heading
+        sitting at ~40% opacity — white type on the pale lower half of the
+        artwork, effectively unreadable. Holding ~0.9 to the 60% mark and only
+        releasing above the copy keeps the type legible while leaving the top
+        45% of the banner completely untouched.
+
+        From `lg` it is the original left-to-right fade across the full hero,
+        which is where the copy sits at that size.
+      */}
+      <div className="absolute inset-x-0 bottom-0 h-[55%] bg-[linear-gradient(to_top,rgba(26,26,26,0.96)_0%,rgba(26,26,26,0.9)_60%,rgba(26,26,26,0.6)_80%,transparent_100%)] lg:inset-0 lg:h-auto lg:bg-gradient-to-r lg:from-charcoal/85 lg:via-charcoal/45 lg:to-transparent" />
+
+      {/*
+        Pinned to the banner's bottom-left below `lg`, so the hero is the image
+        and nothing else — being absolute means it contributes no height, and
+        the slide ends exactly where the artwork does.
+
+        From `lg` it goes back to a normal-flow flex child that centres itself
+        against `min-h-[86vh]`, which is the desktop composition untouched.
+      */}
+      <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[90rem] px-5 pb-4 lg:static lg:flex lg:min-h-[86vh] lg:items-center lg:px-10 lg:pb-0">
         <div className="max-w-xl animate-fade-up">
-          <h1 className="font-display text-[2rem] leading-[1.05] font-light whitespace-pre-line text-white sm:text-5xl lg:text-[4.25rem]">
+          {/*
+            `line-clamp-1` below `sm`: there is roughly 60px of usable band at
+            the foot of a 195px banner, and a heading that wraps to three lines
+            would climb straight over the artwork it is supposed to caption.
+            `whitespace-normal` stops a `\n` in the copy forcing that wrap.
+          */}
+          <h1 className="line-clamp-1 font-display text-sm leading-tight font-light whitespace-normal text-white sm:line-clamp-none sm:text-5xl sm:leading-[1.05] sm:whitespace-pre-line lg:text-[4.25rem]">
             {slide.heading}
           </h1>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base lg:mt-6">
+
+          {/* Hidden below `sm`. The banner artwork already carries a headline
+              of its own; a subtitle under it in the same 60px band would be a
+              third restatement of the same product name. */}
+          <p className="hidden max-w-md leading-relaxed text-white/70 sm:mt-4 sm:block sm:text-base lg:mt-6">
             {slide.subtitle}
           </p>
-          <div className="mt-7 flex flex-wrap gap-3 lg:mt-10">
+
+          <div className="mt-2 flex flex-wrap gap-3 sm:mt-7 lg:mt-10">
             {/* Looks like the button it replaces; the surrounding link is what
                 actually navigates. `group-hover` keeps the hover affordance
-                alive when the pointer is anywhere on the slide. */}
+                alive when the pointer is anywhere on the slide.
+
+                `sm` size with `sm:`-prefixed overrides back up to the old `lg`
+                padding — `buttonClass` takes one size, so a responsive button
+                has to come from the className rather than the size argument. */}
             <span
               className={buttonClass(
                 "gold",
-                "lg",
-                "group-hover:bg-gold-dark group-focus-visible:bg-gold-dark",
+                "sm",
+                "sm:px-8 sm:py-4 sm:text-xs group-hover:bg-gold-dark group-focus-visible:bg-gold-dark",
               )}
             >
               {slide.cta.label}
             </span>
           </div>
-
-          {/* Tighter rhythm below `lg`: these gaps were tuned to fill a 78svh
-              box, and now that the copy is stacked under the banner rather
-              than centred in one, the desktop spacing just reads as drift. */}
-          <dl className="mt-9 grid max-w-md grid-cols-3 gap-3 border-t border-white/15 pt-5 sm:gap-6 lg:mt-14 lg:pt-7">
-            {STATS.map((s) => (
-              <div key={s.k} className="min-w-0">
-                <dt className="break-words font-display text-base font-light text-gold-light sm:text-2xl">
-                  {s.k}
-                </dt>
-                <dd className="mt-1 text-[10px] tracking-[0.18em] uppercase text-white/55">
-                  {s.v}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
     </Link>

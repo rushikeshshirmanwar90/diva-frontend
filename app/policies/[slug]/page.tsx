@@ -41,10 +41,12 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
         <nav aria-label="Policies" className="min-w-0">
           <p className="eyebrow mb-4">Policies</p>
 
-          {/* Below `lg` a vertical list would stack above the article and
-              push it below the fold — a horizontal scroller keeps it to one
-              row, same fix as `account-nav.tsx`. */}
-          <ul className="no-scrollbar bleed flex gap-2 overflow-x-auto pb-1 lg:hidden">
+          {/* Below `lg` these wrap onto as many rows as they need. They used
+              to be a horizontal scroller, which kept the nav to one row but
+              put 435px of policy links — most of them — off the right edge
+              behind an unadvertised swipe. Wrapping costs a row or two and
+              shows every link. */}
+          <ul className="flex flex-wrap gap-2 lg:hidden">
             {policies.map((p) => (
               <li key={p.slug} className="shrink-0">
                 <Link

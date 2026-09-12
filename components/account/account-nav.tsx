@@ -32,13 +32,12 @@ export function AccountNav() {
   return (
     <nav aria-label="Account" className="min-w-0">
       {/*
-        Below `lg` this is the only nav in the section — a vertical sidebar
-        list stacked full-width above the page content would push every
-        account page's actual content below five links and a promo box. A
-        horizontal scroller keeps the section switcher to one compact row,
-        the same fix `category-rail.tsx` uses for the same bleed-to-edge need.
+        Below `lg` this is the only nav in the section, so it wraps onto a
+        second row rather than scrolling sideways. The five chips happen to fit
+        390px today, but as a scroller a sixth link or a longer label would
+        have silently gone off-edge with no affordance saying so.
       */}
-      <ul className="no-scrollbar bleed flex gap-2 overflow-x-auto pb-1 lg:hidden">
+      <ul className="flex flex-wrap gap-2 lg:hidden">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (

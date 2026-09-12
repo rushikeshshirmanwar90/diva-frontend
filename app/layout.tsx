@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { Toaster } from "@/components/ui/toaster";
+import { NavigationBuffer } from "@/components/layout/navigation-buffer";
 import { StoreProvider } from "@/lib/store/store";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { CatalogueProvider } from "@/lib/data/catalogue-context";
@@ -53,7 +54,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} h-full`}>
       <body className="flex min-h-full flex-col antialiased">
+        {/*
+          Two layers of navigation feedback, covering different moments.
+
+          `NextTopLoader` is the always-on hairline at the top of the viewport.
+          `NavigationBuffer` is the veil that follows if the route has not
+          committed within ~180ms, and it clears the instant the route changes —
+          at which point the segment's own `loading.tsx` skeleton takes over,
+          which is a better placeholder because it has the page's shape. The
+          delay is what stops a prefetched, instant navigation flashing a veil
+          for two frames.
+        */}
         <NextTopLoader color="#c9a227" showSpinner={false} />
+        <NavigationBuffer />
         <CatalogueProvider
           products={catalogue}
           categories={categories}

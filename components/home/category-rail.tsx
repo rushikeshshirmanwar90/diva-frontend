@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { categories } from "@/lib/data/categories";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { LinkPendingOverlay } from "@/components/ui/link-pending";
 
 export async function CategoryRail() {
   const list = await categories();
@@ -14,12 +15,18 @@ export async function CategoryRail() {
         description="Nine categories, from a 2.9-gram everyday hoop to a 68-gram bridal set."
       />
 
-      <div className="no-scrollbar bleed mt-12 flex snap-x gap-4 overflow-x-auto lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible">
+      {/*
+        A grid on every size now, rather than a side-scrolling rail below `lg`.
+        The rail hid most of the nine categories off the right edge behind a
+        gesture with no affordance — a grid shows them all and lets the page
+        scroll the one direction it already scrolls.
+      */}
+      <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-5">
         {list.map((c, i) => (
           <Link
             key={c.slug}
             href={`/category/${c.slug}`}
-            className="group w-40 shrink-0 snap-start sm:w-48 lg:w-auto"
+            className="group"
           >
             <div className="relative aspect-3/4 overflow-hidden bg-beige">
               {c.image ? (
@@ -27,12 +34,13 @@ export async function CategoryRail() {
                   src={c.image}
                   alt={c.name}
                   fill
-                  sizes="(max-width: 1024px) 12rem, 18vw"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 18vw"
                   priority={i < 5}
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               ) : null}
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent" />
+              <LinkPendingOverlay />
               <div className="absolute inset-x-0 bottom-0 p-4">
                 <p className="font-display text-xl leading-tight font-light text-white">
                   {c.name}

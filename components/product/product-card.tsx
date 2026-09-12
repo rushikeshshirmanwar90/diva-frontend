@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { LinkPendingOverlay } from "@/components/ui/link-pending";
 import { Price } from "@/components/ui/price";
 import { Rating } from "@/components/ui/rating";
 import { useStore } from "@/lib/store/store";
@@ -56,7 +57,9 @@ export function ProductCard({
           href={`/product/${product.slug}`}
           className="absolute inset-0 z-10"
           aria-label={product.title}
-        />
+        >
+          <LinkPendingOverlay />
+        </Link>
 
         <div className="pointer-events-none absolute top-3 left-3 z-20 flex flex-col items-start gap-1.5">
           {product.badges.map((b) => (

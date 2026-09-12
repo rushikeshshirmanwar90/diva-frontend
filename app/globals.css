@@ -24,6 +24,7 @@
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-fade-in: fade-in 0.5s ease-out both;
   --animate-marquee: marquee 42s linear infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
   --animate-slide-in-left: slide-in-left 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-slide-in-right: slide-in-right 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -66,6 +67,22 @@
   }
 }
 
+/*
+  Sweeps a soft highlight across a skeleton block. `translateX` only, so it
+  stays on the compositor and a grid of twenty placeholders does not cost a
+  layout pass per frame. The reduced-motion block at the bottom of this file
+  freezes it, which leaves a plain beige block — still a correct "loading"
+  affordance, just a static one.
+*/
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -92,7 +109,7 @@ html {
   clips without offering anything to scroll.
 
   This is a safety net, not the layout. Anything that actually overflows is
-  still a bug to fix at the source — see `.bleed` below.
+  still a bug to fix at the source.
 */
 html,
 body {
@@ -111,7 +128,7 @@ body {
   color: #fff;
 }
 
-/* Thin, unobtrusive scrollbar for horizontal rails */
+/* Thin, unobtrusive scrollbar for the one remaining rail (ProductRail, lg+) */
 .no-scrollbar {
   scrollbar-width: none;
 }
@@ -120,45 +137,17 @@ body {
 }
 
 /*
-  The page gutter, as one value instead of a number retyped per file.
-  Every page shell is `px-5 lg:px-10`, which is exactly this.
+  There was a `.bleed` utility here — an edge-to-edge helper that cancelled the
+  page gutter with a negative margin so a scroll rail could run to the screen
+  edges. It is gone because the thing it existed for is gone: no rail bleeds to
+  the edge below `lg` any more, they are all grids or wrapped rows.
+
+  Worth remembering if one is ever reintroduced. The original bug was a rail
+  bled by `-mx-6` (24px) inside a shell padded `px-5` (20px), hanging 4px past
+  the viewport on each side and letting every page carrying it pan sideways — a
+  negative margin is only ever as correct as the number typed next to it, so
+  derive both from one value rather than matching them by hand.
 */
-:root {
-  --page-gutter: 1.25rem;
-}
-
-@media (min-width: 64rem) {
-  :root {
-    --page-gutter: 2.5rem;
-  }
-}
-
-/*
-  Edge-to-edge scroll rail inside a gutter-padded shell: cancel the shell's
-  padding, then re-add it inside so the first and last card still line up with
-  the text above them.
-
-  Replaces hand-matched `-mx-N ... px-N` pairs, because getting that pair wrong
-  is precisely the bug this fixes — `ProductRail` bled by `-mx-6` (24px) inside
-  a shell padded `px-5` (20px), so it hung 4px past the viewport on each side
-  and every page carrying a rail could be panned sideways. A negative margin
-  can only ever be as correct as the number someone typed next to it; deriving
-  both from one custom property removes the chance to disagree.
-
-  Self-resetting at `lg`, where these rails all become grids inside the padded
-  shell and must not bleed at all.
-*/
-.bleed {
-  margin-inline: calc(var(--page-gutter) * -1);
-  padding-inline: var(--page-gutter);
-}
-
-@media (min-width: 64rem) {
-  .bleed {
-    margin-inline: 0;
-    padding-inline: 0;
-  }
-}
 
 /*
   iOS Safari zooms the whole page in when you focus a control whose font-size
