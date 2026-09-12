@@ -77,14 +77,26 @@
 
 html {
   scroll-behavior: smooth;
-  /*
-    Belt-and-suspenders: one element that's a few pixels too wide (a fixed
-    width, an unbreakable long word/number) should never be able to widen
-    the whole page into a horizontal scrollbar. Applied at the root scroller
-    rather than on some nested wrapper, so it doesn't touch `position: sticky`
-    computed against the viewport.
-  */
-  overflow-x: hidden;
+}
+
+/*
+  Belt-and-suspenders: one element that's a few pixels too wide (a fixed
+  width, an unbreakable long word/number) should never be able to widen the
+  whole page into a horizontal scrollbar.
+
+  `clip`, not `hidden`. `overflow-x: hidden` here only ever worked by being on
+  the root and propagating to the viewport, and that propagation is the part
+  iOS Safari does not reliably honour — so the guard was missing on the one
+  browser that needed it. `clip` does not create a scroll container, so it can
+  also go on `body` (where `hidden` would have broken the sticky header) and it
+  clips without offering anything to scroll.
+
+  This is a safety net, not the layout. Anything that actually overflows is
+  still a bug to fix at the source — see `.bleed` below.
+*/
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
@@ -105,6 +117,66 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/*
+  The page gutter, as one value instead of a number retyped per file.
+  Every page shell is `px-5 lg:px-10`, which is exactly this.
+*/
+:root {
+  --page-gutter: 1.25rem;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --page-gutter: 2.5rem;
+  }
+}
+
+/*
+  Edge-to-edge scroll rail inside a gutter-padded shell: cancel the shell's
+  padding, then re-add it inside so the first and last card still line up with
+  the text above them.
+
+  Replaces hand-matched `-mx-N ... px-N` pairs, because getting that pair wrong
+  is precisely the bug this fixes — `ProductRail` bled by `-mx-6` (24px) inside
+  a shell padded `px-5` (20px), so it hung 4px past the viewport on each side
+  and every page carrying a rail could be panned sideways. A negative margin
+  can only ever be as correct as the number someone typed next to it; deriving
+  both from one custom property removes the chance to disagree.
+
+  Self-resetting at `lg`, where these rails all become grids inside the padded
+  shell and must not bleed at all.
+*/
+.bleed {
+  margin-inline: calc(var(--page-gutter) * -1);
+  padding-inline: var(--page-gutter);
+}
+
+@media (min-width: 64rem) {
+  .bleed {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+/*
+  iOS Safari zooms the whole page in when you focus a control whose font-size
+  is under 16px, and does not zoom back out afterwards. Every form control on
+  the site was under it — `text-sm` inputs (14px), the shop sort `<select>`
+  (11px) — so one tap into any field left the viewport scaled up and the page
+  pannable sideways for the rest of the session. That reads as "the site
+  overflows horizontally" and is unrelated to the layout actually being too
+  wide; it is the only reason 16px is a hard floor here.
+
+  Above `lg` there is no such behaviour, so the smaller type is left alone.
+*/
+@media (max-width: 63.99rem) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 1rem;
+  }
 }
 
 .eyebrow {

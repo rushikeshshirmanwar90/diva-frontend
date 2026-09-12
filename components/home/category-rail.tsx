@@ -14,7 +14,7 @@ export async function CategoryRail() {
         description="Nine categories, from a 2.9-gram everyday hoop to a 68-gram bridal set."
       />
 
-      <div className="no-scrollbar mt-12 -mx-5 flex snap-x gap-4 overflow-x-auto px-5 lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible lg:px-0">
+      <div className="no-scrollbar bleed mt-12 flex snap-x gap-4 overflow-x-auto lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible">
         {list.map((c, i) => (
           <Link
             key={c.slug}

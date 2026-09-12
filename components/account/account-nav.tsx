@@ -22,8 +22,15 @@ const links = [
 export function AccountNav() {
   const pathname = usePathname();
 
+  /*
+    `min-w-0` below because this is a grid item in `app/account/layout.tsx` and
+    the scroller inside reports its full un-wrapped chip width as min-content —
+    so `min-width: auto` would floor the nav at that width and push the page
+    sideways. Currently the five labels happen to fit; a sixth, or a longer
+    one, is all it would take. Same fix as `app/policies/[slug]/page.tsx`.
+  */
   return (
-    <nav aria-label="Account">
+    <nav aria-label="Account" className="min-w-0">
       {/*
         Below `lg` this is the only nav in the section — a vertical sidebar
         list stacked full-width above the page content would push every
@@ -31,7 +38,7 @@ export function AccountNav() {
         horizontal scroller keeps the section switcher to one compact row,
         the same fix `category-rail.tsx` uses for the same bleed-to-edge need.
       */}
-      <ul className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:hidden">
+      <ul className="no-scrollbar bleed flex gap-2 overflow-x-auto pb-1 lg:hidden">
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (

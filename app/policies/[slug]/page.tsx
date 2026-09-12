@@ -29,13 +29,22 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
       <Breadcrumbs trail={[{ label: policy.title }]} />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[16rem_1fr] lg:gap-20">
-        <nav aria-label="Policies">
+        {/*
+          `min-w-0` is load-bearing, not tidying. A grid item defaults to
+          `min-width: auto`, which floors it at its *min-content* width — and
+          the scroller below contributes the full un-wrapped width of every
+          chip (~825px), because `overflow-x-auto` zeroes a scroll container's
+          own `min-width: auto` but does nothing to the min-content width it
+          reports to its parent. Without this the nav refused to shrink below
+          825px inside a 350px column and dragged the whole page sideways.
+        */}
+        <nav aria-label="Policies" className="min-w-0">
           <p className="eyebrow mb-4">Policies</p>
 
           {/* Below `lg` a vertical list would stack above the article and
               push it below the fold — a horizontal scroller keeps it to one
               row, same fix as `account-nav.tsx`. */}
-          <ul className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:hidden">
+          <ul className="no-scrollbar bleed flex gap-2 overflow-x-auto pb-1 lg:hidden">
             {policies.map((p) => (
               <li key={p.slug} className="shrink-0">
                 <Link
@@ -86,7 +95,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
           </ul>
         </nav>
 
-        <article className="max-w-2xl">
+        <article className="min-w-0 max-w-2xl">
           <h1 className="font-display text-4xl leading-tight font-light text-ink lg:text-[3rem]">
             {policy.title}
           </h1>

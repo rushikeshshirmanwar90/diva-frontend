@@ -29,7 +29,7 @@ export function ProductGrid({
 /** Horizontally scrolling rail — used for related and recently viewed. */
 export function ProductRail({ products }: { products: Product[] }) {
   return (
-    <div className="no-scrollbar -mx-6 flex snap-x snap-mandatory gap-6 overflow-x-auto px-6 pb-2 lg:mx-0 lg:px-0">
+    <div className="no-scrollbar bleed flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2">
       {products.map((product) => (
         <div
           key={product.id}

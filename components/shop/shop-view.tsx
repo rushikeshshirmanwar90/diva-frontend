@@ -49,6 +49,20 @@ export function ShopView({
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  /*
+    Same lock the cart drawer and search overlay already take. Without it the
+    catalogue keeps scrolling under the filter sheet, so dragging the facet
+    list past its end scrolls the page behind instead — and closing the sheet
+    drops you somewhere you never navigated to.
+  */
+  useEffect(() => {
+    if (!drawerOpen) return;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [drawerOpen]);
+
   // Keep the URL shareable without triggering a Next navigation on every click.
   useEffect(() => {
     const query = filtersToQuery(state, keepParams);
@@ -123,7 +137,13 @@ export function ShopView({
               {activeCount > 0 && ` · ${activeCount} filter${activeCount === 1 ? "" : "s"} applied`}
             </p>
 
-            <div className="flex items-center gap-3">
+            {/*
+              Wraps because the 16px mobile floor on form controls (see
+              `globals.css`) widens this `<select>` enough that Filter + Sort no
+              longer fit one row at 320px. Two rows at that width beats a row
+              that pushes past the viewport.
+            */}
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => setDrawerOpen(true)}
@@ -137,7 +157,7 @@ export function ShopView({
                 )}
               </button>
 
-              <label className="flex items-center gap-2 text-[10px] tracking-luxe uppercase text-muted">
+              <label className="flex min-w-0 items-center gap-2 text-[10px] tracking-luxe uppercase text-muted">
                 Sort
                 <select
                   value={state.sort}
@@ -145,7 +165,7 @@ export function ShopView({
                     setVisible(PAGE_SIZE);
                     setState((p) => ({ ...p, sort: e.target.value as SortKey }));
                   }}
-                  className="border border-line bg-white px-3 py-2 text-[11px] tracking-normal text-ink outline-none focus:border-gold"
+                  className="min-w-0 border border-line bg-white px-3 py-2 text-[11px] tracking-normal text-ink outline-none focus:border-gold"
                 >
                   {sortOptions.map((o) => (
                     <option key={o.key} value={o.key}>
@@ -252,7 +272,7 @@ export function ShopView({
                 includeCategory={includeCategory}
               />
             </div>
-            <div className="grid grid-cols-2 gap-3 border-t border-line px-5 py-4">
+            <div className="grid grid-cols-2 gap-3 border-t border-line px-5 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+1rem)]">
               <Button variant="outline" onClick={clearAll}>
                 Clear all
               </Button>

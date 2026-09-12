@@ -2,11 +2,12 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper, SwiperSlide, type SwiperClass } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import { ButtonLink } from "@/components/ui/button";
+import { buttonClass } from "@/components/ui/button";
 import { MODEL, isAnimatedImageUrl } from "@/lib/images";
 import type { HeroSlide } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -47,7 +48,12 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section className="relative">
-      <div className="relative min-h-[78vh] w-full overflow-hidden bg-charcoal lg:min-h-[86vh]">
+      {/*
+        No mobile min-height: below `lg` the hero is as tall as the banner plus
+        the copy under it. Forcing `78svh` here is what made a 2:1 banner get
+        `object-cover`-ed into a portrait box, throwing away ~70% of its width.
+      */}
+      <div className="relative w-full overflow-hidden bg-charcoal lg:min-h-[86vh]">
         <Swiper
           modules={[Autoplay]}
           autoplay={multi ? { delay: 6000, disableOnInteraction: false } : false}
@@ -108,33 +114,94 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
 function HeroSlideContent({ slide }: { slide: HeroSlide }) {
   return (
-    <div className="relative min-h-[78vh] w-full lg:min-h-[86vh]">
-      <Image
-        src={slide.image}
-        alt={slide.imageAlt}
-        fill
-        priority
-        sizes="100vw"
-        unoptimized={isAnimatedImageUrl(slide.image)}
-        className="object-cover object-[60%_center]"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-charcoal/85 via-charcoal/45 to-transparent" />
+    /*
+      The whole slide is the link, not just the button.
 
-      <div className="relative mx-auto flex min-h-[78vh] max-w-[90rem] items-center px-5 lg:min-h-[86vh] lg:px-10">
+      It has to be one link rather than a wrapper around the existing one: the
+      CTA was an `<a>`, and an `<a>` inside an `<a>` is invalid and behaves
+      unpredictably. The stretched-link trick (`::after { inset: 0 }` on the
+      CTA) does not work here either — it resolves against the nearest
+      positioned ancestor, and the copy container below needs `relative` to
+      paint above the absolutely-positioned banner on desktop, so the hit area
+      would stop at the text block and never cover the artwork.
+
+      So the CTA is a span now. It still looks and hovers like a button via
+      `group-hover`, and this way the accessible name is set once, deliberately,
+      instead of being the concatenation of a heading, a subtitle and three
+      statistics.
+    */
+    <Link
+      href={slide.cta.href}
+      aria-label={`${slide.heading.replace(/\s+/g, " ").trim()} — ${slide.cta.label}`}
+      className="group relative block w-full focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-gold lg:min-h-[86vh]"
+    >
+      {/*
+        Two different jobs at two different sizes.
+
+        Below `lg` this is a banner in normal flow: a 2:1 box with
+        `object-contain`, so the whole banner is visible and the copy sits
+        underneath it. `contain` rather than `cover` because slides come from
+        the admin at mixed ratios (2.000 and 1.203 in the current set) and
+        Swiper needs every slide the same height — `cover` would crop whatever
+        does not match, which is the bug this replaces. Anything not 2:1 gets
+        charcoal bars that blend into the section behind it.
+
+        From `lg` it goes back to filling the hero as a background layer, where
+        the box (1.86) and the banners (2.00) are close enough that `cover`
+        loses almost nothing.
+      */}
+      <div className="relative aspect-[2/1] w-full bg-charcoal lg:absolute lg:inset-0 lg:aspect-auto">
+        <Image
+          src={slide.image}
+          alt={slide.imageAlt}
+          fill
+          priority
+          sizes="100vw"
+          unoptimized={isAnimatedImageUrl(slide.image)}
+          className="object-contain object-center lg:object-cover lg:object-[60%_center]"
+        />
+      </div>
+
+      {/*
+        Desktop-only scrim. It exists to make white copy legible over the
+        artwork, which is only a problem when the copy is *on* the artwork —
+        below `lg` the copy now sits beneath the banner, so there is nothing to
+        darken. Dropping it on mobile also retires the collision it was hiding:
+        these banners carry their own burnt-in headline, and the old
+        charcoal/85 fade was covering the whole image to stop that headline
+        showing through behind `slide.heading`.
+      */}
+      <div className="hidden lg:absolute lg:inset-0 lg:block lg:bg-gradient-to-r lg:from-charcoal/85 lg:via-charcoal/45 lg:to-transparent" />
+
+      {/* `pb-16` leaves room for the pagination dots pinned to the hero's
+          bottom edge, which on mobile would otherwise land on the stats. */}
+      <div className="relative mx-auto flex max-w-[90rem] items-center px-5 pt-10 pb-16 lg:min-h-[86vh] lg:px-10 lg:py-0">
         <div className="max-w-xl animate-fade-up">
           <h1 className="font-display text-[2rem] leading-[1.05] font-light whitespace-pre-line text-white sm:text-5xl lg:text-[4.25rem]">
             {slide.heading}
           </h1>
-          <p className="mt-6 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base lg:mt-6">
             {slide.subtitle}
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <ButtonLink href={slide.cta.href} variant="gold" size="lg">
+          <div className="mt-7 flex flex-wrap gap-3 lg:mt-10">
+            {/* Looks like the button it replaces; the surrounding link is what
+                actually navigates. `group-hover` keeps the hover affordance
+                alive when the pointer is anywhere on the slide. */}
+            <span
+              className={buttonClass(
+                "gold",
+                "lg",
+                "group-hover:bg-gold-dark group-focus-visible:bg-gold-dark",
+              )}
+            >
               {slide.cta.label}
-            </ButtonLink>
+            </span>
           </div>
 
-          <dl className="mt-14 grid max-w-md grid-cols-3 gap-3 border-t border-white/15 pt-7 sm:gap-6">
+          {/* Tighter rhythm below `lg`: these gaps were tuned to fill a 78svh
+              box, and now that the copy is stacked under the banner rather
+              than centred in one, the desktop spacing just reads as drift. */}
+          <dl className="mt-9 grid max-w-md grid-cols-3 gap-3 border-t border-white/15 pt-5 sm:gap-6 lg:mt-14 lg:pt-7">
             {STATS.map((s) => (
               <div key={s.k} className="min-w-0">
                 <dt className="break-words font-display text-base font-light text-gold-light sm:text-2xl">
@@ -148,6 +215,6 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
           </dl>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

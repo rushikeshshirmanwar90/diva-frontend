@@ -162,7 +162,12 @@ export function CartDrawer() {
               ))}
             </ul>
 
-            <div className="border-t border-line px-6 py-5">
+            {/*
+              Extra bottom padding for the home-indicator strip, matching
+              `mobile-nav.tsx` — the drawer is `inset-y-0`, so on a notched
+              iPhone "Proceed to checkout" otherwise sits under the gesture bar.
+            */}
+            <div className="border-t border-line px-6 pt-5 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)]">
               <dl className="space-y-1.5 text-sm">
                 <Row label="Subtotal" value={formatPaise(totals.subtotal)} />
                 <Row label="GST (3%)" value={formatPaise(totals.gst)} />
