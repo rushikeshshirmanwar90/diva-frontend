@@ -27,7 +27,7 @@ import { AddressForm } from "@/components/account/address-form";
 import { createAddress, listAddresses, type Address } from "@/lib/api/addresses";
 import { formatPaise } from "@/lib/format";
 import { cn } from "@/lib/cn";
-import { CHECKOUT_ENABLED, errorMessage } from "@/lib/api/client";
+import { errorMessage } from "@/lib/api/client";
 import {
   checkServiceability,
   createOrder,
@@ -42,10 +42,6 @@ import {
  * does that, and duplicating the choice here would mean asking the customer to
  * pick UPI twice. The list below is presentational — it says what is accepted,
  * and is not a form control.
- *
- * `CHECKOUT_ENABLED` gates the real flow. With it off the component behaves
- * exactly as the demo always has, because this storefront is still shown to the
- * client as a click-through preview and must work with no backend running.
  */
 
 const steps = ["Address", "Payment"] as const;
@@ -82,13 +78,13 @@ export function CheckoutView() {
    * better place to ask someone to sign in than after they have typed one in.
    */
   useEffect(() => {
-    if (CHECKOUT_ENABLED && authStatus === "guest") {
+    if (authStatus === "guest") {
       router.replace("/login?redirect=/checkout");
     }
   }, [authStatus, router]);
 
   useEffect(() => {
-    if (!CHECKOUT_ENABLED || authStatus !== "authenticated") return;
+    if (authStatus !== "authenticated") return;
     let cancelled = false;
 
     void (async () => {
@@ -124,7 +120,7 @@ export function CheckoutView() {
   } | null>(null);
 
   const shipping = address && lookup?.pincode === address.pincode ? lookup.result : null;
-  const checkingPincode = CHECKOUT_ENABLED && !!address && lookup?.pincode !== address.pincode;
+  const checkingPincode = !!address && lookup?.pincode !== address.pincode;
 
   /**
    * Confirms the pincode is deliverable, before the customer pays.
@@ -137,7 +133,7 @@ export function CheckoutView() {
    * estimate on screen always describes what is actually selected.
    */
   useEffect(() => {
-    if (!CHECKOUT_ENABLED || !hydrated || lines.length === 0 || !address) return;
+    if (!hydrated || lines.length === 0 || !address) return;
 
     const pincode = address.pincode;
     let cancelled = false;
@@ -176,7 +172,7 @@ export function CheckoutView() {
   }, [address?.pincode, hydrated, lines.length, totals.total]);
 
   if (!hydrated) return <div className="min-h-[60vh]" />;
-  if (CHECKOUT_ENABLED && (authStatus === "loading" || authStatus === "guest")) {
+  if (authStatus === "loading" || authStatus === "guest") {
     return <div className="min-h-[60vh]" />;
   }
 
@@ -248,22 +244,6 @@ export function CheckoutView() {
       setError(errorMessage(cause));
       setPlacing(false);
     }
-  };
-
-  /**
-   * With no real credentials, there is nowhere for `window.location.href` to
-   * send the browser — PhonePe's OAuth validates server-side, so a made-up
-   * client id 401s rather than opening any page. `/checkout/sandbox-gateway`
-   * is what stands in: a clearly-labelled simulator, not a skip straight to
-   * "order confirmed", so a click on Pay still shows *something* happening.
-   */
-  const onPay = () => {
-    if (CHECKOUT_ENABLED) {
-      void payWithPhonePe();
-      return;
-    }
-    setPlacing(true);
-    router.push("/checkout/sandbox-gateway");
   };
 
   return (
@@ -340,8 +320,7 @@ export function CheckoutView() {
                   insured jewellery shipment.
                 </p>
 
-                {CHECKOUT_ENABLED ? (
-                  addresses === null ? (
+                {addresses === null ? (
                     <div className="mt-8 flex justify-center py-10 text-muted">
                       <Loader2 width={20} height={20} className="animate-spin" />
                     </div>
@@ -417,18 +396,11 @@ export function CheckoutView() {
                       >
                         <Plus width={12} height={12} /> Add a new address
                       </button>
-                    </>
-                  )
-                ) : (
-                  <div className="mt-8 border border-line bg-beige p-5 text-xs leading-relaxed text-muted">
-                    This build is a front-end demo: address collection and the delivery
-                    check are real once checkout is live. The next screen simulates a
-                    payment gateway.
-                  </div>
+                  </>
                 )}
 
                 {/* Delivery estimate for the selected pincode */}
-                {CHECKOUT_ENABLED && address && (
+                {address && (
                   <div className="mt-6 flex items-start gap-3 bg-beige p-4">
                     {checkingPincode ? (
                       <>
@@ -476,7 +448,7 @@ export function CheckoutView() {
                   </div>
                 )}
 
-                {CHECKOUT_ENABLED && addresses && addresses.length > 0 && !addingAddress && (
+                {addresses && addresses.length > 0 && !addingAddress && (
                   <p className="mt-6 text-xs text-muted">
                     <Link href="/account/addresses" className="text-gold hover:underline">
                       Manage saved addresses
@@ -518,9 +490,7 @@ export function CheckoutView() {
                   variant="gold"
                   size="lg"
                   className="mt-8 w-full sm:w-auto"
-                  disabled={
-                    (CHECKOUT_ENABLED && !address) || (shipping ? !shipping.serviceable : false)
-                  }
+                  disabled={!address || (shipping ? !shipping.serviceable : false)}
                   onClick={() => setStep(1)}
                 >
                   Continue to payment
@@ -569,19 +539,9 @@ export function CheckoutView() {
                     className="mt-0.5 shrink-0 text-gold"
                   />
                   <p className="text-xs leading-relaxed text-muted">
-                    {CHECKOUT_ENABLED ? (
-                      <>
-                        You will be redirected to PhonePe&apos;s secure gateway to complete
-                        payment — card and UPI details are never entered on or stored by
-                        Diva.
-                      </>
-                    ) : (
-                      <span className="text-ink">
-                        This build is a front-end demo: the next screen simulates a
-                        payment gateway for preview purposes. No real gateway is
-                        contacted, no payment is taken, and no data leaves your browser.
-                      </span>
-                    )}
+                    You will be redirected to PhonePe&apos;s secure gateway to complete
+                    payment — card and UPI details are never entered on or stored by
+                    Diva.
                   </p>
                 </div>
 
@@ -594,11 +554,16 @@ export function CheckoutView() {
                   >
                     <ChevronLeft width={14} height={14} /> Back
                   </Button>
-                  <Button variant="gold" size="lg" disabled={placing} onClick={onPay}>
+                  <Button
+                    variant="gold"
+                    size="lg"
+                    disabled={placing}
+                    onClick={() => void payWithPhonePe()}
+                  >
                     {placing ? (
                       <>
                         <Loader2 width={14} height={14} className="animate-spin" />
-                        {CHECKOUT_ENABLED ? "Taking you to PhonePe…" : "Opening test gateway…"}
+                        Taking you to PhonePe…
                       </>
                     ) : (
                       `Pay ${formatPaise(totals.total)}`

@@ -58,8 +58,6 @@ type StoreValue = {
 
   toasts: Toast[];
   notify: (message: string, opts?: { href?: string; linkLabel?: string }) => void;
-
-  placeOrder: () => string;
 };
 
 const StoreContext = createContext<StoreValue | null>(null);
@@ -325,12 +323,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     mutate(() => ({ couponCode: null }));
   }, []);
 
-  const placeOrder = useCallback(() => {
-    const orderNumber = `DIVA-2026-${10000 + Math.floor(Math.random() * 89999)}`;
-    mutate(() => ({ cart: [], couponCode: null }));
-    return orderNumber;
-  }, []);
-
   const value: StoreValue = {
     hydrated: loaded && !wishlistLoading,
     lines,
@@ -351,7 +343,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setCartOpen,
     toasts,
     notify,
-    placeOrder,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

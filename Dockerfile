@@ -11,13 +11,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Baked into the client bundle at build time — not secret, safe as build args.
+# Baked into the client bundle at build time — not secret, safe as a build arg.
 ARG NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-ARG NEXT_PUBLIC_CHECKOUT_ENABLED
-ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ENV NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=$NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME \
-    NEXT_PUBLIC_CHECKOUT_ENABLED=$NEXT_PUBLIC_CHECKOUT_ENABLED \
-    NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID \
     NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build

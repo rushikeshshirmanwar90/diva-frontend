@@ -14,7 +14,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * six months from now.
  */
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+/**
+ * A Google OAuth client id is public by design — it ships in every page load
+ * and identifies the app, not a user. Hardcoding the default means a Docker
+ * image built without the `--build-arg` can no longer ship with an empty id
+ * and a permanently disabled button; the env var remains as an override.
+ */
+const GOOGLE_CLIENT_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+  "192134530774-sd8gmcifhtiu88r08pt4huih7svfcvtm.apps.googleusercontent.com";
 
 type CredentialResponse = { credential: string };
 
@@ -50,7 +58,7 @@ export function GoogleSignInButton({
   );
 
   useEffect(() => {
-    if (!GOOGLE_CLIENT_ID || !scriptReady || !containerRef.current || !window.google) return;
+    if (!scriptReady || !containerRef.current || !window.google) return;
 
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
@@ -88,19 +96,6 @@ export function GoogleSignInButton({
     window.addEventListener("resize", render);
     return () => window.removeEventListener("resize", render);
   }, [scriptReady, handleCredential]);
-
-  if (!GOOGLE_CLIENT_ID) {
-    return (
-      <button
-        type="button"
-        disabled
-        title="Google sign-in is not configured — set NEXT_PUBLIC_GOOGLE_CLIENT_ID"
-        className="mt-6 flex w-full items-center justify-center border border-line py-3.5 text-[11px] tracking-luxe uppercase text-muted opacity-60"
-      >
-        Google sign-in unavailable
-      </button>
-    );
-  }
 
   return (
     <>

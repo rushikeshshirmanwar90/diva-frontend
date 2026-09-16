@@ -207,12 +207,3 @@ export function errorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return "Something went wrong. Please try again.";
 }
-
-/**
- * Whether the real checkout is wired up.
- *
- * The storefront doubles as a click-through demo for the client, and that demo
- * must keep working with no backend running. When this is false the checkout
- * falls back to the simulated order it has always produced.
- */
-export const CHECKOUT_ENABLED = process.env.NEXT_PUBLIC_CHECKOUT_ENABLED === "true";

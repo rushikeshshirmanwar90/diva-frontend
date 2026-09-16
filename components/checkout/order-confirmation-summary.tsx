@@ -8,11 +8,9 @@ import { getOrder, type Order } from "@/lib/api/checkout";
  * The three-tile "what happens next" block on `/order-confirmed`.
  *
  * Fetches the real order rather than trusting anything in the URL — the
- * `order` query param is just what the redirect happened to carry, and in
- * demo mode (`CHECKOUT_ENABLED=false`) it's a client-generated number that
- * was never created server-side. `undefined` = loading, `null` = the order
- * couldn't be resolved (demo mode, or a stale/foreign order number), each
- * rendered distinctly rather than guessed at.
+ * `order` query param is just what the redirect happened to carry.
+ * `undefined` = loading, `null` = the order couldn't be resolved (a stale or
+ * foreign order number), each rendered distinctly rather than guessed at.
  */
 export function OrderConfirmationSummary({ orderNumber }: { orderNumber: string }) {
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
