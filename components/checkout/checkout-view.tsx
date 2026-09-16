@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
+  Banknote,
   Check,
   ChevronLeft,
   Clock,
@@ -15,6 +16,7 @@ import {
   Plus,
   ShieldCheck,
   ShoppingBag,
+  Smartphone,
   Truck,
 } from "lucide-react";
 import { useStore } from "@/lib/store/store";
@@ -32,16 +34,21 @@ import {
   checkServiceability,
   createOrder,
   initiatePayment,
+  type CheckoutPaymentMethod,
   type Serviceability,
 } from "@/lib/api/checkout";
 
 /**
- * Three-step checkout: address → payment → PhonePe.
+ * Two-step checkout: address → payment.
  *
- * The payment step does **not** collect a payment method. PhonePe's hosted page
- * does that, and duplicating the choice here would mean asking the customer to
- * pick UPI twice. The list below is presentational — it says what is accepted,
- * and is not a form control.
+ * The payment step collects one thing only: pay online, or cash on delivery.
+ * It does **not** ask for UPI vs card — PhonePe's hosted page does that, and
+ * duplicating the choice here would mean asking the customer to pick UPI
+ * twice. The `acceptedMethods` list under the online option is presentational,
+ * not a form control.
+ *
+ * A COD order never leaves this app. The server confirms it on creation, so
+ * the success redirect happens here rather than on the payment-return page.
  */
 
 const steps = ["Address", "Payment"] as const;
@@ -56,7 +63,7 @@ const acceptedMethods = [
 
 export function CheckoutView() {
   const router = useRouter();
-  const { hydrated, lines, totals, coupon } = useStore();
+  const { hydrated, lines, totals, coupon, clearCart } = useStore();
   const { status: authStatus } = useAuth();
 
   const [step, setStep] = useState(0);
@@ -68,6 +75,7 @@ export function CheckoutView() {
 
   const [giftNote, setGiftNote] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>("PHONEPE");
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -123,6 +131,14 @@ export function CheckoutView() {
   const checkingPincode = !!address && lookup?.pincode !== address.pincode;
 
   /**
+   * Unknown until the serviceability answer is in; treated as offered so a
+   * failed lookup does not silently hide the option. The server re-checks the
+   * same policy at order creation and answers with a clear message if not.
+   */
+  const codAvailable = shipping ? shipping.codAvailable : true;
+  const codUnavailableReason = shipping?.codUnavailableReason;
+
+  /**
    * Confirms the pincode is deliverable, before the customer pays.
    *
    * Discovering after payment that nobody delivers there means refunding a
@@ -160,6 +176,10 @@ export function CheckoutView() {
       if (result && !result.serviceable) {
         setError(result.reason ?? "We cannot deliver to this pincode.");
       }
+      // A cart edit can push the total over the COD cap while COD is selected.
+      if (result && !result.codAvailable) {
+        setPaymentMethod("PHONEPE");
+      }
     })();
 
     return () => {
@@ -189,15 +209,20 @@ export function CheckoutView() {
   }
 
   /**
-   * Creates the order, then hands the browser to PhonePe.
+   * Creates the order, then either hands the browser to PhonePe or — for cash
+   * on delivery — goes straight to the confirmation page.
    *
-   * Two calls, not one, and deliberately so: the order exists and holds stock
-   * before the gateway is involved, so a customer who abandons the PhonePe page
-   * comes back to a resumable order rather than nothing. Nothing is marked paid
-   * here — confirmation comes from PhonePe's webhook and our status check, both
-   * server-side.
+   * Prepaid is two calls, not one, and deliberately so: the order exists and
+   * holds stock before the gateway is involved, so a customer who abandons the
+   * PhonePe page comes back to a resumable order rather than nothing. Nothing
+   * is marked paid here — confirmation comes from PhonePe's webhook and our
+   * status check, both server-side.
+   *
+   * COD is one call. The server confirms the order in the same request (there
+   * is no payment to wait for), so `status` comes back CONFIRMED and the local
+   * bag can be cleared immediately.
    */
-  const payWithPhonePe = async () => {
+  const placeOrder = async () => {
     if (!address) {
       setError("Please select or add a delivery address.");
       setStep(0);
@@ -222,6 +247,17 @@ export function CheckoutView() {
         return;
       }
 
+      if (paymentMethod === "COD" && deliverable && !deliverable.codAvailable) {
+        setLookup({ pincode: address.pincode, result: deliverable });
+        setPaymentMethod("PHONEPE");
+        setError(
+          deliverable.codUnavailableReason ??
+            "Cash on delivery is not available for this order. Please pay online.",
+        );
+        setPlacing(false);
+        return;
+      }
+
       const order = await createOrder({
         items: lines.map((line) => ({
           productId: line.product.id,
@@ -231,7 +267,14 @@ export function CheckoutView() {
         addressId: address._id,
         couponCode: coupon ?? undefined,
         giftNote: giftNote && giftMessage.trim() ? giftMessage.trim() : undefined,
+        paymentMethod,
       });
+
+      if (paymentMethod === "COD") {
+        clearCart();
+        router.replace(`/order-confirmed?order=${order.orderNumber}`);
+        return;
+      }
 
       const payment = await initiatePayment(order.orderNumber);
 
@@ -507,29 +550,104 @@ export function CheckoutView() {
                 </p>
 
                 <p className="mt-8 text-[10px] tracking-luxe uppercase text-muted">
-                  Accepted on the next screen
+                  How would you like to pay?
                 </p>
 
-                {/* Not a form control: PhonePe's hosted page collects the method. */}
-                <ul className="mt-4 space-y-3">
-                  {acceptedMethods.map((m) => (
-                    <li
-                      key={m.id}
-                      className="flex items-center gap-4 border border-line p-5"
+                <div role="radiogroup" aria-label="Payment method" className="mt-4 space-y-4">
+                  {/* Pay online */}
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={paymentMethod === "PHONEPE"}
+                    onClick={() => setPaymentMethod("PHONEPE")}
+                    className={cn(
+                      "flex w-full gap-4 border p-5 text-left transition-colors",
+                      paymentMethod === "PHONEPE"
+                        ? "border-charcoal bg-beige/60"
+                        : "border-line hover:border-charcoal/40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "mt-1 flex size-4 shrink-0 items-center justify-center rounded-full border",
+                        paymentMethod === "PHONEPE" ? "border-gold" : "border-line",
+                      )}
                     >
-                      <Check
-                        width={14}
-                        height={14}
-                        strokeWidth={2}
-                        className="shrink-0 text-gold"
-                      />
-                      <span className="flex-1">
-                        <span className="block text-sm text-ink">{m.label}</span>
-                        <span className="mt-0.5 block text-xs text-muted">{m.sub}</span>
+                      {paymentMethod === "PHONEPE" && (
+                        <span className="size-2 rounded-full bg-gold" />
+                      )}
+                    </span>
+                    <span className="flex-1">
+                      <span className="flex items-center gap-2 text-sm text-ink">
+                        <Smartphone width={14} height={14} className="text-gold" />
+                        Pay online
                       </span>
-                    </li>
-                  ))}
-                </ul>
+                      <span className="mt-1 block text-xs text-muted">
+                        UPI, cards, net banking and wallets via PhonePe&apos;s secure page.
+                      </span>
+
+                      {paymentMethod === "PHONEPE" && (
+                        // Not a form control: PhonePe's hosted page collects the method.
+                        <ul className="mt-4 space-y-2 border-t border-line pt-4">
+                          {acceptedMethods.map((m) => (
+                            <li key={m.id} className="flex items-center gap-3">
+                              <Check
+                                width={12}
+                                height={12}
+                                strokeWidth={2}
+                                className="shrink-0 text-gold"
+                              />
+                              <span className="text-xs text-ink">{m.label}</span>
+                              <span className="hidden text-xs text-muted sm:inline">
+                                · {m.sub}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </span>
+                  </button>
+
+                  {/* Cash on delivery */}
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={paymentMethod === "COD"}
+                    aria-disabled={!codAvailable}
+                    disabled={!codAvailable}
+                    onClick={() => setPaymentMethod("COD")}
+                    className={cn(
+                      "flex w-full gap-4 border p-5 text-left transition-colors",
+                      !codAvailable
+                        ? "cursor-not-allowed border-line opacity-60"
+                        : paymentMethod === "COD"
+                          ? "border-charcoal bg-beige/60"
+                          : "border-line hover:border-charcoal/40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "mt-1 flex size-4 shrink-0 items-center justify-center rounded-full border",
+                        paymentMethod === "COD" ? "border-gold" : "border-line",
+                      )}
+                    >
+                      {paymentMethod === "COD" && (
+                        <span className="size-2 rounded-full bg-gold" />
+                      )}
+                    </span>
+                    <span className="flex-1">
+                      <span className="flex items-center gap-2 text-sm text-ink">
+                        <Banknote width={14} height={14} className="text-gold" />
+                        Cash on delivery
+                      </span>
+                      <span className="mt-1 block text-xs text-muted">
+                        {codAvailable
+                          ? `Pay ${formatPaise(totals.total)} to the courier when your order arrives — cash or UPI at the door.`
+                          : (codUnavailableReason ?? "Not available for this order.")}
+                      </span>
+                    </span>
+                  </button>
+                </div>
 
                 <div className="mt-6 flex items-start gap-3 bg-beige p-5">
                   <ShieldCheck
@@ -539,9 +657,9 @@ export function CheckoutView() {
                     className="mt-0.5 shrink-0 text-gold"
                   />
                   <p className="text-xs leading-relaxed text-muted">
-                    You will be redirected to PhonePe&apos;s secure gateway to complete
-                    payment — card and UPI details are never entered on or stored by
-                    Diva.
+                    {paymentMethod === "COD"
+                      ? "Your order is confirmed the moment you place it. Please keep the exact amount and a photo ID matching the order name ready at delivery."
+                      : "You will be redirected to PhonePe’s secure gateway to complete payment — card and UPI details are never entered on or stored by Diva."}
                   </p>
                 </div>
 
@@ -558,13 +676,15 @@ export function CheckoutView() {
                     variant="gold"
                     size="lg"
                     disabled={placing}
-                    onClick={() => void payWithPhonePe()}
+                    onClick={() => void placeOrder()}
                   >
                     {placing ? (
                       <>
                         <Loader2 width={14} height={14} className="animate-spin" />
-                        Taking you to PhonePe…
+                        {paymentMethod === "COD" ? "Placing your order…" : "Taking you to PhonePe…"}
                       </>
+                    ) : paymentMethod === "COD" ? (
+                      `Place order · ${formatPaise(totals.total)}`
                     ) : (
                       `Pay ${formatPaise(totals.total)}`
                     )}

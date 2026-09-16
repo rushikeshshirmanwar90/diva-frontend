@@ -216,6 +216,18 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
           </p>
 
           <h2 className="mt-8 text-[10px] tracking-luxe uppercase text-muted">
+            Payment
+          </h2>
+          <p className="mt-3 text-sm text-ink">
+            {order.paymentMethod === "COD" ? "Cash on delivery" : "Paid online"}
+          </p>
+          {order.paymentMethod === "COD" && order.status !== "DELIVERED" && (
+            <p className="mt-1 text-xs text-muted">
+              {formatPaise(order.totals.grandTotalPaise)} due to the courier at the door.
+            </p>
+          )}
+
+          <h2 className="mt-8 text-[10px] tracking-luxe uppercase text-muted">
             Order total
           </h2>
           <dl className="mt-3 space-y-2 text-sm">

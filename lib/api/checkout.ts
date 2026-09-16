@@ -37,12 +37,17 @@ export type OrderItemInput = {
   quantity: number;
 };
 
+/** What a customer may pick at checkout. `MANUAL` is staff-only and never sent from here. */
+export type CheckoutPaymentMethod = "PHONEPE" | "COD";
+
 export type CreateOrderInput = {
   items: OrderItemInput[];
   addressId?: string;
   shippingAddress?: AddressInput;
   couponCode?: string;
   giftNote?: string;
+  /** Defaults to PHONEPE server-side when omitted. */
+  paymentMethod?: CheckoutPaymentMethod;
 };
 
 export type OrderTotals = {
@@ -57,6 +62,7 @@ export type Order = {
   _id: string;
   orderNumber: string;
   status: string;
+  paymentMethod: CheckoutPaymentMethod | "MANUAL";
   totals: OrderTotals;
   items: Array<{
     title: string;
@@ -93,6 +99,9 @@ export type Serviceability = {
   shippingChargePaise: number;
   estimatedDays: { min: number; max: number } | null;
   courierName: string | null;
+  /** Store policy for this cart value — the switch and the order-value cap. */
+  codAvailable: boolean;
+  codUnavailableReason?: string;
   reason?: string;
 };
 

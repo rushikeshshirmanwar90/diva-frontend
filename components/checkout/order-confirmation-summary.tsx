@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mail, MapPin, Package } from "lucide-react";
+import { Banknote, Mail, MapPin, Package } from "lucide-react";
 import { getOrder, type Order } from "@/lib/api/checkout";
+import { formatPaise } from "@/lib/format";
+import { cn } from "@/lib/cn";
 
 /**
  * The three-tile "what happens next" block on `/order-confirmed`.
@@ -78,10 +80,26 @@ export function OrderConfirmationSummary({ orderNumber }: { orderNumber: string 
         month: "long",
       }),
     },
+    // A fourth tile only for cash on delivery: the one number the customer
+    // needs to have ready, stated where they will look for it.
+    ...(order.paymentMethod === "COD"
+      ? [
+          {
+            icon: Banknote,
+            title: "Pay on delivery",
+            body: `${formatPaise(order.totals.grandTotalPaise)} to the courier — cash or UPI at the door. Nothing has been charged yet.`,
+          },
+        ]
+      : []),
   ];
 
   return (
-    <div className="grid gap-px bg-line sm:grid-cols-3">
+    <div
+      className={cn(
+        "grid gap-px bg-line",
+        tiles.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3",
+      )}
+    >
       {tiles.map(({ icon: Icon, title, body }) => (
         <div key={title} className="bg-white p-7">
           <Icon width={20} height={20} strokeWidth={1.3} className="text-gold" />
