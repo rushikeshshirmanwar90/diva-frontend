@@ -9,7 +9,8 @@ import { ProductRail } from "@/components/product/product-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { RecentlyViewed } from "@/components/product/recently-viewed";
 import { getCategory } from "@/lib/data/categories";
-import { getProduct, relatedProducts } from "@/lib/data/products";
+import { getProduct } from "@/lib/data/products";
+import { recommendedProducts } from "@/lib/data/recommendations";
 import { getProductReviews } from "@/lib/data/catalogue";
 import { toYouTubeEmbedUrl } from "@/lib/youtube";
 import { cn } from "@/lib/cn";
@@ -48,7 +49,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
   if (!product) notFound();
 
   const category = await getCategory(product.categorySlug);
-  const related = await relatedProducts(product, 6);
+  const related = await recommendedProducts(product, 8);
   const reviews = await getProductReviews(product.slug);
   const videoEmbedUrl = toYouTubeEmbedUrl(product.videoUrl);
 

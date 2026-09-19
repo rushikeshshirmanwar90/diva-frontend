@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, Loader2, Truck } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import {
   cancelOrder,
   getOrder,
@@ -14,6 +14,7 @@ import {
 import { errorMessage } from "@/lib/api/client";
 import { formatDate, formatPaise } from "@/lib/format";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { OrderTracker } from "@/components/account/order-tracker";
 
 /** Mirrors `CUSTOMER_CANCELLABLE` in diva-backend's `lib/orders/state-machine.ts`. */
 const CUSTOMER_CANCELLABLE = new Set([
@@ -119,6 +120,10 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
         </p>
       )}
 
+      <div className="mt-8">
+        <OrderTracker order={order} tracking={tracking} />
+      </div>
+
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_20rem]">
         <div>
           <ul className="divide-y divide-line border-y border-line">
@@ -147,46 +152,6 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
               </li>
             ))}
           </ul>
-
-          {tracking && (
-            <div className="mt-8 border border-line p-6">
-              <p className="flex items-center gap-2 text-[10px] tracking-luxe uppercase text-gold">
-                <Truck width={14} height={14} /> Tracking
-              </p>
-              <p className="mt-2 text-sm text-ink">
-                {tracking.courierName ?? "Courier"}
-                {tracking.awbCode && ` · AWB ${tracking.awbCode}`}
-              </p>
-              {tracking.trackingUrl && (
-                <a
-                  href={tracking.trackingUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 inline-block text-xs text-gold hover:underline"
-                >
-                  Track shipment
-                </a>
-              )}
-              {tracking.events.length > 0 && (
-                <ol className="mt-5 space-y-3 border-t border-line pt-5">
-                  {tracking.events.map((event, index) => (
-                    <li key={index} className="flex items-start gap-3 text-xs">
-                      <span className="mt-1 size-1.5 shrink-0 rounded-full bg-gold" />
-                      <span>
-                        <span className="block text-ink">
-                          {event.status.replace(/_/g, " ")}
-                        </span>
-                        <span className="text-muted">
-                          {formatDate(event.occurredAt)}
-                          {event.location ? ` · ${event.location}` : ""}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </div>
-          )}
 
           {CUSTOMER_CANCELLABLE.has(order.status) && (
             <Button

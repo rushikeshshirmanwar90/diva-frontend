@@ -649,19 +649,22 @@ export function CheckoutView() {
                   </button>
                 </div>
 
-                <div className="mt-6 flex items-start gap-3 bg-beige p-5">
-                  <ShieldCheck
-                    width={18}
-                    height={18}
-                    strokeWidth={1.4}
-                    className="mt-0.5 shrink-0 text-gold"
-                  />
-                  <p className="text-xs leading-relaxed text-muted">
-                    {paymentMethod === "COD"
-                      ? "Your order is confirmed the moment you place it. Please keep the exact amount and a photo ID matching the order name ready at delivery."
-                      : "You will be redirected to PhonePe’s secure gateway to complete payment — card and UPI details are never entered on or stored by Diva."}
-                  </p>
-                </div>
+                {/* Only the online path needs the reassurance about where card details go. */}
+                {paymentMethod === "PHONEPE" && (
+                  <div className="mt-6 flex items-start gap-3 bg-beige p-5">
+                    <ShieldCheck
+                      width={18}
+                      height={18}
+                      strokeWidth={1.4}
+                      className="mt-0.5 shrink-0 text-gold"
+                    />
+                    <p className="text-xs leading-relaxed text-muted">
+                      You will be redirected to PhonePe&apos;s secure gateway to complete
+                      payment — card and UPI details are never entered on or stored by
+                      Diva.
+                    </p>
+                  </div>
+                )}
 
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button

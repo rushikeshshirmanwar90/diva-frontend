@@ -6,10 +6,11 @@ import { CraftStory } from "@/components/home/craft-story";
 import { Testimonials } from "@/components/home/testimonials";
 import { InstagramStrip } from "@/components/home/instagram-strip";
 import { NewsletterBand } from "@/components/home/newsletter-band";
+import { RecentlyViewedRail } from "@/components/home/recently-viewed-rail";
 import { ProductGrid, ProductRail } from "@/components/product/product-grid";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { collections } from "@/lib/data/categories";
-import { products, productsByBadge, productsByCollection } from "@/lib/data/products";
+import { getOccasionCollection } from "@/lib/data/occasions";
+import { products, productsByBadge, productsByOccasion } from "@/lib/data/products";
 import { getHeroSlides } from "@/lib/data/hero";
 
 export default async function HomePage() {
@@ -24,18 +25,17 @@ export default async function HomePage() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 6);
   /**
-   * The two banner slots take whichever edits exist, rather than the named
-   * "wedding-edit" and "daily-wear" this page used to assume. Those were demo
-   * slugs; a store that has not created them would have crashed on the
-   * non-null assertion that used to be here. Each banner renders only if there
-   * is a collection to put in it.
+   * The banner slots are the Wedding and Daily Wear occasion edits. Both are
+   * fixed entries in `lib/data/occasions.ts` rather than admin-created
+   * collections, so they always exist — the only question is how many pieces
+   * have been tagged into each.
    */
-  const edits = await collections();
-  const [wedding, daily] = edits;
+  const wedding = getOccasionCollection("wedding");
+  const daily = getOccasionCollection("daily-wear");
 
   const [weddingCount, dailyCount] = await Promise.all([
-    wedding ? productsByCollection(wedding.slug) : Promise.resolve([]),
-    daily ? productsByCollection(daily.slug) : Promise.resolve([]),
+    productsByOccasion("wedding"),
+    productsByOccasion("daily-wear"),
   ]);
 
   return (
@@ -70,6 +70,8 @@ export default async function HomePage() {
           <ProductRail products={newArrivals} />
         </div>
       </section>
+
+      <RecentlyViewedRail />
 
       <PriceTiles />
 {/* 

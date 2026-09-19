@@ -17,6 +17,7 @@ import { Price } from "@/components/ui/price";
 import { Rating } from "@/components/ui/rating";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/store/store";
+import { recordProductView } from "@/lib/analytics/product-view";
 import { GST_RATE } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
@@ -29,6 +30,7 @@ export function BuyBox({ product }: { product: Product }) {
 
   useEffect(() => {
     markViewed(product.slug);
+    recordProductView(product.slug);
   }, [markViewed, product.slug]);
 
   const variant = product.variants.find((v) => v.id === variantId) ?? firstAvailable;

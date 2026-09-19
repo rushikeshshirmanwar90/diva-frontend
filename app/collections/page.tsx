@@ -4,39 +4,42 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/shop/page-header";
 import { isAnimatedImageUrl } from "@/lib/images";
-import { collections } from "@/lib/data/categories";
-import { productsByCollection } from "@/lib/data/products";
+import { byOccasion, occasionCollections } from "@/lib/data/occasions";
+import { products } from "@/lib/data/products";
 
 export const metadata: Metadata = {
   title: "Collections",
   description:
-    "Curated edits — the Wedding Edit, Festive Radiance, Daily Wear, the Gifting Suite and Limited Edition runs from our Jaipur atelier.",
+    "Shop by occasion — Daily Wear, Wedding, Engagement, Festival, Party, Office and Gift edits from our Jaipur atelier.",
 };
 
+/**
+ * The index: one tile per occasion, each linking to its own page.
+ *
+ * The edits are the backend's occasions, not its admin-created collections —
+ * a product ticked as "Wedding" on the add-product page lands in the Wedding
+ * edit without a second assignment. The products themselves live on
+ * `/collections/[slug]`, one occasion per page with the full filter panel;
+ * this page only shows how many pieces each edit holds.
+ */
 export default async function CollectionsPage() {
-  const edits = await collections();
-
-  // Counted up front: the map below renders synchronously and cannot await.
+  const catalogue = await products();
   const counts = new Map(
-    await Promise.all(
-      edits.map(
-        async (c) => [c.slug, (await productsByCollection(c.slug)).length] as const,
-      ),
-    ),
+    occasionCollections.map((c) => [c.slug, byOccasion(catalogue, c).length] as const),
   );
 
   return (
     <>
       <PageHeader
-        eyebrow="Curated edits"
+        eyebrow="Shop by occasion"
         title="Collections"
-        description="Five edits, each built around how a piece will actually be worn rather than what it is made of."
+        description="Seven edits, each built around when a piece will actually be worn rather than what it is made of."
         trail={[{ label: "Collections" }]}
       />
 
       <div className="mx-auto max-w-[90rem] px-5 pb-16 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-2">
-          {edits.map((c, i) => (
+          {occasionCollections.map((c, i) => (
             <Link
               key={c.slug}
               href={`/collections/${c.slug}`}

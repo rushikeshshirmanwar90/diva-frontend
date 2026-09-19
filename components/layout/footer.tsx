@@ -1,61 +1,22 @@
 import Link from "next/link";
-import {
-  BadgeCheck,
-  Mail,
-  Phone,
-  RotateCcw,
-  ShieldCheck,
-  Truck,
-} from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
   YoutubeIcon,
 } from "@/components/ui/social-icons";
-import { categories, collections } from "@/lib/data/categories";
+import { categories } from "@/lib/data/categories";
+import { occasionCollections } from "@/lib/data/occasions";
 import { getSiteSettings } from "@/lib/data/site";
 import { NewsletterForm } from "@/components/home/newsletter-form";
 
-const ICON_MAP: Record<string, typeof BadgeCheck> = {
-  BadgeCheck,
-  Truck,
-  RotateCcw,
-  ShieldCheck,
-};
-
 export async function Footer() {
-  const [categoryList, collectionList, settings] = await Promise.all([
-    categories(),
-    collections(),
-    getSiteSettings(),
-  ]);
+  const [categoryList, settings] = await Promise.all([categories(), getSiteSettings()]);
 
   const contact = settings.contact;
-  const assurances = settings.assurances.map((a, i) => ({
-    icon: (a.icon && ICON_MAP[a.icon]) || [BadgeCheck, Truck, RotateCcw, ShieldCheck][i % 4] || ShieldCheck,
-    title: a.title,
-    body: a.body,
-  }));
 
   return (
     <footer className="mt-24 border-t border-line">
-      <div className="mx-auto grid max-w-[90rem] gap-8 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
-        {assurances.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="flex gap-4">
-            <Icon
-              width={22}
-              height={22}
-              strokeWidth={1.3}
-              className="mt-0.5 shrink-0 text-gold"
-            />
-            <div>
-              <p className="text-[11px] tracking-luxe uppercase text-ink">{title}</p>
-              <p className="mt-1.5 text-xs leading-relaxed text-muted">{body}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
       <div className="bg-beige">
         <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-10">
           <div>
@@ -96,7 +57,7 @@ export async function Footer() {
 
           <FooterColumn
             heading="Collections"
-            links={collectionList.map((c) => ({
+            links={occasionCollections.map((c) => ({
               label: c.name,
               href: `/collections/${c.slug}`,
             }))}
@@ -104,20 +65,29 @@ export async function Footer() {
 
           <div>
             <p className="eyebrow mb-4">Help</p>
+            {/* Managed in the admin console under Settings → Help Links. */}
             <ul className="space-y-2.5">
-              {[
-                { label: "Contact & stores", href: "/contact" },
-                { label: "FAQ", href: "/faq" },
-                { label: "Shipping", href: "/policies/shipping" },
-                { label: "Returns & exchange", href: "/policies/returns" },
-                { label: "Privacy policy", href: "/policies/privacy" },
-                { label: "Terms of service", href: "/policies/terms" },
-                { label: "My account", href: "/account" },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="link-underline text-sm text-charcoal">
-                    {l.label}
-                  </Link>
+              {settings.helpLinks.map((l) => (
+                <li key={`${l.href}-${l.label}`}>
+                  {/^https?:\/\//i.test(l.href) ? (
+                    <a
+                      href={l.href}
+                      className="link-underline text-sm text-charcoal"
+                      target={l.openInNewTab ? "_blank" : undefined}
+                      rel={l.openInNewTab ? "noopener noreferrer" : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={l.href}
+                      className="link-underline text-sm text-charcoal"
+                      target={l.openInNewTab ? "_blank" : undefined}
+                      rel={l.openInNewTab ? "noopener noreferrer" : undefined}
+                    >
+                      {l.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

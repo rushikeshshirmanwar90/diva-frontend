@@ -10,17 +10,32 @@ export const metadata: Metadata = {
     "Delivery times, pricing, returns, buyback and hallmarking — the questions we are actually asked, answered plainly.",
 };
 
+/**
+ * Everything on this page is managed in the admin console under
+ * Settings → Help & FAQ Content: the header, the question groups, and the
+ * help cards at the bottom.
+ *
+ * The intro links the store's WhatsApp number wherever the admin writes
+ * "WhatsApp us" — the number itself lives in Store & Contact, so a change
+ * there is reflected here without editing two places.
+ */
 export default async function FaqPage() {
   const settings = await getSiteSettings();
   const contact = settings.contact;
   const faqGroups = settings.faqs;
+  const help = settings.helpPage;
+
+  const description = help.description.replace(
+    /WhatsApp us(?! on)/i,
+    `WhatsApp us on ${contact.whatsapp}`,
+  );
 
   return (
     <>
       <PageHeader
-        eyebrow="Help centre"
-        title="Questions, answered plainly"
-        description={`If your question is not here, WhatsApp us on ${contact.whatsapp} — a person replies, usually within ten minutes.`}
+        eyebrow={help.eyebrow}
+        title={help.title}
+        description={description}
         trail={[{ label: "Help & FAQ" }]}
       />
 
@@ -36,34 +51,40 @@ export default async function FaqPage() {
           ))}
         </div>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2">
-          {[
-            {
-              title: "Still stuck?",
-              body: "Message the support desk and get a reply within four working hours.",
-              href: "/contact",
-              cta: "Contact us",
-            },
-            {
-              title: "Planning a wedding?",
-              body: "Bridal orders take 6–8 weeks. Here is the timeline we recommend.",
-              href: "/blog/bridal-timeline-eight-weeks",
-              cta: "Read the guide",
-            },
-          ].map((c) => (
-            <Link
-              key={c.href}
-              href={c.href}
-              className="group border border-line p-8 transition-colors hover:border-gold"
-            >
-              <p className="font-display text-2xl font-light text-ink">{c.title}</p>
-              <p className="mt-3 text-sm leading-relaxed text-muted">{c.body}</p>
-              <span className="link-underline mt-5 inline-block text-[11px] tracking-luxe uppercase text-charcoal">
-                {c.cta} →
-              </span>
-            </Link>
-          ))}
-        </div>
+        {help.cards.length > 0 && (
+          <div className="mt-16 grid gap-6 sm:grid-cols-2">
+            {help.cards.map((c, index) => {
+              const external = /^https?:\/\//i.test(c.href);
+              const className =
+                "group border border-line p-8 transition-colors hover:border-gold";
+              const body = (
+                <>
+                  <p className="font-display text-2xl font-light text-ink">{c.title}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{c.body}</p>
+                  <span className="link-underline mt-5 inline-block text-[11px] tracking-luxe uppercase text-charcoal">
+                    {c.cta} →
+                  </span>
+                </>
+              );
+
+              return external ? (
+                <a
+                  key={`${c.href}-${index}`}
+                  href={c.href}
+                  className={className}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {body}
+                </a>
+              ) : (
+                <Link key={`${c.href}-${index}`} href={c.href} className={className}>
+                  {body}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </>
   );

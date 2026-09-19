@@ -26,23 +26,6 @@ export function byBadge(list: Product[], badge: Product["badges"][number]): Prod
   return list.filter((product) => product.badges.includes(badge));
 }
 
-/** Same category first, then anything sharing a collection. */
-export function related(list: Product[], product: Product, limit = 4): Product[] {
-  const sameCategory = list.filter(
-    (candidate) =>
-      candidate.categorySlug === product.categorySlug && candidate.slug !== product.slug,
-  );
-
-  const sharedCollection = list.filter(
-    (candidate) =>
-      candidate.slug !== product.slug &&
-      candidate.categorySlug !== product.categorySlug &&
-      candidate.collectionSlugs.some((slug) => product.collectionSlugs.includes(slug)),
-  );
-
-  return [...sameCategory, ...sharedCollection].slice(0, limit);
-}
-
 export function search(list: Product[], query: string): Product[] {
   const needle = query.trim().toLowerCase();
   if (!needle) return [];

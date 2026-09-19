@@ -8,12 +8,12 @@ import {
   Heart,
   HelpCircle,
   Info,
-  Phone,
   Search,
   User,
   X,
 } from "lucide-react";
 import { useCategories } from "@/lib/data/catalogue-context";
+import { occasionCollections } from "@/lib/data/occasions";
 import { Logo } from "@/components/layout/logo";
 import {
   FacebookIcon,
@@ -25,7 +25,6 @@ const moreLinks = [
   { href: "/account", label: "My account", icon: User },
   { href: "/wishlist", label: "Wishlist", icon: Heart },
   { href: "/about", label: "Our story", icon: Info },
-  { href: "/contact", label: "Contact & stores", icon: Phone },
   { href: "/faq", label: "Help & FAQ", icon: HelpCircle },
 ];
 
@@ -141,6 +140,48 @@ export function MobileNav({
           >
             Shop all jewellery
           </Link>
+
+          {/* The Collections tab: one row per backend occasion. */}
+          <div className="mt-8">
+            <p className="eyebrow mb-3">Shop by occasion</p>
+            <ul className="divide-y divide-line/70">
+              {occasionCollections.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/collections/${c.slug}`}
+                    onClick={onClose}
+                    className="group flex items-center gap-3 py-3 transition-colors active:bg-beige/60"
+                  >
+                    <span className="relative size-12 shrink-0 overflow-hidden rounded-sm bg-beige">
+                      <Image
+                        src={c.image}
+                        alt=""
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-display text-lg font-light text-ink group-active:text-gold">
+                        {c.name}
+                      </span>
+                      <span className="block truncate text-[11px] text-muted">
+                        {c.tagline}
+                      </span>
+                    </span>
+                    <ChevronRight width={15} height={15} className="shrink-0 text-line" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/collections"
+              onClick={onClose}
+              className="mt-5 flex items-center justify-center border border-line px-5 py-3 text-[11px] font-medium tracking-luxe uppercase text-charcoal transition-colors hover:border-gold hover:text-gold active:bg-beige"
+            >
+              All collections
+            </Link>
+          </div>
 
           <div className="mt-8">
             <p className="eyebrow mb-3">More</p>

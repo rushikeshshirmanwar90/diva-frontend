@@ -1,6 +1,7 @@
 import 'server-only';
 import { getCatalogue, getProduct as fetchProduct } from '@/lib/data/catalogue';
-import { byBadge, byCategory, byCollection, related, search } from '@/lib/data/product-helpers';
+import { byBadge, byCategory, byCollection, search } from '@/lib/data/product-helpers';
+import { byOccasion, getOccasionCollection } from '@/lib/data/occasions';
 import type { Product } from '@/lib/types';
 
 /**
@@ -30,12 +31,19 @@ export async function productsByCollection(slug: string): Promise<Product[]> {
   return byCollection(await getCatalogue(), slug);
 }
 
-export async function productsByBadge(badge: Product['badges'][number]): Promise<Product[]> {
-  return byBadge(await getCatalogue(), badge);
+/**
+ * Products tagged with the occasion behind a `/collections/[slug]` page.
+ *
+ * An unknown slug yields an empty list rather than throwing; the page decides
+ * whether that is a 404.
+ */
+export async function productsByOccasion(slug: string): Promise<Product[]> {
+  const collection = getOccasionCollection(slug);
+  return collection ? byOccasion(await getCatalogue(), collection) : [];
 }
 
-export async function relatedProducts(product: Product, limit = 4): Promise<Product[]> {
-  return related(await getCatalogue(), product, limit);
+export async function productsByBadge(badge: Product['badges'][number]): Promise<Product[]> {
+  return byBadge(await getCatalogue(), badge);
 }
 
 export async function searchProducts(query: string): Promise<Product[]> {

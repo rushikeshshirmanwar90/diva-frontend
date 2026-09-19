@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import type { Category, Collection, Occasion, Product, Review, Variant } from "@/lib/types";
 import { backendUrl } from "@/lib/domain";
+import { OCCASION_LABELS } from "@/lib/data/occasions";
 
 /**
  * The catalogue, from the backend.
@@ -144,24 +145,6 @@ function titleCase(token: string | undefined | null): string {
     .join(" ");
 }
 
-/**
- * Backend occasion tokens → the storefront's vocabulary.
- *
- * The two lists were written independently and do not line up one-to-one:
- * `WEDDING` and `ENGAGEMENT` both read as "Bridal" to a shopper, and `GIFT`
- * appears as "Gifting". Anything unrecognised is dropped rather than shown raw,
- * because `DAILY_WEAR` in a filter chip looks like a bug.
- */
-const OCCASION_LABELS: Record<string, Occasion> = {
-  DAILY_WEAR: "Daily Wear",
-  WEDDING: "Bridal",
-  ENGAGEMENT: "Bridal",
-  FESTIVAL: "Festive",
-  PARTY: "Party",
-  OFFICE: "Office",
-  GIFT: "Gifting",
-};
-
 const GENDER_LABELS: Record<string, Product["attributes"]["gender"]> = {
   WOMEN: "Women",
   MEN: "Men",
@@ -221,8 +204,11 @@ function toProduct(product: ApiProduct, slugs: SlugMaps): Product {
       // about the piece; several would be a lie on a card that shows one line.
       metal: colours.length === 1 && colours[0] ? titleCase(colours[0]) : undefined,
       gender: product.attributes?.gender ? GENDER_LABELS[product.attributes.gender] : undefined,
+      // Backend tokens → the labels in `lib/data/occasions.ts`, which are also
+      // what the collection pages match on. Anything unrecognised is dropped
+      // rather than shown raw, because `DAILY_WEAR` in a chip looks like a bug.
       occasions: (product.attributes?.occasions ?? [])
-        .map((occasion) => OCCASION_LABELS[occasion])
+        .map((occasion) => OCCASION_LABELS[occasion as keyof typeof OCCASION_LABELS])
         .filter((occasion): occasion is Occasion => Boolean(occasion)),
       certification: product.attributes?.certification,
     },

@@ -174,8 +174,8 @@ export default function AboutPage() {
           <ButtonLink href="/shop" variant="gold" size="lg">
             Browse the collection
           </ButtonLink>
-          <ButtonLink href="/contact" variant="outline" size="lg">
-            Visit a counter
+          <ButtonLink href="/faq" variant="outline" size="lg">
+            Help &amp; FAQ
           </ButtonLink>
         </div>
       </section>

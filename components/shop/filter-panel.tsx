@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useCatalogue, useCategories } from "@/lib/data/catalogue-context";
+import { occasionNames } from "@/lib/data/occasions";
 import type { Category, Product } from "@/lib/types";
 import {
   facetCounts,
@@ -28,15 +29,6 @@ type Group = {
 function distinct(values: Array<string | undefined>): string[] {
   return [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
 }
-const occasionOptions = [
-  "Bridal",
-  "Festive",
-  "Daily Wear",
-  "Office",
-  "Gifting",
-  "Party",
-];
-
 /** `categories` is passed in: this runs inside a client component that reads
  * them from context, and a module-level import would go back to the mock list. */
 export function buildGroups(
@@ -87,7 +79,9 @@ export function buildGroups(
     {
       key: "occasion",
       label: "Occasion",
-      options: occasionOptions.map((o) => ({ value: o, label: o })),
+      // The backend's seven occasions, so a chip here and a tile on
+      // `/collections` always mean the same thing.
+      options: occasionNames.map((o) => ({ value: o, label: o })),
     },
     {
       key: "gender",

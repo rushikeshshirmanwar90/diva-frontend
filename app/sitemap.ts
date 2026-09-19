@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { categories, collections } from "@/lib/data/categories";
+import { categories } from "@/lib/data/categories";
+import { occasionCollections } from "@/lib/data/occasions";
 import { products } from "@/lib/data/products";
 import { blogPosts } from "@/lib/data/content";
 import { POLICY_SLUGS } from "@/lib/data/policies";
@@ -7,17 +8,12 @@ import { POLICY_SLUGS } from "@/lib/data/policies";
 const BASE = "https://diva.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [catalogue, categoryList, collectionList] = await Promise.all([
-    products(),
-    categories(),
-    collections(),
-  ]);
+  const [catalogue, categoryList] = await Promise.all([products(), categories()]);
   const staticRoutes = [
     { path: "", priority: 1 },
     { path: "/shop", priority: 0.9 },
     { path: "/collections", priority: 0.8 },
     { path: "/about", priority: 0.6 },
-    { path: "/contact", priority: 0.6 },
     { path: "/blog", priority: 0.7 },
     { path: "/faq", priority: 0.5 },
   ];
@@ -33,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       priority: 0.8,
     })),
-    ...collectionList.map((c) => ({
+    ...occasionCollections.map((c) => ({
       url: `${BASE}/collections/${c.slug}`,
       lastModified: new Date(),
       priority: 0.7,

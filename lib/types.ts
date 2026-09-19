@@ -24,13 +24,28 @@ export type Stone =
 
 export type Gender = "Women" | "Men" | "Unisex" | "Kids";
 
+/**
+ * The backend's occasion tokens — the "Occasions" chips on the admin's
+ * add-product page. Mirrors `OCCASIONS` in the backend's `models/enums.ts`.
+ */
+export type OccasionKey =
+  | "DAILY_WEAR"
+  | "WEDDING"
+  | "ENGAGEMENT"
+  | "FESTIVAL"
+  | "PARTY"
+  | "OFFICE"
+  | "GIFT";
+
+/** The same seven, as shown to a shopper. See `lib/data/occasions.ts`. */
 export type Occasion =
-  | "Bridal"
-  | "Festive"
   | "Daily Wear"
+  | "Wedding"
+  | "Engagement"
+  | "Festival"
+  | "Party"
   | "Office"
-  | "Gifting"
-  | "Party";
+  | "Gift";
 
 export type Variant = {
   id: string;
@@ -116,6 +131,16 @@ export type Collection = {
   tagline: string;
   description: string;
   image: string;
+};
+
+/**
+ * A storefront collection backed by an occasion rather than an admin-created
+ * collection: the `/collections` pages and the Collections tab list these.
+ */
+export type OccasionCollection = Omit<Collection, "name"> & {
+  key: OccasionKey;
+  /** Also the value a product carries in `attributes.occasions`. */
+  name: Occasion;
 };
 
 export type Review = {

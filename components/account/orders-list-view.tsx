@@ -11,6 +11,23 @@ import { cn } from "@/lib/cn";
 
 const PAGE_SIZE = 10;
 
+const STATUS_LABEL: Record<string, string> = {
+  PENDING: "Awaiting payment",
+  PAYMENT_INITIATED: "Awaiting payment",
+  PAYMENT_FAILED: "Payment failed",
+  ABANDONED: "Not completed",
+  PAYMENT_SUCCESS: "Confirmed",
+  CONFIRMED: "Confirmed",
+  SHIPMENT_CREATED: "Packing",
+  SHIPPED: "Shipped",
+  OUT_FOR_DELIVERY: "Out for delivery",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
+  RETURN_REQUESTED: "Return requested",
+  RETURN_PICKED: "Return collected",
+  REFUNDED: "Refunded",
+};
+
 const statusTone: Record<string, string> = {
   DELIVERED: "text-success",
   CANCELLED: "text-sale",
@@ -104,7 +121,7 @@ export function OrdersListView() {
                         statusTone[order.status] ?? "text-charcoal",
                       )}
                     >
-                      {order.status.replace(/_/g, " ")}
+                      {STATUS_LABEL[order.status] ?? order.status.replace(/_/g, " ")}
                     </p>
                     <p className="mt-0.5 text-sm text-ink">
                       {formatPaise(order.totals.grandTotalPaise)}

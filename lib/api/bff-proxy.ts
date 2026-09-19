@@ -52,14 +52,41 @@ const STRIPPED_RESPONSE_HEADERS = new Set([
   "keep-alive",
 ]);
 
-/** Removes Domain and ensures Path=/ so the cookie is host-only and available across all routes */
-function normalizeCookie(cookie: string): string {
+/**
+ * Rewrites a backend cookie so it belongs to the storefront.
+ *
+ * - `Domain` is removed and `Path=/` forced, so the cookie is host-only and
+ *   available across all routes here.
+ * - `Secure` is kept only when the storefront itself is served over HTTPS.
+ *   The backend sets it unconditionally in production (correct for its own
+ *   origin), but once the cookie is re-homed to this host its transport is
+ *   *ours*. A browser silently drops a `Secure` cookie on an `http://` page,
+ *   so a storefront on plain HTTP would see every login succeed and every
+ *   `/auth/me` answer 401 — the session never exists. Stripping the flag on
+ *   HTTP matches what the backend does for its own non-production runs.
+ */
+function normalizeCookie(cookie: string, storefrontIsHttps: boolean): string {
   const parts = cookie.split(";").map((part) => part.trim());
   const filtered = parts.filter(
-    (part) => !/^domain=/i.test(part) && !/^path=/i.test(part),
+    (part) =>
+      !/^domain=/i.test(part) &&
+      !/^path=/i.test(part) &&
+      (storefrontIsHttps || !/^secure$/i.test(part)),
   );
   filtered.push("Path=/");
   return filtered.join("; ");
+}
+
+/**
+ * Whether the browser reached this storefront over HTTPS.
+ *
+ * Behind a TLS-terminating proxy (nginx, Caddy, Cloudflare) the request
+ * arrives here as plain HTTP with `X-Forwarded-Proto: https`, so that header
+ * wins when present; otherwise the URL's own scheme is the answer.
+ */
+function isHttpsRequest(request: NextRequest): boolean {
+  const forwarded = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  return (forwarded ?? request.nextUrl.protocol.replace(":", "")) === "https";
 }
 
 /**
@@ -130,8 +157,9 @@ export async function bffProxy(request: NextRequest, backendPath: string): Promi
    * stripped from each so they bind to the storefront host, which is the point
    * of proxying in the first place.
    */
+  const storefrontIsHttps = isHttpsRequest(request);
   for (const cookie of upstream.headers.getSetCookie()) {
-    responseHeaders.append("set-cookie", normalizeCookie(cookie));
+    responseHeaders.append("set-cookie", normalizeCookie(cookie, storefrontIsHttps));
   }
 
   return new NextResponse(upstream.body, {

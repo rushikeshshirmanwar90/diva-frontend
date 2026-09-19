@@ -62,7 +62,10 @@ export type Order = {
   _id: string;
   orderNumber: string;
   status: string;
+  /** Every status change, oldest first — what the tracker is drawn from. */
+  statusHistory: { status: string; at: string; note?: string }[];
   paymentMethod: CheckoutPaymentMethod | "MANUAL";
+  deliveredAt?: string;
   totals: OrderTotals;
   items: Array<{
     title: string;

@@ -2,7 +2,7 @@ import { LoadingAnnouncer, Skeleton } from "@/components/ui/skeleton";
 
 /**
  * The fallback every async route falls back to when it has no closer
- * `loading.tsx` — collections, blog posts, policies, FAQ, contact, the order
+ * `loading.tsx` — collections, blog posts, policies, FAQ, the order
  * confirmation and the home page.
  *
  * Deliberately generic: a page shell of title, lede and a card grid. Routes

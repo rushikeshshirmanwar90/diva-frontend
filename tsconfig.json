@@ -10,6 +10,9 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    // Tests import sibling modules with a `.ts` suffix so Node's built-in runner can
+    // execute them directly; harmless for Next, which never emits.
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",

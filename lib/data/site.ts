@@ -6,12 +6,6 @@ import { faqs as defaultFaqs } from "@/lib/data/content";
 
 export type { Contact };
 
-export type SiteAssurance = {
-  title: string;
-  body: string;
-  icon?: string;
-};
-
 export type StoreLocation = {
   city: string;
   tag: string;
@@ -26,6 +20,51 @@ export type FaqGroup = {
   items: Array<{ q: string; a: string }>;
 };
 
+export type HelpLink = {
+  label: string;
+  href: string;
+  openInNewTab: boolean;
+};
+
+/** What the footer showed before the list became editable — and still shows if the API is down. */
+export const DEFAULT_HELP_LINKS: HelpLink[] = [
+  { label: "FAQ", href: "/faq", openInNewTab: false },
+  { label: "Shipping", href: "/policies/shipping", openInNewTab: false },
+  { label: "Returns & exchange", href: "/policies/returns", openInNewTab: false },
+  { label: "Privacy policy", href: "/policies/privacy", openInNewTab: false },
+  { label: "Terms of service", href: "/policies/terms", openInNewTab: false },
+  { label: "My account", href: "/account", openInNewTab: false },
+];
+
+export type HelpCard = {
+  title: string;
+  body: string;
+  href: string;
+  cta: string;
+};
+
+export type HelpPage = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  cards: HelpCard[];
+};
+
+export const DEFAULT_HELP_CARDS: HelpCard[] = [
+  {
+    title: "Track an order",
+    body: "See where your order is, download invoices and request a return from your account.",
+    href: "/account/orders",
+    cta: "My orders",
+  },
+  {
+    title: "Planning a wedding?",
+    body: "Bridal orders take 6–8 weeks. Here is the timeline we recommend.",
+    href: "/blog/bridal-timeline-eight-weeks",
+    cta: "Read the guide",
+  },
+];
+
 export type SiteSettings = {
   contact: Contact;
   storeName: string;
@@ -33,7 +72,9 @@ export type SiteSettings = {
   footerBlurb: string;
   copyrightText: string;
   paymentMethodsNote: string;
-  assurances: SiteAssurance[];
+  /** Active links only, in display order. */
+  helpLinks: HelpLink[];
+  helpPage: HelpPage;
   contactPage: {
     eyebrow: string;
     title: string;
@@ -53,7 +94,8 @@ type ApiSettings = {
   footerBlurb?: string;
   copyrightText?: string;
   paymentMethodsNote?: string;
-  assurances?: SiteAssurance[];
+  helpLinks?: { label: string; href: string; isActive?: boolean; openInNewTab?: boolean }[];
+  helpPage?: { eyebrow?: string; title?: string; description?: string; cards?: HelpCard[] };
   contactPage?: {
     eyebrow?: string;
     title?: string;
@@ -72,29 +114,6 @@ function toTelHref(phone: string): string {
 function toWhatsappHref(phone: string): string {
   return `https://wa.me/${phone.replace(/\D/g, "")}`;
 }
-
-const DEFAULT_ASSURANCES: SiteAssurance[] = [
-  {
-    title: "BIS hallmarked",
-    body: "HUID on every gold piece, verifiable in the BIS Care app.",
-    icon: "BadgeCheck",
-  },
-  {
-    title: "Insured delivery",
-    body: "Fully insured and tracked until it is signed for.",
-    icon: "Truck",
-  },
-  {
-    title: "15-day returns",
-    body: "Plus one free size exchange within 30 days.",
-    icon: "RotateCcw",
-  },
-  {
-    title: "Lifetime care",
-    body: "Free cleaning, polishing and re-rhodium plating.",
-    icon: "ShieldCheck",
-  },
-];
 
 const DEFAULT_STORES: StoreLocation[] = [
   {
@@ -166,7 +185,31 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
         d.copyrightText || "© 2026 Diva The Indian Jewel · GSTIN 29AABCD1234E1ZQ",
       paymentMethodsNote:
         d.paymentMethodsNote || "UPI · Cards · Net banking · No-cost EMI",
-      assurances: d.assurances?.length ? d.assurances : DEFAULT_ASSURANCES,
+      /**
+       * An explicitly empty list is honoured — an admin who removed every
+       * link wants an empty column, not the defaults back. Only an *absent*
+       * field (older backend) falls through.
+       */
+      helpLinks: d.helpLinks
+        ? d.helpLinks
+            .filter((link) => link.isActive !== false && isSafeHref(link.href))
+            .map((link) => ({
+              label: link.label,
+              href: link.href,
+              openInNewTab: link.openInNewTab ?? false,
+            }))
+        : DEFAULT_HELP_LINKS,
+      helpPage: {
+        eyebrow: d.helpPage?.eyebrow || "Help centre",
+        title: d.helpPage?.title || "Questions, answered plainly",
+        description:
+          d.helpPage?.description ||
+          "If your question is not here, WhatsApp us — a person replies, usually within ten minutes.",
+        // Absent → defaults; explicitly empty → no cards. Same rule as helpLinks.
+        cards: d.helpPage?.cards
+          ? d.helpPage.cards.filter((card) => isSafeHref(card.href))
+          : DEFAULT_HELP_CARDS,
+      },
       contactPage: {
         eyebrow: d.contactPage?.eyebrow || "We answer in under four hours",
         title: d.contactPage?.title || "Talk to a person",
@@ -182,6 +225,14 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   }
 });
 
+/**
+ * Belt and braces over the backend's own validation: only a storefront path
+ * or an http(s) URL is ever rendered as a footer link.
+ */
+function isSafeHref(href: string): boolean {
+  return /^\/(?!\/)/.test(href) || /^https?:\/\//i.test(href);
+}
+
 function fallbackSiteSettings(): SiteSettings {
   return {
     contact: DEFAULT_CONTACT,
@@ -191,7 +242,14 @@ function fallbackSiteSettings(): SiteSettings {
       "Fine jewellery made in Bengaluru and Jaipur since 1998. Every piece is hallmarked, priced transparently, and made to be worn — not stored.",
     copyrightText: "© 2026 Diva The Indian Jewel · GSTIN 29AABCD1234E1ZQ",
     paymentMethodsNote: "UPI · Cards · Net banking · No-cost EMI",
-    assurances: DEFAULT_ASSURANCES,
+    helpLinks: DEFAULT_HELP_LINKS,
+    helpPage: {
+      eyebrow: "Help centre",
+      title: "Questions, answered plainly",
+      description:
+        "If your question is not here, WhatsApp us — a person replies, usually within ten minutes.",
+      cards: DEFAULT_HELP_CARDS,
+    },
     contactPage: {
       eyebrow: "We answer in under four hours",
       title: "Talk to a person",
