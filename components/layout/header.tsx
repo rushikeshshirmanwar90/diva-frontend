@@ -144,7 +144,7 @@ export function Header() {
               aria-controls="header-categories"
               className={cn(
                 "flex items-center gap-1.5 py-3 text-[10px] tracking-luxe uppercase transition-colors",
-                categoriesOpen || pathname.startsWith("/category/")
+                categoriesOpen || pathname === "/categories" || pathname.startsWith("/category/")
                   ? "text-gold-deep"
                   : "text-charcoal active:text-gold-deep",
               )}
@@ -163,7 +163,10 @@ export function Header() {
               id="header-categories"
               className="animate-fade-in grid grid-cols-2 gap-x-6 border-t border-line/80 px-5 py-3 sm:grid-cols-3"
             >
-              {categories.map((c) => ({ label: c.name, href: `/category/${c.slug}` })).map((item) => {
+              {[
+                ...categories.map((c) => ({ label: c.name, href: `/category/${c.slug}` })),
+                { label: "All categories", href: "/categories" },
+              ].map((item) => {
                 const active = pathname === item.href;
                 return (
                   <li key={item.href}>
@@ -193,7 +196,7 @@ export function Header() {
               item.label === "All Products"
                 ? pathname === "/shop"
                 : item.label === "Categories"
-                  ? pathname.startsWith("/category/")
+                  ? pathname === "/categories" || pathname.startsWith("/category/")
                   : pathname === item.href || pathname.startsWith(item.href);
             return (
               <li

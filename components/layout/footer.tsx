@@ -8,7 +8,6 @@ import {
 import { categories } from "@/lib/data/categories";
 import { occasionCollections } from "@/lib/data/occasions";
 import { getSiteSettings } from "@/lib/data/site";
-import { NewsletterForm } from "@/components/home/newsletter-form";
 
 export async function Footer() {
   const [categoryList, settings] = await Promise.all([categories(), getSiteSettings()]);
@@ -26,7 +25,6 @@ export async function Footer() {
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
               {settings.footerBlurb}
             </p>
-            <NewsletterForm className="mt-7" />
             <div className="mt-7 flex gap-3">
               {[
                 { Icon: InstagramIcon, label: "Instagram" },

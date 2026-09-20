@@ -2,7 +2,6 @@ import "server-only";
 import { cache } from "react";
 import type { Testimonial } from "@/lib/types";
 import { backendUrl } from "@/lib/domain";
-import { testimonials as fallbackTestimonials } from "@/lib/data/content";
 
 type ApiFeaturedReview = {
   _id: string;
@@ -30,10 +29,12 @@ export type TestimonialSection = {
 /**
  * The homepage's "What customers actually say" section.
  *
- * Reviews staff have starred in the admin come first. When none are picked —
- * a fresh store, or the backend being unreachable — the static copy in
- * `content.ts` is shown instead, so the section never renders empty.
+ * Only reviews staff have starred in the admin. When none are picked — a
+ * fresh store, or the backend being unreachable — the list is empty and the
+ * homepage leaves the section out entirely rather than padding it with
+ * invented quotes.
  */
+const NONE: TestimonialSection = { testimonials: [], summary: null };
 export const getFeaturedTestimonials = cache(async (): Promise<TestimonialSection> => {
   try {
     const response = await fetch(backendUrl("/reviews/featured"), {
@@ -41,10 +42,10 @@ export const getFeaturedTestimonials = cache(async (): Promise<TestimonialSectio
       headers: { accept: "application/json" },
     });
 
-    if (!response.ok) return { testimonials: fallbackTestimonials, summary: null };
+    if (!response.ok) return NONE;
 
     const payload = (await response.json()) as Envelope<ApiFeatured>;
-    if (!payload.success) return { testimonials: fallbackTestimonials, summary: null };
+    if (!payload.success) return NONE;
 
     const testimonials = payload.data.items
       .filter((review) => review.body?.trim())
@@ -58,11 +59,8 @@ export const getFeaturedTestimonials = cache(async (): Promise<TestimonialSectio
 
     const summary = payload.data.summary.ratingCount > 0 ? payload.data.summary : null;
 
-    return {
-      testimonials: testimonials.length > 0 ? testimonials : fallbackTestimonials,
-      summary,
-    };
+    return { testimonials, summary };
   } catch {
-    return { testimonials: fallbackTestimonials, summary: null };
+    return NONE;
   }
 });

@@ -45,11 +45,17 @@ export function buildNavItems(
     ...genderCollections.map((c) => ({ label: c.name, href: `/for/${c.slug}` })),
     {
       label: "Categories",
-      href: "/shop",
+      href: "/categories",
       panel: {
         columns: [
           { heading: "By category", links: categoryLinks.slice(0, categoryHalf) },
-          { heading: "More", links: categoryLinks.slice(categoryHalf) },
+          {
+            heading: "More",
+            links: [
+              ...categoryLinks.slice(categoryHalf),
+              { label: "All categories", href: "/categories" },
+            ],
+          },
         ],
         feature: featuredCategory?.image
           ? {

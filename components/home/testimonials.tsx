@@ -14,6 +14,9 @@ function columnsFor(count: number) {
 }
 
 export function Testimonials({ testimonials, summary }: TestimonialSection) {
+  // Nothing starred in the admin: no section, not a section of placeholders.
+  if (testimonials.length === 0) return null;
+
   const eyebrow = summary
     ? `${summary.ratingCount.toLocaleString("en-IN")} ${summary.ratingCount === 1 ? "review" : "reviews"} · ${summary.ratingAvg.toFixed(1)} average`
     : "From our customers";

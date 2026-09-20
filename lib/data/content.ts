@@ -1,42 +1,5 @@
-import type { BlogPost, Testimonial } from "@/lib/types";
+import type { BlogPost } from "@/lib/types";
 import { MODEL, STILL } from "@/lib/images";
-
-/* ─────────────────────────── Testimonials ──────────────────────────── */
-
-export const testimonials: Testimonial[] = [
-  {
-    id: "t-1",
-    name: "Shalini Iyer",
-    city: "Bengaluru",
-    quote:
-      "I've bought from the big chains for twenty years. This was the first time someone explained why a piece was priced the way it was, line by line, before I asked.",
-    rating: 5,
-  },
-  {
-    id: "t-2",
-    name: "Aditi Raghunathan",
-    city: "Chennai",
-    quote:
-      "The bridal set arrived eleven days before the wedding, exactly as promised, in a case that fit into hand baggage. That mattered more than I can explain.",
-    rating: 5,
-  },
-  {
-    id: "t-3",
-    name: "Kavya Menon",
-    city: "Kochi",
-    quote:
-      "I returned a ring because the size was wrong. No questions, no restocking fee, refund in three days. I have bought four things since.",
-    rating: 5,
-  },
-  {
-    id: "t-4",
-    name: "Rhea Kapoor",
-    city: "Mumbai",
-    quote:
-      "Every piece has come with its hallmark and its certificate. I have stopped double-checking, which is its own kind of luxury.",
-    rating: 5,
-  },
-];
 
 /* ───────────────────────────── Journal ─────────────────────────────── */
 
