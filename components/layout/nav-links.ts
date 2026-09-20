@@ -1,6 +1,6 @@
 import type { Category } from "@/lib/types";
-import { MODEL } from "@/lib/images";
 import { occasionCollections } from "@/lib/data/occasions";
+import { genderCollections } from "@/lib/data/genders";
 
 export type NavItem = {
   label: string;
@@ -14,15 +14,25 @@ export type NavItem = {
 /**
  * Built from the taxonomy rather than declared once at module scope.
  *
- * Categories come from the backend; the Collections tab lists the backend's
- * occasions (`lib/data/occasions.ts`) — the same chips an admin ticks on the
- * add-product page — so it needs nothing fetched.
+ * All Products, Women and Men are plain links (`lib/data/genders.ts` for the
+ * last two). The other two tabs each open a panel: Categories lists the
+ * backend's categories
+ * in the admin's display order; Collections lists the backend's occasions
+ * (`lib/data/occasions.ts`), the same chips an admin ticks on the
+ * add-product page, so it needs nothing fetched.
  */
 export function buildNavItems(
   categories: Category[],
 ): NavItem[] {
-  // Split in two so the panel reads as a pair of short lists rather than one
-  // long column: 4 + 3 for the seven occasions.
+  // Split in two so each panel reads as a pair of short lists rather than
+  // one long column.
+  const categoryHalf = Math.ceil(categories.length / 2);
+  const categoryLinks = categories.map((c) => ({
+    label: c.name,
+    href: `/category/${c.slug}`,
+  }));
+  const [featuredCategory] = categories;
+
   const half = Math.ceil(occasionCollections.length / 2);
   const occasionLinks = occasionCollections.map((c) => ({
     label: c.name,
@@ -31,34 +41,24 @@ export function buildNavItems(
   const [featuredOccasion] = occasionCollections;
 
   return [
+    { label: "All Products", href: "/shop" },
+    ...genderCollections.map((c) => ({ label: c.name, href: `/for/${c.slug}` })),
     {
-      label: "Jewellery",
+      label: "Categories",
       href: "/shop",
       panel: {
         columns: [
-          {
-            heading: "By category",
-            links: categories
-              .slice(0, 5)
-              .map((c) => ({ label: c.name, href: `/category/${c.slug}` })),
-          },
-          {
-            heading: "More",
-            links: [
-              ...categories.slice(5).map((c) => ({
-                label: c.name,
-                href: `/category/${c.slug}`,
-              })),
-              { label: "Shop all", href: "/shop" },
-            ],
-          },
+          { heading: "By category", links: categoryLinks.slice(0, categoryHalf) },
+          { heading: "More", links: categoryLinks.slice(categoryHalf) },
         ],
-        feature: {
-          title: "New this season",
-          blurb: "Nine pieces added to the daily-wear edit",
-          href: "/shop?sort=newest",
-          image: MODEL.daintyWhite,
-        },
+        feature: featuredCategory?.image
+          ? {
+              title: featuredCategory.name,
+              blurb: featuredCategory.blurb,
+              href: `/category/${featuredCategory.slug}`,
+              image: featuredCategory.image,
+            }
+          : undefined,
       },
     },
     {
@@ -83,6 +83,5 @@ export function buildNavItems(
         },
       },
     },
-    { label: "Our Story", href: "/about" },
   ];
 }

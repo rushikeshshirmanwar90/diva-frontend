@@ -2,7 +2,6 @@ import { Hero } from "@/components/home/hero";
 import { CategoryRail } from "@/components/home/category-rail";
 import { CollectionBanner } from "@/components/home/collection-banner";
 import { PriceTiles } from "@/components/home/price-tiles";
-import { CraftStory } from "@/components/home/craft-story";
 import { Testimonials } from "@/components/home/testimonials";
 import { InstagramStrip } from "@/components/home/instagram-strip";
 import { NewsletterBand } from "@/components/home/newsletter-band";
@@ -12,12 +11,14 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { getOccasionCollection } from "@/lib/data/occasions";
 import { products, productsByBadge, productsByOccasion } from "@/lib/data/products";
 import { getHeroSlides } from "@/lib/data/hero";
+import { getFeaturedTestimonials } from "@/lib/data/testimonials";
 
 export default async function HomePage() {
-  const [catalogue, bestsellers, heroSlides] = await Promise.all([
+  const [catalogue, bestsellers, heroSlides, testimonialSection] = await Promise.all([
     products(),
     productsByBadge("bestseller"),
     getHeroSlides(),
+    getFeaturedTestimonials(),
   ]);
 
   const featured = bestsellers.slice(0, 4);
@@ -44,19 +45,12 @@ export default async function HomePage() {
       <CategoryRail />
 
       <section className="mx-auto max-w-[90rem] px-5 pb-8 lg:px-10">
-        {/* <SectionHeading
-          eyebrow="Most loved"
-          title="Signature pieces"
-          href="/shop?sort=popular"
-          linkLabel="Shop bestsellers"
-          align="between"
-        /> */}
         <ProductGrid products={featured} className="mt-10" />
       </section>
 
-      {wedding && (
+      {/* {wedding && (
         <CollectionBanner collection={wedding} productCount={weddingCount.length} />
-      )}
+      )} */}
 
       <section className="mx-auto max-w-[90rem] px-5 py-12 lg:px-10">
         <SectionHeading
@@ -74,12 +68,12 @@ export default async function HomePage() {
       <RecentlyViewedRail />
 
       <PriceTiles />
-{/* 
+      {/* 
       {daily && (
         <CollectionBanner collection={daily} reverse productCount={dailyCount.length} />
       )} */}
 
-      <Testimonials />
+      <Testimonials {...testimonialSection} />
     </>
   );
 }

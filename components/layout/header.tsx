@@ -4,10 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart, Search, ShoppingBag, User, X } from "lucide-react";
+import { ChevronDown, Heart, Search, ShoppingBag, User, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { buildNavItems } from "@/components/layout/nav-links";
 import { useCategories } from "@/lib/data/catalogue-context";
+import { genderCollections } from "@/lib/data/genders";
 import { SearchOverlay } from "@/components/layout/search-overlay";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { useStore } from "@/lib/store/store";
@@ -25,6 +26,7 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -39,12 +41,13 @@ export function Header() {
   if (lastPath !== pathname) {
     setLastPath(pathname);
     setOpenPanel(null);
+    setCategoriesOpen(false);
     setMenuOpen(false);
     setSearchOpen(false);
   }
 
   const iconButton =
-    "relative flex size-9 sm:size-10 items-center justify-center rounded-full text-charcoal transition-all duration-200 hover:bg-beige hover:text-gold active:bg-beige-dark";
+    "relative flex size-11 sm:size-10 items-center justify-center rounded-full text-charcoal transition-all duration-200 hover:bg-beige hover:text-gold-deep active:bg-beige-dark";
 
   return (
     <header
@@ -76,7 +79,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="hidden text-[10px] tracking-luxe uppercase text-muted hover:text-gold lg:inline transition-colors"
+            className="hidden text-[10px] tracking-luxe uppercase text-muted hover:text-gold-deep lg:inline transition-colors"
           >
             Search
           </button>
@@ -114,13 +117,84 @@ export function Header() {
         </div>
       </div>
 
+      {/* Categories, below lg: one button that unfolds the full list. */}
+      {categories.length > 0 && (
+        <nav className="border-t border-line/80 lg:hidden" aria-label="Shop">
+          <div className="flex items-center justify-center gap-5 sm:gap-8">
+            {[
+              { label: "All Products", href: "/shop" },
+              ...genderCollections.map((c) => ({ label: c.name, href: `/for/${c.slug}` })),
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={pathname === item.href ? "page" : undefined}
+                className={cn(
+                  "block py-3 text-[10px] tracking-luxe uppercase whitespace-nowrap transition-colors",
+                  pathname === item.href ? "text-gold-deep" : "text-charcoal active:text-gold-deep",
+                )}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={() => setCategoriesOpen((open) => !open)}
+              aria-expanded={categoriesOpen}
+              aria-controls="header-categories"
+              className={cn(
+                "flex items-center gap-1.5 py-3 text-[10px] tracking-luxe uppercase transition-colors",
+                categoriesOpen || pathname.startsWith("/category/")
+                  ? "text-gold-deep"
+                  : "text-charcoal active:text-gold-deep",
+              )}
+            >
+              Categories
+            <ChevronDown
+              width={14}
+              height={14}
+              strokeWidth={1.5}
+              className={cn("transition-transform duration-300", categoriesOpen && "rotate-180")}
+            />
+            </button>
+          </div>
+          {categoriesOpen && (
+            <ul
+              id="header-categories"
+              className="animate-fade-in grid grid-cols-2 gap-x-6 border-t border-line/80 px-5 py-3 sm:grid-cols-3"
+            >
+              {categories.map((c) => ({ label: c.name, href: `/category/${c.slug}` })).map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "block py-2.5 text-sm transition-colors",
+                        active ? "text-gold-deep" : "text-charcoal active:text-gold-deep",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </nav>
+      )}
+
       {/* Desktop navigation */}
       <nav className="hidden border-t border-line lg:block">
         <ul className="mx-auto flex max-w-[90rem] items-center justify-center gap-9 px-10">
           {navItems.map((item) => {
             const active =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+              item.label === "All Products"
+                ? pathname === "/shop"
+                : item.label === "Categories"
+                  ? pathname.startsWith("/category/")
+                  : pathname === item.href || pathname.startsWith(item.href);
             return (
               <li
                 key={item.label}
@@ -131,8 +205,8 @@ export function Header() {
                   className={cn(
                     "block py-4 text-[11px] tracking-luxe uppercase transition-colors",
                     active || openPanel === item.label
-                      ? "text-gold"
-                      : "text-charcoal hover:text-gold",
+                      ? "text-gold-deep"
+                      : "text-charcoal hover:text-gold-deep",
                   )}
                 >
                   {item.label}
@@ -227,7 +301,7 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 function Count({ value }: { value: number }) {
   return (
-    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[9px] font-semibold leading-none text-white shadow-xs">
+    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[9px] font-semibold leading-none text-charcoal shadow-xs">
       {value > 99 ? "99+" : value}
     </span>
   );
@@ -239,7 +313,7 @@ export function CloseButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Close"
-      className="flex size-10 items-center justify-center text-charcoal transition-colors hover:text-gold"
+      className="flex size-10 items-center justify-center text-charcoal transition-colors hover:text-gold-deep"
     >
       <X width={20} height={20} strokeWidth={1.5} />
     </button>

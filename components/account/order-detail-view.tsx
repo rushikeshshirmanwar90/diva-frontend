@@ -94,7 +94,7 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
     <div className="mx-auto max-w-4xl">
       <Link
         href="/account/orders"
-        className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-muted hover:text-gold"
+        className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-muted hover:text-gold-deep"
       >
         <ChevronLeft width={13} height={13} /> All orders
       </Link>
@@ -140,7 +140,7 @@ export function OrderDetailView({ orderNumber }: { orderNumber: string }) {
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/product/${item.slug}`}
-                    className="font-display text-lg font-light text-ink hover:text-gold"
+                    className="font-display text-lg font-light text-ink hover:text-gold-deep"
                   >
                     {item.title}
                   </Link>

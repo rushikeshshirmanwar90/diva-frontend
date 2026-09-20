@@ -37,7 +37,7 @@ export function CollectionBanner({
           <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
             {collection.description}
           </p>
-          <p className="mt-6 text-[11px] tracking-luxe uppercase text-gold">
+          <p className="mt-6 text-[11px] tracking-luxe uppercase text-gold-deep">
             {productCount} pieces in this edit
           </p>
           <ButtonLink href={`/collections/${collection.slug}`} className="mt-8">

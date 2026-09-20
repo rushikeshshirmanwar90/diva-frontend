@@ -53,7 +53,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
                   href={`/policies/${p.slug}`}
                   className={`block border px-4 py-2.5 text-[11px] tracking-luxe whitespace-nowrap uppercase transition-colors ${
                     p.slug === policy.slug
-                      ? "border-gold bg-gold text-white"
+                      ? "border-gold bg-gold text-charcoal"
                       : "border-line text-charcoal hover:border-charcoal"
                   }`}
                 >
@@ -78,8 +78,8 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
                   href={`/policies/${p.slug}`}
                   className={`block py-3.5 text-sm transition-colors ${
                     p.slug === policy.slug
-                      ? "text-gold"
-                      : "text-charcoal hover:text-gold"
+                      ? "text-gold-deep"
+                      : "text-charcoal hover:text-gold-deep"
                   }`}
                 >
                   {p.title}
@@ -89,7 +89,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
             <li>
               <Link
                 href="/faq"
-                className="block py-3.5 text-sm text-charcoal transition-colors hover:text-gold"
+                className="block py-3.5 text-sm text-charcoal transition-colors hover:text-gold-deep"
               >
                 Help & FAQ
               </Link>
@@ -127,7 +127,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
 
           <p className="mt-16 border-t border-line pt-6 text-xs leading-relaxed text-muted">
             Questions about this policy? Write to{" "}
-            <a href={contact.emailHref} className="text-gold hover:underline">
+            <a href={contact.emailHref} className="text-gold-deep hover:underline">
               {contact.email}
             </a>{" "}
             or WhatsApp {contact.whatsapp}.

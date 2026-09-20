@@ -138,7 +138,7 @@ export function OrdersListView() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold disabled:opacity-30"
+                className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold-deep disabled:opacity-30"
               >
                 Previous
               </button>
@@ -149,7 +149,7 @@ export function OrdersListView() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold disabled:opacity-30"
+                className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold-deep disabled:opacity-30"
               >
                 Next
               </button>

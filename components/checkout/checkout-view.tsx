@@ -312,7 +312,7 @@ export function CheckoutView() {
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center rounded-full border text-xs transition-colors",
                     i < step
-                      ? "border-gold bg-gold text-white"
+                      ? "border-gold bg-gold text-charcoal"
                       : i === step
                         ? "border-charcoal text-charcoal"
                         : "border-line text-muted",

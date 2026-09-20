@@ -73,7 +73,7 @@ export function ProductCard({
           onClick={() => toggleWishlist(product.slug)}
           aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
           aria-pressed={saved}
-          className="absolute top-3 right-3 z-20 flex size-9 items-center justify-center rounded-full bg-white/85 backdrop-blur transition hover:bg-white"
+          className="absolute top-2 right-2 z-20 flex size-11 items-center justify-center rounded-full bg-white/85 backdrop-blur transition hover:bg-white sm:top-3 sm:right-3 sm:size-9"
         >
           <Heart
             width={15}
@@ -101,7 +101,7 @@ export function ProductCard({
       <div className="pt-4">
         <p className="eyebrow">{product.attributes.metal}</p>
         <h3 className="mt-1.5 font-display text-lg leading-snug font-normal text-ink">
-          <Link href={`/product/${product.slug}`} className="hover:text-gold">
+          <Link href={`/product/${product.slug}`} className="hover:text-gold-deep">
             {product.title}
           </Link>
         </h3>

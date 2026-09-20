@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Heart,
   HelpCircle,
-  Info,
   Search,
   User,
   X,
@@ -24,7 +23,6 @@ import {
 const moreLinks = [
   { href: "/account", label: "My account", icon: User },
   { href: "/wishlist", label: "Wishlist", icon: Heart },
-  { href: "/about", label: "Our story", icon: Info },
   { href: "/faq", label: "Help & FAQ", icon: HelpCircle },
 ];
 
@@ -59,7 +57,7 @@ export function MobileNav({
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold active:bg-beige-dark"
+            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold-deep active:bg-beige-dark"
           >
             <X width={19} height={19} strokeWidth={1.5} />
           </button>
@@ -84,7 +82,7 @@ export function MobileNav({
             <Link
               href="/account"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 rounded-sm border border-line/80 bg-beige/30 px-3 py-2 text-xs font-medium text-ink transition-colors hover:border-gold hover:text-gold active:bg-beige"
+              className="flex items-center justify-center gap-2 rounded-sm border border-line/80 bg-beige/30 px-3 py-2 text-xs font-medium text-ink transition-colors hover:border-gold hover:text-gold-deep active:bg-beige"
             >
               <User width={14} height={14} className="text-gold" />
               <span>My Account</span>
@@ -92,7 +90,7 @@ export function MobileNav({
             <Link
               href="/wishlist"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 rounded-sm border border-line/80 bg-beige/30 px-3 py-2 text-xs font-medium text-ink transition-colors hover:border-gold hover:text-gold active:bg-beige"
+              className="flex items-center justify-center gap-2 rounded-sm border border-line/80 bg-beige/30 px-3 py-2 text-xs font-medium text-ink transition-colors hover:border-gold hover:text-gold-deep active:bg-beige"
             >
               <Heart width={14} height={14} className="text-gold" />
               <span>Wishlist</span>
@@ -120,7 +118,7 @@ export function MobileNav({
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-display text-lg font-light text-ink group-active:text-gold">
+                    <span className="block truncate font-display text-lg font-light text-ink group-active:text-gold-deep">
                       {c.name}
                     </span>
                     <span className="block truncate text-[11px] text-muted">
@@ -136,7 +134,7 @@ export function MobileNav({
           <Link
             href="/shop"
             onClick={onClose}
-            className="mt-5 flex items-center justify-center border border-gold px-5 py-3 text-[11px] font-medium tracking-luxe uppercase text-gold transition-colors hover:bg-gold hover:text-white active:bg-gold-dark"
+            className="mt-5 flex items-center justify-center border border-gold px-5 py-3 text-[11px] font-medium tracking-luxe uppercase text-gold-deep transition-colors hover:bg-gold hover:text-charcoal active:bg-gold-dark"
           >
             Shop all jewellery
           </Link>
@@ -162,7 +160,7 @@ export function MobileNav({
                       />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-display text-lg font-light text-ink group-active:text-gold">
+                      <span className="block truncate font-display text-lg font-light text-ink group-active:text-gold-deep">
                         {c.name}
                       </span>
                       <span className="block truncate text-[11px] text-muted">
@@ -177,7 +175,7 @@ export function MobileNav({
             <Link
               href="/collections"
               onClick={onClose}
-              className="mt-5 flex items-center justify-center border border-line px-5 py-3 text-[11px] font-medium tracking-luxe uppercase text-charcoal transition-colors hover:border-gold hover:text-gold active:bg-beige"
+              className="mt-5 flex items-center justify-center border border-line px-5 py-3 text-[11px] font-medium tracking-luxe uppercase text-charcoal transition-colors hover:border-gold hover:text-gold-deep active:bg-beige"
             >
               All collections
             </Link>
@@ -191,7 +189,7 @@ export function MobileNav({
                   <Link
                     href={href}
                     onClick={onClose}
-                    className="flex items-center gap-3 py-3 text-sm text-charcoal transition-colors active:text-gold"
+                    className="flex items-center gap-3 py-3 text-sm text-charcoal transition-colors active:text-gold-deep"
                   >
                     <Icon width={16} height={16} strokeWidth={1.5} className="text-gold" />
                     <span className="flex-1">{label}</span>

@@ -82,6 +82,18 @@ export function loginWithGoogle(idToken: string) {
   });
 }
 
+/** Always "sent", whether or not the address exists — see the backend's note. */
+export function forgotPassword(email: string) {
+  return apiFetch<{ sent: true }>("/auth/forgot-password", { method: "POST", body: { email } });
+}
+
+export function resetPassword(token: string, password: string) {
+  return apiFetch<{ reset: true }>("/auth/reset-password", {
+    method: "POST",
+    body: { token, password },
+  });
+}
+
 export function logout() {
   return apiFetch<{ loggedOut: true }>("/auth/logout", { method: "POST" });
 }

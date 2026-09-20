@@ -89,7 +89,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         {videoEmbedUrl && (
           <div className="overflow-hidden border border-line bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-line bg-beige/50 px-5 py-3.5">
-              <span className="eyebrow text-gold">Jewellery in motion</span>
+              <span className="eyebrow text-gold-deep">Jewellery in motion</span>
               <span className="text-[10px] tracking-luxe uppercase text-muted">
                 YouTube Short
               </span>

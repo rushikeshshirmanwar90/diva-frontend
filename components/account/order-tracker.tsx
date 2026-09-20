@@ -149,7 +149,7 @@ export function OrderTracker({ order, tracking }: { order: Order; tracking: Trac
                   <span
                     className={cn(
                       "relative mx-auto flex size-6 items-center justify-center rounded-full border text-[10px]",
-                      done ? "border-gold bg-gold text-white" : "border-line bg-white text-muted",
+                      done ? "border-gold bg-gold text-charcoal" : "border-line bg-white text-muted",
                       current && order.status !== "DELIVERED" && "ring-4 ring-gold/15",
                     )}
                   >

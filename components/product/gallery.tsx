@@ -120,7 +120,7 @@ export function Gallery({
                 />
               )}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/40 text-white">
-                <span className="flex size-7 items-center justify-center rounded-full bg-gold text-white shadow-md transition-transform group-hover:scale-110">
+                <span className="flex size-7 items-center justify-center rounded-full bg-gold text-charcoal shadow-md transition-transform group-hover:scale-110">
                   <Play width={12} height={12} className="ml-0.5 fill-white text-white" />
                 </span>
                 <span className="text-[9px] font-medium tracking-luxe uppercase">
@@ -207,9 +207,9 @@ export function Gallery({
               <button
                 type="button"
                 onClick={openVideo}
-                className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-charcoal/85 px-3.5 py-2 text-[10px] tracking-luxe uppercase text-white shadow-lg backdrop-blur transition-all duration-200 hover:bg-gold hover:text-white active:scale-95"
+                className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-charcoal/85 px-3.5 py-2 text-[10px] tracking-luxe uppercase text-white shadow-lg backdrop-blur transition-all duration-200 hover:bg-gold hover:text-charcoal active:scale-95"
               >
-                <span className="flex size-4 items-center justify-center rounded-full bg-gold text-white">
+                <span className="flex size-4 items-center justify-center rounded-full bg-gold text-charcoal">
                   <Play width={9} height={9} className="ml-0.5 fill-white text-white" />
                 </span>
                 Watch Short

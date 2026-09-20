@@ -9,10 +9,12 @@ const base =
 
 const variants: Record<Variant, string> = {
   solid: "bg-charcoal text-white hover:bg-charcoal-soft",
-  gold: "bg-gold text-white hover:bg-gold-dark",
+  // Charcoal on gold (7.2:1), not white (2.4:1): the primary action must be
+  // the most legible thing on the page, not the least.
+  gold: "bg-gold text-charcoal hover:bg-gold-dark",
   outline:
     "border border-charcoal/25 text-charcoal hover:border-charcoal hover:bg-charcoal hover:text-white",
-  ghost: "text-charcoal hover:text-gold",
+  ghost: "text-charcoal hover:text-gold-deep",
 };
 
 const sizes: Record<Size, string> = {

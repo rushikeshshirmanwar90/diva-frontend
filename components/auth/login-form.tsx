@@ -17,8 +17,10 @@ export function LoginForm() {
 
   /** Where to land after signing in — checkout sends people here with `?redirect=/checkout`. */
   const redirectTo = searchParams.get("redirect") || "/account";
+  /** `/reset-password` sends people here with `?reset=1` once the new password is set. */
+  const justReset = searchParams.get("reset") === "1";
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +72,11 @@ export function LoginForm() {
       }
     >
       <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+        {justReset && !error && (
+          <p role="status" className="border border-success/30 bg-success/5 p-3 text-xs text-success">
+            Your password has been changed. Sign in with the new one.
+          </p>
+        )}
         {error && (
           <p
             role="alert"
@@ -102,7 +109,7 @@ export function LoginForm() {
           required
           disabled={submitting}
           hint={
-            <Link href="#" className="text-[10px] tracking-wide text-gold hover:underline">
+            <Link href="/forgot-password" className="text-[10px] tracking-wide text-gold-deep hover:underline">
               Forgot?
             </Link>
           }

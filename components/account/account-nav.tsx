@@ -47,7 +47,7 @@ export function AccountNav() {
                 className={cn(
                   "flex items-center gap-2 border px-4 py-2.5 text-[11px] tracking-luxe whitespace-nowrap uppercase transition-colors",
                   active
-                    ? "border-gold bg-gold text-white"
+                    ? "border-gold bg-gold text-charcoal"
                     : "border-line text-charcoal hover:border-charcoal",
                 )}
               >
@@ -68,7 +68,7 @@ export function AccountNav() {
                 href={href}
                 className={cn(
                   "flex items-center gap-3 py-4 text-sm transition-colors",
-                  active ? "text-gold" : "text-charcoal hover:text-gold",
+                  active ? "text-gold" : "text-charcoal hover:text-gold-deep",
                 )}
               >
                 <Icon width={15} height={15} strokeWidth={1.5} />

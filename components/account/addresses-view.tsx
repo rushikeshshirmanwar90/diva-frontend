@@ -116,7 +116,7 @@ export function AddressesView() {
                   <button
                     type="button"
                     onClick={() => setEditingId(address._id)}
-                    className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold"
+                    className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold-deep"
                   >
                     Edit
                   </button>
@@ -124,7 +124,7 @@ export function AddressesView() {
                     <button
                       type="button"
                       onClick={() => void handleSetDefault(address._id)}
-                      className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold"
+                      className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold-deep"
                     >
                       Set as default
                     </button>
@@ -154,7 +154,7 @@ export function AddressesView() {
             <button
               type="button"
               onClick={() => setEditingId("new")}
-              className="flex min-h-52 flex-col items-center justify-center gap-3 border border-dashed border-line text-muted transition-colors hover:border-gold hover:text-gold"
+              className="flex min-h-52 flex-col items-center justify-center gap-3 border border-dashed border-line text-muted transition-colors hover:border-gold hover:text-gold-deep"
             >
               <Plus width={20} height={20} strokeWidth={1.4} />
               <span className="text-[10px] tracking-luxe uppercase">

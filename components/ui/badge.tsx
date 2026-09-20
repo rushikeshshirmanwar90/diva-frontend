@@ -2,7 +2,7 @@ import { cn } from "@/lib/cn";
 
 const tones = {
   new: "bg-charcoal text-white",
-  bestseller: "bg-gold text-white",
+  bestseller: "bg-gold text-charcoal",
   limited: "bg-white text-charcoal ring-1 ring-charcoal/20",
   sale: "bg-sale text-white",
 } as const;

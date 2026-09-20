@@ -5,13 +5,21 @@
   --color-gold: #c9a227;
   --color-gold-light: #e2c76a;
   --color-gold-dark: #a8871c;
+  /*
+    Gold for *text* on white or beige. The brand gold reads at 2.4:1 there —
+    fine for a surface, an icon or a rule, unreadable as an 11px label. This is
+    the lightest gold that clears 4.5:1 on both light surfaces; on charcoal,
+    keep using gold or gold-light.
+  */
+  --color-gold-deep: #8a6d12;
   --color-charcoal: #1a1a1a;
   --color-charcoal-soft: #2e2c29;
   --color-beige: #f8f5f0;
   --color-beige-dark: #efe9e0;
   --color-ash: #efefef;
   --color-ink: #171412;
-  --color-muted: #7a736c;
+  /* 4.75:1 on beige, 5.2:1 on white. #7a736c fell to 4.3:1 on beige. */
+  --color-muted: #736c66;
   --color-line: #e6e0d7;
   --color-sale: #b23b3b;
   --color-success: #2f7a55;
@@ -175,7 +183,52 @@ body {
   color: var(--color-muted);
 }
 
-/* Gold hairline that grows on hover — used on text links */
+/*
+  The site is light-only by design. Without this, a phone in Dark Mode
+  renders the native parts we don't draw — text fields, selects, scrollbars,
+  the date picker — in the system's dark palette on a white page.
+*/
+:root {
+  color-scheme: light;
+}
+
+/*
+  Keyboard focus. Tailwind leaves the browser's default ring, which on a
+  white page is a faint blue hairline that vanishes against beige. One rule
+  for every control and link, in the brand's own colour, offset so it never
+  overlaps the element's border. Text fields keep their own gold-border focus
+  (`focus:border-gold`) rather than a double ring.
+*/
+:where(a, button, [role="button"], [role="tab"], summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+/* Hidden until a keyboard user tabs into the page, then the first thing they reach. */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  transform: translateY(-120%);
+  background: var(--color-charcoal);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  font-size: 11px;
+  letter-spacing: var(--tracking-luxe);
+  text-transform: uppercase;
+  transition: transform 0.2s ease-out;
+}
+.skip-link:focus-visible {
+  transform: none;
+  outline-offset: -3px;
+}
+
+/*
+  Gold hairline that grows on hover — used on text links. Scaled rather than
+  widened so the reveal stays on the compositor instead of triggering layout
+  on every frame.
+*/
 .link-underline {
   position: relative;
 }
@@ -185,12 +238,14 @@ body {
   left: 0;
   bottom: -3px;
   height: 1px;
-  width: 0;
+  width: 100%;
   background: var(--color-gold);
-  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .link-underline:hover::after {
-  width: 100%;
+  transform: scaleX(1);
 }
 
 @media (prefers-reduced-motion: reduce) {

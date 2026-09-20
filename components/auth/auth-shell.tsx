@@ -55,7 +55,7 @@ export function AuthShell({
 
           <p className="mt-10 text-[10px] leading-relaxed text-muted/80">
             By continuing you agree to Diva&apos;s terms and{" "}
-            <Link href="/policies/privacy" className="text-gold hover:underline">
+            <Link href="/policies/privacy" className="text-gold-deep hover:underline">
               privacy policy
             </Link>
             .

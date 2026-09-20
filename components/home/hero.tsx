@@ -189,7 +189,7 @@ function HeroSlideContent({ slide }: { slide: HeroSlide }) {
             would climb straight over the artwork it is supposed to caption.
             `whitespace-normal` stops a `\n` in the copy forcing that wrap.
           */}
-          <h1 className="line-clamp-1 font-display text-sm leading-tight font-light whitespace-normal text-white sm:line-clamp-none sm:text-5xl sm:leading-[1.05] sm:whitespace-pre-line lg:text-[4.25rem]">
+          <h1 className="line-clamp-2 font-display text-lg leading-tight font-light whitespace-normal text-white sm:line-clamp-none sm:text-5xl sm:leading-[1.05] sm:whitespace-pre-line lg:text-[4.25rem]">
             {slide.heading}
           </h1>
 

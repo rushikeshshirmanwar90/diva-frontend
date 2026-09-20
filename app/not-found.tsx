@@ -11,7 +11,7 @@ export default async function NotFound() {
     <div className="grid min-h-[70vh] lg:grid-cols-2">
       <div className="flex items-center px-5 py-20 lg:px-16">
         <div className="max-w-md">
-          <p className="font-display text-7xl leading-none font-light text-gold">404</p>
+          <p className="font-display text-7xl leading-none font-light text-gold-dark">404</p>
           <h1 className="mt-6 font-display text-3xl leading-tight font-light text-ink lg:text-4xl">
             This piece isn&apos;t here
           </h1>

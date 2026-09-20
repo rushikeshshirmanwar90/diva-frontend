@@ -112,7 +112,7 @@ export function ShopView({
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="text-[10px] tracking-luxe uppercase text-gold hover:underline"
+                  className="text-[10px] tracking-luxe uppercase text-gold-deep hover:underline"
                 >
                   Clear all
                 </button>
@@ -151,7 +151,7 @@ export function ShopView({
               >
                 <SlidersHorizontal width={13} height={13} /> Filter
                 {activeCount > 0 && (
-                  <span className="ml-1 rounded-full bg-gold px-1.5 text-[9px] text-white">
+                  <span className="ml-1 rounded-full bg-gold px-1.5 text-[9px] text-charcoal">
                     {activeCount}
                   </span>
                 )}
@@ -195,7 +195,7 @@ export function ShopView({
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="px-3 py-1.5 text-xs text-gold hover:underline"
+                  className="px-3 py-1.5 text-xs text-gold-deep hover:underline"
                 >
                   Clear all
                 </button>
@@ -259,7 +259,7 @@ export function ShopView({
                 type="button"
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close filters"
-                className="flex size-9 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold"
+                className="flex size-9 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold-deep"
               >
                 <X width={19} height={19} strokeWidth={1.5} />
               </button>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/lib/data/categories";
 import { occasionCollections } from "@/lib/data/occasions";
+import { genderCollections } from "@/lib/data/genders";
 import { products } from "@/lib/data/products";
 import { blogPosts } from "@/lib/data/content";
 import { POLICY_SLUGS } from "@/lib/data/policies";
@@ -13,7 +14,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "", priority: 1 },
     { path: "/shop", priority: 0.9 },
     { path: "/collections", priority: 0.8 },
-    { path: "/about", priority: 0.6 },
     { path: "/blog", priority: 0.7 },
     { path: "/faq", priority: 0.5 },
   ];
@@ -33,6 +33,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE}/collections/${c.slug}`,
       lastModified: new Date(),
       priority: 0.7,
+    })),
+    ...genderCollections.map((c) => ({
+      url: `${BASE}/for/${c.slug}`,
+      lastModified: new Date(),
+      priority: 0.8,
     })),
     ...catalogue.map((p) => ({
       url: `${BASE}/product/${p.slug}`,

@@ -10,7 +10,7 @@ export function Breadcrumbs({
     <nav aria-label="Breadcrumb" className="text-[11px] tracking-wide text-muted">
       <ol className="flex flex-wrap items-center gap-1.5">
         <li>
-          <Link href="/" className="hover:text-gold">
+          <Link href="/" className="hover:text-gold-deep">
             Home
           </Link>
         </li>
@@ -18,7 +18,7 @@ export function Breadcrumbs({
           <li key={item.label} className="flex items-center gap-1.5">
             <ChevronRight width={12} height={12} className="text-line" />
             {item.href ? (
-              <Link href={item.href} className="hover:text-gold">
+              <Link href={item.href} className="hover:text-gold-deep">
                 {item.label}
               </Link>
             ) : (

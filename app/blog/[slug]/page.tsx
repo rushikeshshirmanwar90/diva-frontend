@@ -100,7 +100,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
                   />
                 </div>
                 <div>
-                  <p className="font-display text-xl font-light text-ink group-hover:text-gold">
+                  <p className="font-display text-xl font-light text-ink group-hover:text-gold-deep">
                     {p.title}
                   </p>
                   <p className="mt-1 text-xs text-muted">

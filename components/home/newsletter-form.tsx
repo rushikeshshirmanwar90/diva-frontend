@@ -59,7 +59,7 @@ export function NewsletterForm({
         aria-label="Subscribe"
         className={cn(
           "shrink-0 transition-colors",
-          dark ? "text-white hover:text-gold-light" : "text-charcoal hover:text-gold",
+          dark ? "text-white hover:text-gold-light" : "text-charcoal hover:text-gold-deep",
         )}
       >
         <ArrowRight width={17} height={17} />

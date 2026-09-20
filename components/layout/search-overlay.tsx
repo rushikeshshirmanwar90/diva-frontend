@@ -50,7 +50,7 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label="Close search"
-            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold active:bg-beige-dark"
+            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold-deep active:bg-beige-dark"
           >
             <X width={20} height={20} strokeWidth={1.5} />
           </button>
@@ -138,7 +138,7 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-display text-base text-ink group-hover:text-gold">
+                      <p className="truncate font-display text-base text-ink group-hover:text-gold-deep">
                         {p.title}
                       </p>
                       <p className="truncate text-xs text-muted">{p.subtitle}</p>

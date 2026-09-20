@@ -42,7 +42,7 @@ export default function BlogPage() {
                 <p className="eyebrow">
                   Latest · {lead.tag} · {lead.readMinutes} min read
                 </p>
-                <h2 className="mt-4 font-display text-3xl leading-tight font-light text-ink group-hover:text-gold lg:text-[2.8rem]">
+                <h2 className="mt-4 font-display text-3xl leading-tight font-light text-ink group-hover:text-gold-deep lg:text-[2.8rem]">
                   {lead.title}
                 </h2>
                 <p className="mt-5 max-w-lg text-sm leading-relaxed text-muted">
@@ -74,7 +74,7 @@ export default function BlogPage() {
               <p className="eyebrow mt-5">
                 {post.tag} · {post.readMinutes} min read
               </p>
-              <h3 className="mt-2 font-display text-2xl leading-snug font-light text-ink group-hover:text-gold">
+              <h3 className="mt-2 font-display text-2xl leading-snug font-light text-ink group-hover:text-gold-deep">
                 {post.title}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">{post.excerpt}</p>

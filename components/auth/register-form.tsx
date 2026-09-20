@@ -33,6 +33,8 @@ export function RegisterForm() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** The address already has a verified account — offer the two ways forward. */
+  const [taken, setTaken] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleGoogle = async (idToken: string) => {
@@ -67,6 +69,7 @@ export function RegisterForm() {
       if (cause instanceof ApiError && cause.details) {
         setFieldErrors(Object.fromEntries(cause.details.map((d) => [d.path, d.message])));
       }
+      setTaken(cause instanceof ApiError && cause.status === 409);
       setError(errorMessage(cause));
     } finally {
       setSubmitting(false);
@@ -121,12 +124,22 @@ export function RegisterForm() {
       >
         <form className="space-y-6" onSubmit={handleVerify} noValidate>
           {error && (
-            <p
+            <div
               role="alert"
               className="border border-[#c0392b]/30 bg-[#c0392b]/5 p-3 text-xs text-[#c0392b]"
             >
               {error}
-            </p>
+              {taken && (
+                <span className="mt-2 flex gap-4">
+                  <Link href={`/login?email=${encodeURIComponent(email.trim().toLowerCase())}`} className="font-medium underline underline-offset-4">
+                    Sign in
+                  </Link>
+                  <Link href="/forgot-password" className="font-medium underline underline-offset-4">
+                    Reset password
+                  </Link>
+                </span>
+              )}
+            </div>
           )}
           <Field
             label="6-digit code"
@@ -153,7 +166,7 @@ export function RegisterForm() {
             type="button"
             onClick={() => void handleResend()}
             disabled={submitting}
-            className="w-full text-center text-[10px] tracking-luxe uppercase text-gold hover:underline disabled:opacity-50"
+            className="w-full text-center text-[10px] tracking-luxe uppercase text-gold-deep hover:underline disabled:opacity-50"
           >
             {resent ? "Code resent" : "Resend code"}
           </button>

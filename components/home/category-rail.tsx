@@ -4,6 +4,10 @@ import { categories } from "@/lib/data/categories";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { LinkPendingOverlay } from "@/components/ui/link-pending";
 
+const WORDS = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
+/** "Nine" reads better than "9" in running copy; past twelve the numeral is clearer. */
+const countWord = (n: number) => WORDS[n] ?? String(n);
+
 export async function CategoryRail() {
   const list = await categories();
 
@@ -12,7 +16,7 @@ export async function CategoryRail() {
       <SectionHeading
         eyebrow="Find your piece"
         title="Shop by category"
-        description="Nine categories, from a 2.9-gram everyday hoop to a 68-gram bridal set."
+        description={`${countWord(list.length)} categories, from a 2.9-gram everyday hoop to a 68-gram bridal set.`}
       />
 
       {/*

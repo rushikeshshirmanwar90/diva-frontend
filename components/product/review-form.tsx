@@ -99,7 +99,7 @@ export function ReviewForm({ productId, productTitle }: { productId: string; pro
     if (status !== "authenticated") {
       return (
         <div className="mt-8 border-l-2 border-gold bg-beige/40 px-4 py-3 text-sm text-ink">
-          <Link href="/login" className="link-underline text-gold">
+          <Link href="/login" className="link-underline text-gold-deep">
             Sign in
           </Link>{" "}
           to write a review — it keeps reviews tied to real customers.
@@ -176,7 +176,7 @@ export function ReviewForm({ productId, productTitle }: { productId: string; pro
       {needsSignIn && (
         <p className="mt-4 border-l-2 border-gold bg-beige/40 px-4 py-3 text-sm text-ink">
           Please{" "}
-          <Link href="/login" className="link-underline text-gold">
+          <Link href="/login" className="link-underline text-gold-deep">
             sign in
           </Link>{" "}
           to post a review — it keeps reviews tied to real customers.

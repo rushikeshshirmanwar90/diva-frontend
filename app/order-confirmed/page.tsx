@@ -34,7 +34,7 @@ export default async function OrderConfirmedPage({
           className="object-cover opacity-25"
         />
         <div className="relative mx-auto max-w-3xl px-5 py-20 text-center lg:px-10">
-          <span className="inline-flex size-14 items-center justify-center rounded-full bg-gold text-white">
+          <span className="inline-flex size-14 items-center justify-center rounded-full bg-gold text-charcoal">
             <BadgeCheck width={26} height={26} strokeWidth={1.4} />
           </span>
           <h1 className="mt-7 font-display text-4xl leading-tight font-light text-white lg:text-[3.2rem]">
@@ -60,7 +60,7 @@ export default async function OrderConfirmedPage({
               "15 days from delivery to return it, and 30 days for one free size exchange.",
             ].map((text, i) => (
               <li key={i} className="flex gap-5">
-                <span className="font-display text-xl leading-none font-light text-gold">
+                <span className="font-display text-xl leading-none font-light text-gold-deep">
                   0{i + 1}
                 </span>
                 <p className="text-sm leading-relaxed text-muted">{text}</p>

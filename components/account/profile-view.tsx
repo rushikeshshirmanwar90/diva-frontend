@@ -117,7 +117,7 @@ export function AccountProfileView() {
             <button
               type="button"
               onClick={startEditing}
-              className="text-[10px] tracking-luxe uppercase text-gold hover:underline"
+              className="text-[10px] tracking-luxe uppercase text-gold-deep hover:underline"
             >
               Edit
             </button>
@@ -202,7 +202,7 @@ export function AccountProfileView() {
           <h2 className="font-display text-2xl font-light text-ink">Recent orders</h2>
           <Link
             href="/account/orders"
-            className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-gold hover:underline"
+            className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-gold-deep hover:underline"
           >
             All orders <ArrowRight width={12} height={12} />
           </Link>
@@ -224,7 +224,7 @@ export function AccountProfileView() {
                 <div>
                   <Link
                     href={`/account/orders/${order.orderNumber}`}
-                    className="text-sm text-ink hover:text-gold"
+                    className="text-sm text-ink hover:text-gold-deep"
                   >
                     {order.orderNumber}
                   </Link>
@@ -237,7 +237,7 @@ export function AccountProfileView() {
                   <p className="text-sm text-ink">
                     {formatPaise(order.totals.grandTotalPaise)}
                   </p>
-                  <p className="mt-1 text-[10px] tracking-luxe uppercase text-gold">
+                  <p className="mt-1 text-[10px] tracking-luxe uppercase text-gold-deep">
                     {order.status.replace(/_/g, " ")}
                   </p>
                 </div>

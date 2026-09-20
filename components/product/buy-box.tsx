@@ -130,7 +130,7 @@ export function BuyBox({ product }: { product: Product }) {
             type="button"
             onClick={() => setQty((q) => Math.max(1, q - 1))}
             aria-label="Decrease quantity"
-            className="flex size-12 items-center justify-center text-charcoal hover:text-gold"
+            className="flex size-12 items-center justify-center text-charcoal hover:text-gold-deep"
           >
             <Minus width={14} height={14} />
           </button>
@@ -139,7 +139,7 @@ export function BuyBox({ product }: { product: Product }) {
             type="button"
             onClick={() => setQty((q) => Math.min(5, q + 1))}
             aria-label="Increase quantity"
-            className="flex size-12 items-center justify-center text-charcoal hover:text-gold"
+            className="flex size-12 items-center justify-center text-charcoal hover:text-gold-deep"
           >
             <Plus width={14} height={14} />
           </button>

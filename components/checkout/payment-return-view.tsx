@@ -202,7 +202,7 @@ function Shell({
             tone === "error"
               ? "mt-12 inline-flex size-14 items-center justify-center rounded-full bg-[#c0392b] text-white"
               : tone === "success"
-                ? "mt-12 inline-flex size-14 items-center justify-center rounded-full bg-gold text-white"
+                ? "mt-12 inline-flex size-14 items-center justify-center rounded-full bg-gold text-charcoal"
                 : "mt-12 inline-flex size-14 items-center justify-center rounded-full bg-charcoal text-white"
           }
         >

@@ -80,7 +80,7 @@ export function CartView() {
                       <p className="eyebrow">{line.product.attributes.metal}</p>
                       <Link
                         href={`/product/${line.product.slug}`}
-                        className="mt-1 block font-display text-xl leading-snug font-light text-ink hover:text-gold"
+                        className="mt-1 block font-display text-xl leading-snug font-light text-ink hover:text-gold-deep"
                       >
                         {line.product.title}
                       </Link>
@@ -113,7 +113,7 @@ export function CartView() {
                         type="button"
                         onClick={() => setQty(line.key, line.qty - 1)}
                         aria-label="Decrease quantity"
-                        className="flex size-9 items-center justify-center hover:text-gold"
+                        className="flex size-9 items-center justify-center hover:text-gold-deep"
                       >
                         <Minus width={13} height={13} />
                       </button>
@@ -122,7 +122,7 @@ export function CartView() {
                         type="button"
                         onClick={() => setQty(line.key, line.qty + 1)}
                         aria-label="Increase quantity"
-                        className="flex size-9 items-center justify-center hover:text-gold"
+                        className="flex size-9 items-center justify-center hover:text-gold-deep"
                       >
                         <Plus width={13} height={13} />
                       </button>
@@ -134,7 +134,7 @@ export function CartView() {
                         toggleWishlist(line.product.slug);
                         removeLine(line.key);
                       }}
-                      className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-muted hover:text-gold"
+                      className="inline-flex items-center gap-2 text-[10px] tracking-luxe uppercase text-muted hover:text-gold-deep"
                     >
                       <Heart width={13} height={13} /> Move to wishlist
                     </button>

@@ -36,7 +36,7 @@ export async function Footer() {
                 <span
                   key={label}
                   title={label}
-                  className="flex size-9 items-center justify-center border border-line text-charcoal transition-colors hover:border-gold hover:text-gold"
+                  className="flex size-9 items-center justify-center border border-line text-charcoal transition-colors hover:border-gold hover:text-gold-deep"
                 >
                   <Icon size={15} />
                 </span>
@@ -95,13 +95,13 @@ export async function Footer() {
             <div className="mt-7 space-y-2 text-xs text-muted">
               <p className="flex items-center gap-2">
                 <Phone width={13} height={13} className="text-gold" />
-                <a href={contact.phoneHref} className="hover:text-gold">
+                <a href={contact.phoneHref} className="hover:text-gold-deep">
                   {contact.phone}
                 </a>
               </p>
               <p className="flex items-center gap-2">
                 <Mail width={13} height={13} className="text-gold" />
-                <a href={contact.emailHref} className="hover:text-gold">
+                <a href={contact.emailHref} className="hover:text-gold-deep">
                   {contact.email}
                 </a>
               </p>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
@@ -36,6 +36,19 @@ export const metadata: Metadata = {
     "BIS hallmarked gold, diamond and polki jewellery, made in Bengaluru and Jaipur since 1998. Transparent pricing, insured delivery, 15-day returns.",
 };
 
+/**
+ * `viewportFit: "cover"` is what makes `env(safe-area-inset-bottom)` non-zero
+ * on iPhone. The cart drawer, filter sheet and mobile nav all pad by it; without
+ * this the padding resolves to 0 and their bottom buttons sit under the home
+ * indicator. The theme colour tints the browser chrome to the announcement bar.
+ */
+export const viewport: Viewport = {
+  themeColor: "#1a1a1a",
+  viewportFit: "cover",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   /**
    * Read once here, not per page.
@@ -54,6 +67,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} h-full`}>
       <body className="flex min-h-full flex-col antialiased">
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         {/*
           Two layers of navigation feedback, covering different moments.
 
@@ -84,7 +100,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <AnnouncementBar />
                 <Header />
               </div>
-              <main className="flex-1">{children}</main>
+              <main id="main" className="flex-1">{children}</main>
               <Footer />
               <CartDrawer />
               <Toaster />

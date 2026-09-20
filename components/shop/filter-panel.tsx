@@ -160,7 +160,7 @@ export function FilterPanel({
                         className={cn(
                           "flex size-4 shrink-0 items-center justify-center border transition-colors",
                           checked
-                            ? "border-gold bg-gold text-white"
+                            ? "border-gold bg-gold text-charcoal"
                             : "border-line group-hover/opt:border-charcoal",
                         )}
                       >

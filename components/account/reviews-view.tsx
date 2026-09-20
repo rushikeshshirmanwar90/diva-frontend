@@ -140,7 +140,7 @@ export function ReviewsView() {
                       On{" "}
                       <Link
                         href={`/product/${review.productId.slug}`}
-                        className="hover:text-gold"
+                        className="hover:text-gold-deep"
                       >
                         {review.productId.title}
                       </Link>{" "}
@@ -165,7 +165,7 @@ export function ReviewsView() {
                       <button
                         type="button"
                         onClick={() => setEditingId(review._id)}
-                        className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold"
+                        className="text-[10px] tracking-luxe uppercase text-charcoal hover:text-gold-deep"
                       >
                         Edit
                       </button>

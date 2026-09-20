@@ -49,7 +49,7 @@ export function CartDrawer() {
             type="button"
             onClick={() => setCartOpen(false)}
             aria-label="Close bag"
-            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold"
+            className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-beige hover:text-gold-deep"
           >
             <X width={20} height={20} strokeWidth={1.5} />
           </button>
@@ -118,7 +118,7 @@ export function CartDrawer() {
                     <Link
                       href={`/product/${line.product.slug}`}
                       onClick={() => setCartOpen(false)}
-                      className="font-display text-base leading-snug text-ink hover:text-gold"
+                      className="font-display text-base leading-snug text-ink hover:text-gold-deep"
                     >
                       {line.product.title}
                     </Link>
@@ -131,7 +131,7 @@ export function CartDrawer() {
                           type="button"
                           onClick={() => setQty(line.key, line.qty - 1)}
                           aria-label="Decrease quantity"
-                          className="flex size-8 items-center justify-center text-charcoal hover:text-gold"
+                          className="flex size-11 items-center justify-center text-charcoal hover:text-gold-deep sm:size-8"
                         >
                           <Minus width={13} height={13} />
                         </button>
@@ -140,7 +140,7 @@ export function CartDrawer() {
                           type="button"
                           onClick={() => setQty(line.key, line.qty + 1)}
                           aria-label="Increase quantity"
-                          className="flex size-8 items-center justify-center text-charcoal hover:text-gold"
+                          className="flex size-11 items-center justify-center text-charcoal hover:text-gold-deep sm:size-8"
                         >
                           <Plus width={13} height={13} />
                         </button>
