@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { AuthShell, Field, SocialButtons } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { DEFAULT_CONTACT as CONTACT } from "@/lib/data/contact-defaults";
 import { useAuth } from "@/lib/auth/auth-context";
 import { ApiError, errorMessage } from "@/lib/api/client";
 
@@ -89,7 +88,7 @@ export function LoginForm() {
           label="Email"
           type="email"
           name="email"
-          placeholder={CONTACT.email}
+          placeholder="you@example.com"
           autoComplete="username"
           value={email}
           onChange={setEmail}
