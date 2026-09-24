@@ -110,3 +110,26 @@ export function getMe() {
 export function updateProfile(input: UpdateProfileInput) {
   return apiFetch<Profile>("/auth/me", { method: "PATCH", body: input });
 }
+
+export function deleteAccount() {
+  return apiFetch<{ deleted: true }>("/auth/delete-account", { method: "DELETE" });
+}
+
+/**
+ * The signed-out counterpart to `deleteAccount`: no session needed, just an
+ * address. Always "requested", whether or not the address exists — same
+ * anti-enumeration shape as `forgotPassword`.
+ */
+export function requestAccountDeletion(email: string) {
+  return apiFetch<{ requested: true }>("/auth/request-account-deletion", {
+    method: "POST",
+    body: { email },
+  });
+}
+
+export function confirmAccountDeletion(token: string) {
+  return apiFetch<{ deleted: true }>("/auth/confirm-account-deletion", {
+    method: "POST",
+    body: { token },
+  });
+}

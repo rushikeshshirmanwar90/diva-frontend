@@ -26,6 +26,7 @@ type AuthValue = {
   resendOtp: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (input: UpdateProfileInput) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthValue | null>(null);
@@ -113,6 +114,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    try {
+      await authApi.deleteAccount();
+    } finally {
+      setUser(null);
+      setStatus("guest");
+    }
+  }, []);
+
   const value: AuthValue = {
     status,
     user,
@@ -123,6 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     resendOtp,
     logout,
     updateProfile,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

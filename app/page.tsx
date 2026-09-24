@@ -42,6 +42,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero slides={heroSlides} />
+      <RecentlyViewedRail />
       <CategoryRail />
 
       <section className="mx-auto max-w-[90rem] px-5 pb-8 lg:px-10">
@@ -64,8 +65,6 @@ export default async function HomePage() {
           <ProductRail products={newArrivals} />
         </div>
       </section>
-
-      <RecentlyViewedRail />
 
       <PriceTiles />
       {/* 
