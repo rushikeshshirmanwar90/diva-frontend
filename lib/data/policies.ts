@@ -12,8 +12,15 @@ export type Policy = {
 };
 
 /** Every policy slug that exists, in nav order. Fixed regardless of content, so build-time param generation never depends on the backend being reachable. */
-export const POLICY_SLUGS = ["shipping", "returns", "privacy", "terms"] as const;
+export const POLICY_SLUGS = ["shipping", "returns", "privacy", "terms", "copyright"] as const;
 export type PolicySlug = (typeof POLICY_SLUGS)[number];
+
+/**
+ * The slugs diva-backend stores (its `Policy` model enum). Anything else is
+ * frontend-only copy, served straight from the fallback without a request the
+ * backend would only reject.
+ */
+const BACKEND_POLICY_SLUGS: readonly PolicySlug[] = ["shipping", "returns", "privacy", "terms"];
 
 const FALLBACK_POLICIES: Record<PolicySlug, Policy> = {
   shipping: {
@@ -164,6 +171,52 @@ const FALLBACK_POLICIES: Record<PolicySlug, Policy> = {
       },
     ],
   },
+  copyright: {
+    slug: "copyright",
+    title: "Copyright policy",
+    updated: "2026-10-20",
+    intro:
+      "Our designs, photographs and writing take real work to make. Here is what you may do with them, and how to tell us if you think we have used something of yours.",
+    sections: [
+      {
+        heading: "What we own",
+        body: [
+          "Unless stated otherwise, everything on this site — jewellery designs and sketches, product photographs and videos, the Diva name and logo, page layouts, guides and blog posts — belongs to Diva The Indian Jewel or is used under licence. It is protected by the Copyright Act, 1957, the Designs Act, 2000 and the Trade Marks Act, 1999.",
+          "Some editorial and lifestyle images are licensed from photographers and stock libraries. Those licences cover our use only and do not extend to you.",
+        ],
+      },
+      {
+        heading: "What you may do",
+        body: [
+          "Browse, print or save pages for your own personal, non-commercial use — to compare pieces, show a design to family, or keep a record of an order.",
+          "Share links to our pages, and share our product images on social media where the image is unaltered and credits Diva. Tag us; we like seeing where our pieces end up.",
+        ],
+      },
+      {
+        heading: "What you may not do",
+        body: [
+          "Copy, reproduce or manufacture our jewellery designs, or sell pieces presented as Diva designs.",
+          "Reuse our photographs, videos or product descriptions on another store, marketplace listing or catalogue, or edit them to remove our name or watermark.",
+          "Scrape the site or its prices in bulk, or use the Diva name or logo in a way that suggests we endorse you or your products. For press, collaboration or wholesale use, write to us first — we usually say yes.",
+        ],
+      },
+      {
+        heading: "Your reviews and photos",
+        body: [
+          "When you post a review or upload a photo of a piece, you keep the copyright. You give us a non-exclusive, royalty-free licence to show it on this site and in our marketing, with your first name, for as long as it stays published.",
+          "You can ask us to remove your review or photo at any time from your account or by writing to us, and we will take it down within 7 working days.",
+        ],
+      },
+      {
+        heading: "Reporting infringement",
+        body: [
+          `If you believe anything on this site infringes your copyright or design, write to ${DEFAULT_CONTACT.email} with: a description of your work, the page where our use appears, proof that you own the rights, and your name, address and phone number.`,
+          "We acknowledge every notice within 36 hours and remove material that infringes, in line with the Information Technology Act, 2000 and its intermediary rules. If you report someone else's content in error, we may restore it after hearing from them.",
+          "If you see a counterfeit Diva piece or a copy of our designs elsewhere, please tell us at the same address — every piece we make carries a BIS hallmark and HUID, which counterfeits cannot match.",
+        ],
+      },
+    ],
+  },
 };
 
 type ApiPolicy = {
@@ -181,6 +234,8 @@ type Envelope<T> = { success: true; data: T } | { success: false };
  * `cache: "no-store"` and static fallbacks keep the storefront resilient.
  */
 const getDynamicPolicy = cache(async (slug: PolicySlug): Promise<Policy> => {
+  if (!BACKEND_POLICY_SLUGS.includes(slug)) return FALLBACK_POLICIES[slug];
+
   try {
     const response = await fetch(backendUrl(`/policies/${slug}`), {
       cache: "no-store",
@@ -211,7 +266,7 @@ export async function getPolicy(slug: string): Promise<Policy | undefined> {
   return undefined;
 }
 
-/** All four policies, in nav order — for the sidebar on each policy page. */
+/** Every policy, in nav order — for the sidebar on each policy page. */
 export async function listPolicies(): Promise<Policy[]> {
   return Promise.all(POLICY_SLUGS.map((slug) => getDynamicPolicy(slug)));
 }

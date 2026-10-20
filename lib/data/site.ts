@@ -33,6 +33,7 @@ export const DEFAULT_HELP_LINKS: HelpLink[] = [
   { label: "Returns & exchange", href: "/policies/returns", openInNewTab: false },
   { label: "Privacy policy", href: "/policies/privacy", openInNewTab: false },
   { label: "Terms of service", href: "/policies/terms", openInNewTab: false },
+  { label: "Copyright policy", href: "/policies/copyright", openInNewTab: false },
   { label: "My account", href: "/account", openInNewTab: false },
 ];
 
