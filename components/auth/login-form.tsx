@@ -88,7 +88,6 @@ export function LoginForm() {
           label="Email"
           type="email"
           name="email"
-          placeholder="you@example.com"
           autoComplete="username"
           value={email}
           onChange={setEmail}
@@ -100,7 +99,6 @@ export function LoginForm() {
           label="Password"
           type="password"
           name="password"
-          placeholder="••••••••"
           autoComplete="current-password"
           value={password}
           onChange={setPassword}

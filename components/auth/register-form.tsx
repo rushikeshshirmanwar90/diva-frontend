@@ -7,7 +7,6 @@ import { Loader2 } from "lucide-react";
 import { AuthShell, Field, SocialButtons } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
 import { MODEL } from "@/lib/images";
-import { DEFAULT_CONTACT as CONTACT } from "@/lib/data/contact-defaults";
 import { useAuth } from "@/lib/auth/auth-context";
 import { ApiError, errorMessage } from "@/lib/api/client";
 
@@ -145,7 +144,6 @@ export function RegisterForm() {
             label="6-digit code"
             type="text"
             name="otp"
-            placeholder="123456"
             autoComplete="one-time-code"
             value={otp}
             onChange={(value) => setOtp(value.replace(/\D/g, "").slice(0, 6))}
@@ -202,7 +200,6 @@ export function RegisterForm() {
         <Field
           label="Full name"
           name="name"
-          placeholder="Mahesh Giri"
           autoComplete="name"
           value={name}
           onChange={setName}
@@ -214,7 +211,6 @@ export function RegisterForm() {
           label="Email"
           type="email"
           name="email"
-          placeholder={CONTACT.email}
           autoComplete="email"
           value={email}
           onChange={setEmail}
@@ -226,7 +222,6 @@ export function RegisterForm() {
           label="Mobile"
           type="tel"
           name="phone"
-          placeholder={CONTACT.phone}
           autoComplete="tel"
           value={phone}
           onChange={setPhone}
@@ -237,7 +232,6 @@ export function RegisterForm() {
           label="Password"
           type="password"
           name="password"
-          placeholder="At least 10 characters"
           autoComplete="new-password"
           value={password}
           onChange={setPassword}
